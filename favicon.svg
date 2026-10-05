@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <title>Wizz icon</title>
+  <rect width="512" height="512" rx="96" fill="#000000"/>
+  <g transform="translate(93 190) scale(2)">
+    <polygon fill="#FFFFFF" points="0,0 37,0 37,45 73,0 109,0 109,72 127,72 127,0 163,0 163,108 73,108 73,64 37,108 0,108"/>
+  </g>
+  <circle cx="383" cy="134" r="28" fill="#ED1C24"/>
+</svg>

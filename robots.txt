@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://wizz.com.my/sitemap.xml

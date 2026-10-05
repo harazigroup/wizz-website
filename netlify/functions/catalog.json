@@ -1,0 +1,87 @@
+{
+ "us-starter": {
+  "name": "United States - Starter",
+  "amount": 349,
+  "currency": "USD"
+ },
+ "us-business": {
+  "name": "United States - Business",
+  "amount": 649,
+  "currency": "USD"
+ },
+ "us-complete": {
+  "name": "United States - Complete",
+  "amount": 1190,
+  "currency": "USD"
+ },
+ "uk-starter": {
+  "name": "United Kingdom - Starter",
+  "amount": 299,
+  "currency": "USD"
+ },
+ "uk-business": {
+  "name": "United Kingdom - Business",
+  "amount": 599,
+  "currency": "USD"
+ },
+ "uk-complete": {
+  "name": "United Kingdom - Complete",
+  "amount": 1290,
+  "currency": "USD"
+ },
+ "ca-starter": {
+  "name": "Canada - Starter",
+  "amount": 749,
+  "currency": "USD"
+ },
+ "ca-business": {
+  "name": "Canada - Business",
+  "amount": 1190,
+  "currency": "USD"
+ },
+ "ee-starter": {
+  "name": "Estonia - Starter",
+  "amount": 749,
+  "currency": "USD"
+ },
+ "ee-business": {
+  "name": "Estonia - Business",
+  "amount": 1290,
+  "currency": "USD"
+ },
+ "fr-starter": {
+  "name": "France - Starter",
+  "amount": 849,
+  "currency": "USD"
+ },
+ "fr-business": {
+  "name": "France - Business",
+  "amount": 1390,
+  "currency": "USD"
+ },
+ "ae-deposit": {
+  "name": "UAE - Free zone, no visa (deposit)",
+  "amount": 500,
+  "currency": "USD"
+ },
+ "ae-deposit-visa": {
+  "name": "UAE - Free zone + 1 visa (deposit)",
+  "amount": 500,
+  "currency": "USD"
+ },
+ "sa-assessment": {
+  "name": "Saudi Arabia - Market-entry assessment",
+  "amount": 299,
+  "currency": "USD"
+ },
+ "my-starter": {
+  "name": "Malaysia - Starter",
+  "amount": 990,
+  "currency": "USD"
+ },
+ "my-business": {
+  "name": "Malaysia - Business",
+  "amount": 1790,
+  "currency": "USD"
+ }
+}

@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Thank you | Wizz Smart Services</title>
+<meta name="description" content="Payment confirmation and onboarding.">
+<meta property="og:title" content="Thank you | Wizz Smart Services">
+<meta property="og:description" content="Payment confirmation and onboarding.">
+<meta property="og:image" content="https://wizz.com.my/og.png">
+<meta property="og:url" content="https://wizz.com.my/thank-you.html">
+<link rel="canonical" href="https://wizz.com.my/thank-you.html">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#F3F5F7">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="site.css">
+<meta name="robots" content="noindex">
+</head>
+<body data-page="thank-you">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="wz" viewBox="330 428 420 204">
+    <g fill="currentColor">
+      <polygon points="332,485 369,485 369,530 405,485 441,485 441,557 459,557 459,485 495,485 495,593 405,593 405,549 369,593 332,593"/>
+      <rect x="513" y="485" width="36" height="108"/>
+      <polygon points="567,485 657,485 657,521 621,557 657,557 657,593 567,593 567,557 603,521 567,521"/>
+      <polygon points="657,521 747,521 747,557 711,593 747,593 747,629 657,629 657,593 693,557 657,557"/>
+    </g>
+    <circle cx="530.5" cy="449.5" r="19.5" fill="#E01B22"/>
+  </symbol>
+</svg>
+<header class="site">
+  <div class="wrap bar">
+    <a class="logo" href="index.html" aria-label="Wizz Smart Services home"><svg viewBox="330 428 420 204" aria-hidden="true"><use href="#wz"/></svg></a>
+    <nav class="main" id="mainNav" aria-label="Main">
+      <a href="packages.html" data-i18n="nav_pkgs">Packages</a>
+      <a href="services.html" data-i18n="nav_services">Services</a>
+      <a href="countries.html" data-i18n="nav_countries">Countries</a>
+      <a href="marketplaces.html" data-i18n="nav_mp">Marketplaces</a>
+      <a href="about.html" data-i18n="nav_about">About</a>
+      <a href="blog.html" data-i18n="nav_blog">Blog</a>
+      <a href="contact.html" data-i18n="nav_contact">Contact</a>
+    </nav>
+    <div class="tools">
+      <button class="lang" id="langBtn" type="button" aria-label="Switch language">العربية</button>
+      <a class="btn solid small hide-sm" href="contact.html"><span class="dot"></span><span data-i18n="cta_short">Free consultation</span></a>
+      <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="mainNav"><span></span><span></span><span class="sr" data-i18n="menu">Menu</span></button>
+    </div>
+  </div>
+</header>
+<main id="top">
+<section class="page-hero night">
+  <div class="wrap noimg">
+    <div>
+      <p class="eyebrow">Payment</p>
+      <h1>Thank you</h1>
+      <p class="lede">We're confirming your payment with Airwallex.</p>
+    </div>
+  </div>
+</section>
+<section class="block">
+  <div class="wrap ty">
+    <div class="ty-status" id="tyStatus" role="status">Checking your payment…</div>
+    <form class="ty-form" id="onboard" name="onboarding" method="POST" data-netlify="true" netlify-honeypot="company_website" hidden>
+      <input type="hidden" name="form-name" value="onboarding">
+      <input type="hidden" name="order_id" id="ob_order">
+      <input type="hidden" name="payment_intent" id="ob_intent">
+      <input type="hidden" name="package" id="ob_pkg">
+      <p class="hp"><label>Leave this empty <input name="company_website"></label></p>
+      <h2>Onboarding details</h2>
+      <p class="muted">We use these details to check eligibility and prepare your filings. We'll ask for passport copies separately over a secure channel.</p>
+      <div class="ty-grid">
+        <div><label for="ob_name">Full name (as on passport)</label><input id="ob_name" name="full_name" required autocomplete="name"></div>
+        <div><label for="ob_email">Email</label><input id="ob_email" name="email" type="email" required autocomplete="email"></div>
+        <div><label for="ob_phone">WhatsApp number</label><input id="ob_phone" name="whatsapp" required autocomplete="tel"></div>
+        <div><label for="ob_nat">Nationality</label><input id="ob_nat" name="nationality" required></div>
+        <div class="full"><label for="ob_addr">Full residential address</label><textarea id="ob_addr" name="residential_address" required autocomplete="street-address"></textarea></div>
+        <div><label for="ob_nid">National ID number</label><input id="ob_nid" name="national_id_number" required></div>
+        <div><label for="ob_pass">Passport number</label><input id="ob_pass" name="passport_number" required></div>
+        <div class="full"><label for="ob_names">Proposed company names (up to 3, in order of preference)</label><textarea id="ob_names" name="company_names" required></textarea></div>
+        <div class="full"><label for="ob_act">Business activity</label><input id="ob_act" name="business_activity" required placeholder="e.g. selling skincare products on Amazon US"></div>
+        <div><label for="ob_owners">Owners</label><select id="ob_owners" name="owners"><option>Single owner</option><option>Two or more partners</option></select></div>
+        <div><label for="ob_brand">If selling online</label><select id="ob_brand" name="brand_model"><option>Not applicable</option><option>My own private brand</option><option>Reselling other brands</option></select></div>
+        <div class="full"><label for="ob_notes">Anything else we should know?</label><textarea id="ob_notes" name="notes"></textarea></div>
+      </div>
+      <label class="ty-agree"><input type="checkbox" required name="agree" value="yes"> I confirm these details are correct and I agree to the <a href="terms.html">Terms of Service</a> and <a href="privacy.html">Privacy Policy</a>.</label>
+      <button class="btn solid" type="submit"><span class="dot"></span>Send my details</button>
+    </form>
+    <div class="ty-done" id="tyDone" hidden><h2>Details received</h2><p>Thank you. We'll review your details and contact you on WhatsApp or email within one business day.</p></div>
+  </div>
+</section>
+</main>
+<footer class="site">
+  <div class="wrap">
+    <div class="foot">
+      <div class="foot-brand">
+        <a class="logo" href="index.html" aria-label="Wizz"><svg viewBox="330 428 420 204" aria-hidden="true"><use href="#wz"/></svg></a>
+        <p data-i18n="f_tag">Build your business beyond borders. Company formation, banking setup, marketplaces, Amazon FBA prep and logistics across 12 countries.</p>
+      </div>
+      <div><h4 data-i18n="nav_services">Services</h4><ul>
+          <li><a href="services.html#formation" data-i18n="s1_t">International company formation</a></li>
+          <li><a href="services.html#banking" data-i18n="s3_t">Business banking and payment setup</a></li>
+          <li><a href="services.html#ecommerce" data-i18n="s4_t">E-commerce business setup</a></li>
+          <li><a href="services.html#fba" data-i18n="s8_t">Amazon FBA preparation from Malaysia</a></li>
+          <li><a href="services.html#logistics" data-i18n="s7_t">Logistics and shipping</a></li>
+        </ul></div>
+      <div><h4 data-i18n="nav_countries">Countries</h4><ul>
+          <li><a href="countries.html#na" data-i18n="rg_na">North America</a></li>
+          <li><a href="countries.html#eu" data-i18n="rg_eu">Europe</a></li>
+          <li><a href="countries.html#me" data-i18n="rg_me">Middle East</a></li>
+          <li><a href="countries.html#as" data-i18n="rg_as">Asia</a></li>
+        </ul></div>
+      <div><h4 data-i18n="nav_contact">Contact</h4><ul>
+          <li class="ltr"><a href="https://wa.me/601124477685" target="_blank" rel="noopener">+60 11-2447 7685</a></li>
+          <li class="ltr"><a href="mailto:info@wizz.com.my">info@wizz.com.my</a></li>
+          <li class="social"><a href="https://www.instagram.com/wizz.com.my/" target="_blank" rel="noopener">Instagram</a> · <a href="https://www.tiktok.com/@wizz.com.my" target="_blank" rel="noopener">TikTok</a> <span class="ltr">@wizz.com.my</span></li>
+          <li><a href="about.html" data-i18n="nav_about">About</a> · <a href="blog.html" data-i18n="nav_blog">Blog</a></li>
+        </ul></div>
+    </div>
+    <div class="legal">
+      <span class="legal-links"><a href="terms.html">Terms</a> · <a href="refund.html">Refunds</a> · <a href="privacy.html">Privacy</a></span>
+      <span class="ltr">© 2026 WIZZ SMART SERVICES SDN. BHD. · Reg. No. 202501029005 · B2-2-3, Publika, Solaris Dutamas, 50480 Kuala Lumpur, Malaysia</span>
+      <span data-i18n="disclaimer">Wizz Smart Services is a business services company and does not provide legal or tax advice. Bank, payment-provider, marketplace and government approvals are made by those third parties and are not guaranteed. Forming a company does not grant a visa or residency.</span>
+    </div>
+  </div>
+</footer>
+<script>
+(function(){
+  const st=document.getElementById('tyStatus'),f=document.getElementById('onboard');
+  const intent=new URLSearchParams(location.search).get('intent')||'';
+  let saved={};try{saved=JSON.parse(sessionStorage.getItem('wizz-order')||'{}')}catch(e){}
+  function showForm(d){f.hidden=false;document.getElementById('ob_order').value=d.order_id||saved.order||'';document.getElementById('ob_intent').value=intent;document.getElementById('ob_pkg').value=d.package||saved.pkg||'';}
+  if(!intent){st.innerHTML='We couldn\'t find a payment reference. If you paid, message us on WhatsApp at <span class="ltr">+60 11-2447 7685</span> with your receipt.';return;}
+  fetch('/.netlify/functions/verify?intent='+encodeURIComponent(intent)).then(r=>r.json()).then(d=>{
+    if(d.paid){st.className='ty-status ok';st.textContent='Payment received: '+(d.package||'your package')+' · '+d.currency+' '+Number(d.amount).toLocaleString('en-US')+' · Order '+d.order_id;showForm(d);}
+    else{st.innerHTML='Your payment isn\'t confirmed yet (status: '+(d.status||'unknown')+'). If you completed it, refresh in a minute or message us on WhatsApp at <span class="ltr">+60 11-2447 7685</span>.';}
+  }).catch(()=>{st.innerHTML='We couldn\'t check the payment right now. Fill in the form below and we\'ll match it to your payment.';showForm({});});
+  f.addEventListener('submit',async e=>{e.preventDefault();if(!f.reportValidity())return;
+    const b=f.querySelector('button[type=submit]');b.disabled=true;
+    try{const r=await fetch('/',{method:'POST',headers:{'content-type':'application/x-www-form-urlencoded'},body:new URLSearchParams(new FormData(f)).toString()});if(!r.ok)throw 0;f.hidden=true;document.getElementById('tyDone').hidden=false;}
+    catch(_){b.disabled=false;st.textContent='We couldn\'t send the form. Please try again or email info@wizz.com.my.';}
+  });
+})();
+</script>
+<script src="site.js"></script>
+<script src="fx.js"></script>
+</body>
+</html>
