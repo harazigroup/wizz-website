@@ -58,7 +58,7 @@
     <div>
       <p class="eyebrow">Payment</p>
       <h1>Thank you</h1>
-      <p class="lede">We're confirming your payment with Airwallex.</p>
+      <p class="lede">We're confirming your payment.</p>
     </div>
   </div>
 </section>
@@ -131,11 +131,11 @@
 <script>
 (function(){
   const st=document.getElementById('tyStatus'),f=document.getElementById('onboard');
-  const intent=new URLSearchParams(location.search).get('intent')||'';
+  const qs=new URLSearchParams(location.search);const sid=qs.get('session_id')||'';const intent=qs.get('intent')||sid;
   let saved={};try{saved=JSON.parse(sessionStorage.getItem('wizz-order')||'{}')}catch(e){}
   function showForm(d){f.hidden=false;document.getElementById('ob_order').value=d.order_id||saved.order||'';document.getElementById('ob_intent').value=intent;document.getElementById('ob_pkg').value=d.package||saved.pkg||'';}
   if(!intent){st.innerHTML='We couldn\'t find a payment reference. If you paid, message us on WhatsApp at <span class="ltr">+60 11-2447 7685</span> with your receipt.';return;}
-  fetch('/.netlify/functions/verify?intent='+encodeURIComponent(intent)).then(r=>r.json()).then(d=>{
+  fetch('/.netlify/functions/verify?'+(sid?'session_id=':'intent=')+encodeURIComponent(intent)).then(r=>r.json()).then(d=>{
     if(d.paid){st.className='ty-status ok';st.textContent='Payment received: '+(d.package||'your package')+' · '+d.currency+' '+Number(d.amount).toLocaleString('en-US')+' · Order '+d.order_id;showForm(d);}
     else{st.innerHTML='Your payment isn\'t confirmed yet (status: '+(d.status||'unknown')+'). If you completed it, refresh in a minute or message us on WhatsApp at <span class="ltr">+60 11-2447 7685</span>.';}
   }).catch(()=>{st.innerHTML='We couldn\'t check the payment right now. Fill in the form below and we\'ll match it to your payment.';showForm({});});

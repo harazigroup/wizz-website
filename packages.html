@@ -239,7 +239,7 @@
   <div class="wrap">
     <div class="sec-head"><p class="eyebrow">After you pay</p><h2>What happens next</h2></div>
     <ol class="steps">
-      <li><h3>Secure payment</h3><p>You pay by card on Airwallex's secure checkout page.</p></li>
+      <li><h3>Secure payment</h3><p>You pay by card on a secure checkout page run by our payment provider.</p></li>
       <li><h3>Onboarding form</h3><p>You send your details and documents so we can check eligibility.</p></li>
       <li><h3>Review</h3><p>We confirm everything with you before anything is filed.</p></li>
       <li><h3>Filing</h3><p>We register the company and send your documents as each step completes.</p></li>
@@ -298,6 +298,7 @@
       const r=await fetch('/.netlify/functions/checkout',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({sku:btn.dataset.sku})});
       const d=await r.json().catch(()=>({}));
       if(!r.ok){throw new Error(d.error==='not_configured'?'Online payment is being set up. Message us on WhatsApp at +60 11-2447 7685 and we will send you a payment link.':'We couldn\'t open the checkout. Please try again, or message us on WhatsApp at +60 11-2447 7685.');}
+      if(d.url){try{sessionStorage.setItem('wizz-order',JSON.stringify({order:d.order_id,pkg:d.package}))}catch(e){}location.href=d.url;return;}
       if(!window.AirwallexComponentsSDK)throw new Error('The payment page didn\'t load. Check your connection and try again.');
       const {payments}=await window.AirwallexComponentsSDK.init({env:d.env,enabledElements:['payments']});
       try{sessionStorage.setItem('wizz-order',JSON.stringify({order:d.order_id,pkg:d.package}))}catch(e){}

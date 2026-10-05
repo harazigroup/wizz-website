@@ -90,7 +90,7 @@ pk_body = hero("Packages", "Clear prices for forming your company abroad",
   <div class="wrap">
     <div class="sec-head"><p class="eyebrow">After you pay</p><h2>What happens next</h2></div>
     <ol class="steps">
-      <li><h3>Secure payment</h3><p>You pay by card on Airwallex's secure checkout page.</p></li>
+      <li><h3>Secure payment</h3><p>You pay by card on a secure checkout page run by our payment provider.</p></li>
       <li><h3>Onboarding form</h3><p>You send your details and documents so we can check eligibility.</p></li>
       <li><h3>Review</h3><p>We confirm everything with you before anything is filed.</p></li>
       <li><h3>Filing</h3><p>We register the company and send your documents as each step completes.</p></li>
@@ -115,6 +115,7 @@ PK_JS = '''<script src="https://static.airwallex.com/components/sdk/v1/index.js"
       const r=await fetch('/.netlify/functions/checkout',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({sku:btn.dataset.sku})});
       const d=await r.json().catch(()=>({}));
       if(!r.ok){throw new Error(d.error==='not_configured'?'Online payment is being set up. Message us on WhatsApp at +60 11-2447 7685 and we will send you a payment link.':'We couldn\\'t open the checkout. Please try again, or message us on WhatsApp at +60 11-2447 7685.');}
+      if(d.url){try{sessionStorage.setItem('wizz-order',JSON.stringify({order:d.order_id,pkg:d.package}))}catch(e){}location.href=d.url;return;}
       if(!window.AirwallexComponentsSDK)throw new Error('The payment page didn\\'t load. Check your connection and try again.');
       const {payments}=await window.AirwallexComponentsSDK.init({env:d.env,enabledElements:['payments']});
       try{sessionStorage.setItem('wizz-order',JSON.stringify({order:d.order_id,pkg:d.package}))}catch(e){}
@@ -129,7 +130,7 @@ page("packages.html", "Packages | Wizz Smart Services",
      pk_body, current="packages.html", scripts=PK_JS)
 
 # ---------------- thank you + onboarding
-ty_body = hero("Payment", "Thank you", "We're confirming your payment with Airwallex.") + '''
+ty_body = hero("Payment", "Thank you", "We're confirming your payment.") + '''
 <section class="block">
   <div class="wrap ty">
     <div class="ty-status" id="tyStatus" role="status">Checking your payment…</div>
@@ -164,11 +165,11 @@ ty_body = hero("Payment", "Thank you", "We're confirming your payment with Airwa
 TY_JS = '''<script>
 (function(){
   const st=document.getElementById('tyStatus'),f=document.getElementById('onboard');
-  const intent=new URLSearchParams(location.search).get('intent')||'';
+  const qs=new URLSearchParams(location.search);const sid=qs.get('session_id')||'';const intent=qs.get('intent')||sid;
   let saved={};try{saved=JSON.parse(sessionStorage.getItem('wizz-order')||'{}')}catch(e){}
   function showForm(d){f.hidden=false;document.getElementById('ob_order').value=d.order_id||saved.order||'';document.getElementById('ob_intent').value=intent;document.getElementById('ob_pkg').value=d.package||saved.pkg||'';}
   if(!intent){st.innerHTML='We couldn\\'t find a payment reference. If you paid, message us on WhatsApp at <span class="ltr">+60 11-2447 7685</span> with your receipt.';return;}
-  fetch('/.netlify/functions/verify?intent='+encodeURIComponent(intent)).then(r=>r.json()).then(d=>{
+  fetch('/.netlify/functions/verify?'+(sid?'session_id=':'intent=')+encodeURIComponent(intent)).then(r=>r.json()).then(d=>{
     if(d.paid){st.className='ty-status ok';st.textContent='Payment received: '+(d.package||'your package')+' · '+d.currency+' '+Number(d.amount).toLocaleString('en-US')+' · Order '+d.order_id;showForm(d);}
     else{st.innerHTML='Your payment isn\\'t confirmed yet (status: '+(d.status||'unknown')+'). If you completed it, refresh in a minute or message us on WhatsApp at <span class="ltr">+60 11-2447 7685</span>.';}
   }).catch(()=>{st.innerHTML='We couldn\\'t check the payment right now. Fill in the form below and we\\'ll match it to your payment.';showForm({});});
@@ -204,7 +205,7 @@ legal("terms.html", "Terms of Service", "The terms that apply when you buy a pac
  ("Third-party decisions", ["Company registries, tax authorities, immigration authorities, banks, payment providers and marketplaces make their own decisions. We do not guarantee any registration, licence, visa, work permit, bank account, payment account, marketplace account, tax result or business result."]),
  ("Your responsibilities", [["Give us accurate, complete and current information and documents.","Use the company only for lawful activities.","Pay any government or third-party fees that your package does not include.","Keep up with yearly filings and renewals after the period included in your package."]]),
  ("Eligibility checks", ["Before filing, we check your identity and eligibility under anti-money-laundering and know-your-customer rules, ours and those of our partners. We may decline or stop work if a check fails or if information is false or incomplete."]),
- ("Prices and payment", ["Prices are shown in US dollars. Payments are processed securely by Airwallex; we never see or store your full card details. Prices marked \"from\" are confirmed in a written quote before work starts."]),
+ ("Prices and payment", ["Prices are shown in US dollars. Payments are processed securely by our payment providers (Stripe or Airwallex); we never see or store your full card details. Prices marked \"from\" are confirmed in a written quote before work starts."]),
  ("Timelines", ["Timelines we give are estimates. Delays caused by authorities, providers or missing information are outside our control."]),
  ("Refunds", ["Refunds follow our <a href=\"refund.html\">Refund Policy</a>."]),
  ("Liability", ["To the extent the law allows, our total liability for any claim is limited to the fees you paid us for the service concerned. We are not liable for decisions made by third parties or for indirect losses."]),
@@ -219,9 +220,9 @@ legal("refund.html", "Refund Policy", "When and how you can get your money back.
  ("How to request a refund", ["Email <span class=\"ltr\">info@wizz.com.my</span> with your order number. We reply within 5 business days and send approved refunds to the original payment method, normally within 10 business days."]),
 ])
 legal("privacy.html", "Privacy Policy", "How we collect, use and protect your personal data.", [
- ("What we collect", [["Contact details: name, email, phone or WhatsApp number.","Identity details: nationality, full residential address, national ID number, passport details and copies.","Company details: proposed names, activity, shareholders and directors.","Payment details: order and payment references. Card details are handled by Airwallex, not by us."]]),
+ ("What we collect", [["Contact details: name, email, phone or WhatsApp number.","Identity details: nationality, full residential address, national ID number, passport details and copies.","Company details: proposed names, activity, shareholders and directors.","Payment details: order and payment references. Card details are handled by our payment providers (Stripe or Airwallex), not by us."]]),
  ("Why we use it", [["To provide the services you buy, including filings with registries and authorities.","To carry out identity and eligibility checks required by law and by our partners.","To contact you about your order and your yearly obligations."]]),
- ("Who we share it with", ["Only as needed to deliver your service: company registries and government authorities, registered agents, company secretaries, address providers and professional partners in the relevant country, our payment processor (Airwallex), and our website and form host (Netlify). We don't sell your data."]),
+ ("Who we share it with", ["Only as needed to deliver your service: company registries and government authorities, registered agents, company secretaries, address providers and professional partners in the relevant country, our payment processors (Stripe and Airwallex), and our website and form host (Netlify). We don't sell your data."]),
  ("International transfers", ["Because we form companies in other countries, your data is sent to the country of your company and to our partners there."]),
  ("How long we keep it", ["We keep your records for as long as needed to provide the service and to meet legal record-keeping duties, normally up to 7 years after our work ends."]),
  ("Your rights", ["Under Malaysia's Personal Data Protection Act 2010 you can ask to access or correct your personal data, or to limit how we use it. Email <span class=\"ltr\">info@wizz.com.my</span>."]),

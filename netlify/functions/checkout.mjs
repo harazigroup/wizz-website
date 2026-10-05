@@ -1,9 +1,10 @@
-// POST { sku, email? } -> creates an Airwallex PaymentIntent for a known package and returns what the browser needs.
+// POST { sku } -> starts a checkout for a known package. Uses Stripe when STRIPE_SECRET_KEY is set, otherwise Airwallex.
 import { api, configured, env, json, products } from "./_airwallex.mjs";
+import { stripe, stripeOn } from "./_stripe.mjs";
 
 export default async (req) => {
   if (req.method !== "POST") return json(405, { error: "Use POST" });
-  if (!configured()) return json(503, { error: "not_configured" });
+  if (!stripeOn() && !configured()) return json(503, { error: "not_configured" });
   let input = {};
   try { input = await req.json(); } catch {}
   const item = products[input.sku];
@@ -11,6 +12,21 @@ export default async (req) => {
   const site = process.env.SITE_URL || process.env.URL || new URL(req.url).origin;
   const orderId = `WZ-${new Date().toISOString().slice(2, 10).replace(/-/g, "")}-${Math.random().toString(36).slice(2, 7).toUpperCase()}`;
   try {
+    if (stripeOn()) {
+      const s = await stripe("/checkout/sessions", {
+        method: "POST",
+        body: {
+          mode: "payment",
+          client_reference_id: orderId,
+          success_url: `${site}/thank-you.html?session_id={CHECKOUT_SESSION_ID}`,
+          cancel_url: `${site}/packages.html`,
+          line_items: { 0: { quantity: 1, price_data: { currency: item.currency.toLowerCase(), unit_amount: Math.round(item.amount * 100), product_data: { name: item.name } } } },
+          metadata: { sku: input.sku, package: item.name, order_id: orderId },
+          payment_intent_data: { description: `${item.name} · ${orderId}`, metadata: { sku: input.sku, order_id: orderId } }
+        }
+      });
+      return json(200, { provider: "stripe", url: s.url, order_id: orderId, package: item.name, amount: item.amount });
+    }
     const intent = await api("/api/v1/pa/payment_intents/create", {
       method: "POST",
       body: {
@@ -20,11 +36,10 @@ export default async (req) => {
         merchant_order_id: orderId,
         descriptor: "WIZZ SMART SERVICES",
         return_url: `${site}/thank-you.html`,
-        metadata: { sku: input.sku, package: item.name },
-        ...(typeof input.email === "string" && input.email.includes("@") ? { customer: { email: input.email.slice(0, 120) } } : {})
+        metadata: { sku: input.sku, package: item.name }
       }
     });
-    return json(200, { env, intent_id: intent.id, client_secret: intent.client_secret, currency: intent.currency, order_id: orderId, package: item.name, amount: item.amount });
+    return json(200, { provider: "airwallex", env, intent_id: intent.id, client_secret: intent.client_secret, currency: intent.currency, order_id: orderId, package: item.name, amount: item.amount });
   } catch (e) {
     console.error(e);
     return json(502, { error: "payment_unavailable" });
