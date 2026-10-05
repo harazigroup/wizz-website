@@ -567,6 +567,10 @@ footer.site .logo{color:#F3F5F7}
 .pk-cta .btn:disabled{opacity:.6;cursor:progress}
 .pk-note{font-size:14px;border-inline-start:3px solid var(--red);padding:6px 12px;color:var(--muted);margin-top:8px}
 .pk-msg{margin-top:20px;border:1.5px solid var(--red);background:var(--surface);border-radius:8px;padding:14px 16px;font-weight:500}
+.pk-curbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin-bottom:22px;font-size:14px}
+.pk-curbar label{font-weight:600;margin:0;display:inline}
+.pk-curbar select{width:auto;max-width:100%;min-width:0;margin:0;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);font:inherit;font-size:14px}
+.pk-curnote{color:var(--muted);font-size:13px}
 .pk-addons{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
 .pk-addon{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:14px 16px;display:flex;justify-content:space-between;gap:12px;align-items:baseline}
 .pk-addon b{font:700 15px var(--mono);white-space:nowrap}
@@ -588,6 +592,3 @@ footer.site .logo{color:#F3F5F7}
 .legal-doc ul{margin:0;padding-inline-start:20px;display:grid;gap:6px}
 .legal-links a{color:inherit}
 .steps h3{font-size:17px}
-
-form.ty-form{grid-template-columns:1fr}
-.page-hero + section.block{padding-top:clamp(36px,5vw,56px)}

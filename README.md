@@ -12,3 +12,4 @@ Static website for Wizz Smart Services Sdn. Bhd., hosted on Netlify.
   - `AIRWALLEX_ENV` = `demo` for sandbox, `prod` for live
   - `SITE_URL` = `https://wizz.com.my`
 - Prices: edit `tools/catalog.py`, run `python3 tools/build_pkgs.py` from `tools/` (it regenerates `packages.html`), and update `netlify/functions/catalog.json` to match.
+- Local currency: prices are set in USD. `netlify/functions/prices.mjs` picks the visitor's currency from their country (Netlify geolocation) and the page converts with the same formula checkout uses (`netlify/functions/_fx.mjs`: USD × rate × 1.02, rounded up; GBP/EUR/CAD/AUD/SGD end in 9). Supported: USD, GBP, EUR, CAD, AUD, SGD, AED, SAR, QAR, MYR, THB; everything else falls back to USD. Visitors can switch currency; the choice is remembered. Update the rates in `_fx.mjs` every month or two, or when a currency moves a lot.

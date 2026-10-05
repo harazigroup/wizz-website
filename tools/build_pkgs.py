@@ -38,18 +38,24 @@ def hero(eyebrow, title, lede):
 </section>'''
 
 # ---------------- packages
+import re
+def money(usd):
+    return f'<span class="m" data-usd="{usd}">${usd:,}</span>'
+def money_text(txt):
+    return re.sub(r"\$([0-9][0-9,]*)", lambda m: money(int(m.group(1).replace(",", ""))), esc(txt))
+
 def tier_html(c, t):
     if t["p"] is None:
         price = '<div class="pk-price">Quote</div>'
     else:
-        price = f'<div class="pk-price">{"<span class=\"from\">from</span>" if t.get("frm") else ""}${t["p"]:,}<small>USD</small></div>'
+        price = f'<div class="pk-price">{"<span class=\"from\">from</span>" if t.get("frm") else ""}{money(t["p"])}<small class="cur">USD</small></div>'
     if t.get("sku") and t.get("deposit"):
-        cta = f'<button class="btn solid pk-buy" type="button" data-sku="{t["sku"]}">Pay ${t["deposit"]} deposit</button>'
+        cta = f'<button class="btn solid pk-buy" type="button" data-sku="{t["sku"]}">Pay {money(t["deposit"])} deposit</button>'
     elif t.get("sku"):
         cta = f'<button class="btn solid pk-buy" type="button" data-sku="{t["sku"]}">Buy now</button>'
     else:
         cta = f'<a class="btn ghost" href="contact.html">Get a quote</a>'
-    plus = f'<p class="pk-plus">{esc(t["plus"])}</p>' if t.get("plus") else ""
+    plus = f'<p class="pk-plus">{money_text(t["plus"])}</p>' if t.get("plus") else ""
     items = "".join(f"<li>{esc(i)}</li>" for i in t["i"])
     flag = '<span class="pk-flag">Most popular</span>' if t.get("pop") else ""
     return f'''<article class="pk{' pop' if t.get('pop') else ''}">{flag}
@@ -63,18 +69,19 @@ for idx, c in enumerate(COUNTRIES):
     k = c["c"].lower()
     sel = "true" if idx == 0 else "false"
     tabs.append(f'<button type="button" role="tab" id="tab-{k}" aria-controls="p-{k}" aria-selected="{sel}" tabindex="{0 if idx==0 else -1}" data-k="{k}"><b class="ltr">{c["c"]}</b><span>{esc(c["n"])}</span></button>')
-    notes = "".join(f'<p class="pk-note">{esc(n)}</p>' for n in c["notes"])
+    notes = "".join(f'<p class="pk-note">{money_text(n)}</p>' for n in c["notes"])
     panels.append(f'''<div class="pk-panel" role="tabpanel" id="p-{k}" aria-labelledby="tab-{k}"{'' if idx==0 else ' hidden'}>
     <div class="pk-head"><span class="pk-code ltr">{c["c"]}<i>.</i></span><div><h2>{esc(c["n"])}</h2><p>{esc(c["e"])}</p></div></div>
     <div class="pk-grid">{"".join(tier_html(c, t) for t in c["tiers"])}</div>
     {notes}
   </div>''')
-addons = "".join(f'<div class="pk-addon"><span>{esc(a)}</span><b>{esc(p)}</b></div>' for a, p in ADDONS)
+addons = "".join(f'<div class="pk-addon"><span>{esc(a)}</span><b>{money_text(p)}</b></div>' for a, p in ADDONS)
 
 pk_body = hero("Packages", "Clear prices for forming your company abroad",
-               "Pick a country and a package. Prices are in USD and include government filing fees unless a note says otherwise. Not sure which fits? Book a free consultation first.") + f'''
+               "Pick a country and a package. Prices show in your local currency, and you pay exactly the price you see. They include government filing fees unless a note says otherwise. Not sure which fits? Book a free consultation first.") + f'''
 <section class="block">
   <div class="wrap">
+    <div class="pk-curbar"><label for="pkCur">Prices in</label><select id="pkCur"><option value="USD">USD · US dollar</option></select><span class="pk-curnote" id="pkCurNote">Set in US dollars. Change the currency if you prefer.</span></div>
     <div class="pk-tabs" role="tablist" aria-label="Countries">{"".join(tabs)}</div>
     {"".join(panels)}
     <div class="pk-msg" id="pkMsg" role="status" hidden></div>
@@ -107,12 +114,27 @@ PK_JS = '''<script src="https://static.airwallex.com/components/sdk/v1/index.js"
   function sel(t,focus){tabs.forEach(b=>{const on=b===t;b.setAttribute('aria-selected',on);b.tabIndex=on?0:-1;document.getElementById(b.getAttribute('aria-controls')).hidden=!on;});if(focus)t.focus();try{history.replaceState(null,'','#'+t.dataset.k)}catch(e){}}
   tabs.forEach((t,i)=>{t.addEventListener('click',()=>sel(t));t.addEventListener('keydown',e=>{let j=null;if(e.key==='ArrowRight'||e.key==='ArrowDown')j=(i+1)%tabs.length;if(e.key==='ArrowLeft'||e.key==='ArrowUp')j=(i-1+tabs.length)%tabs.length;if(j!==null){e.preventDefault();sel(tabs[j],true)}})});
   const h=location.hash.slice(1);const start=tabs.find(t=>t.dataset.k===h);if(start)sel(start);
+  const NAMES={USD:'US dollar',GBP:'British pound',EUR:'Euro',CAD:'Canadian dollar',AUD:'Australian dollar',SGD:'Singapore dollar',AED:'UAE dirham',SAR:'Saudi riyal',QAR:'Qatari riyal',MYR:'Malaysian ringgit',THB:'Thai baht'};
+  const cs=document.getElementById('pkCur'),note=document.getElementById('pkCurNote');
+  let FX=null,cur='USD';
+  function local(usd,c){const r=FX&&FX.rates[c];if(!r||c==='USD')return usd;const raw=usd*r.rate*(1+FX.buffer);const up=Math.ceil(raw/r.step)*r.step;return r.nine?up-1:up;}
+  function fmt(n,c){try{return new Intl.NumberFormat('en-US',{style:'currency',currency:c,currencyDisplay:'narrowSymbol',maximumFractionDigits:0,minimumFractionDigits:0}).format(n)}catch(e){return c+' '+n.toLocaleString('en-US')}}
+  function apply(c){cur=(FX&&FX.rates[c])?c:'USD';
+    document.querySelectorAll('.m[data-usd]').forEach(el=>{el.textContent=fmt(local(+el.dataset.usd,cur),cur)});
+    document.querySelectorAll('.pk-price .cur').forEach(el=>{const shown=el.previousElementSibling?el.previousElementSibling.textContent:'';el.textContent=/[A-Z]{3}/.test(shown)?'':cur;});
+    cs.value=cur;note.textContent=cur==='USD'?'Set in US dollars. Change the currency if you prefer.':'Converted from our US dollar prices at a recent rate. You pay exactly this amount in '+cur+'.';}
+  fetch('/.netlify/functions/prices').then(r=>r.ok?r.json():Promise.reject()).then(d=>{FX=d;
+    cs.innerHTML=Object.keys(d.rates).map(c=>'<option value="'+c+'">'+c+' · '+(NAMES[c]||c)+'</option>').join('');
+    let pick=d.currency;try{const s=localStorage.getItem('wizz-cur');if(s&&d.rates[s])pick=s}catch(e){}
+    apply(pick);
+  }).catch(()=>{});
+  cs.addEventListener('change',()=>{apply(cs.value);try{localStorage.setItem('wizz-cur',cur)}catch(e){}});
   const msg=document.getElementById('pkMsg');
   function say(text){msg.textContent=text;msg.hidden=false;msg.scrollIntoView({block:'nearest',behavior:'smooth'});}
   document.querySelectorAll('.pk-buy').forEach(btn=>btn.addEventListener('click',async()=>{
     const label=btn.textContent;btn.disabled=true;btn.textContent='Opening secure checkout…';msg.hidden=true;
     try{
-      const r=await fetch('/.netlify/functions/checkout',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({sku:btn.dataset.sku})});
+      const r=await fetch('/.netlify/functions/checkout',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({sku:btn.dataset.sku,currency:cur})});
       const d=await r.json().catch(()=>({}));
       if(!r.ok){throw new Error(d.error==='not_configured'?'Online payment is being set up. Message us on WhatsApp at +60 11-2447 7685 and we will send you a payment link.':'We couldn\\'t open the checkout. Please try again, or message us on WhatsApp at +60 11-2447 7685.');}
       if(d.url){try{sessionStorage.setItem('wizz-order',JSON.stringify({order:d.order_id,pkg:d.package}))}catch(e){}location.href=d.url;return;}
@@ -126,7 +148,7 @@ PK_JS = '''<script src="https://static.airwallex.com/components/sdk/v1/index.js"
 </script>
 '''
 page("packages.html", "Packages | Wizz Smart Services",
-     "Company formation packages with clear USD prices for the USA, UK, Canada, Estonia, France, Malaysia, UAE, Saudi Arabia and more.",
+     "Company formation packages with clear prices in your currency for the USA, UK, Canada, Estonia, France, Malaysia, UAE, Saudi Arabia and more.",
      pk_body, current="packages.html", scripts=PK_JS)
 
 # ---------------- thank you + onboarding
@@ -232,7 +254,7 @@ legal("privacy.html", "Privacy Policy", "How we collect, use and protect your pe
 # ---------------- nav + footer links on every page
 for f in glob.glob(f"{D}/*.html"):
     s = open(f).read()
-    if 'href="packages.html" data-i18n="nav_pkgs"' not in s:
+    if 'data-i18n="nav_pkgs"' not in s:
         cur = ' aria-current="page"' if f.endswith("/packages.html") else ""
         s = s.replace('<a href="services.html" data-i18n="nav_services"', f'<a href="packages.html"{cur} data-i18n="nav_pkgs">Packages</a>\n      <a href="services.html" data-i18n="nav_services"', 1)
     if 'href="terms.html">Terms</a>' not in s:
@@ -278,6 +300,10 @@ CSS = '''
 .pk-cta .btn:disabled{opacity:.6;cursor:progress}
 .pk-note{font-size:14px;border-inline-start:3px solid var(--red);padding:6px 12px;color:var(--muted);margin-top:8px}
 .pk-msg{margin-top:20px;border:1.5px solid var(--red);background:var(--surface);border-radius:8px;padding:14px 16px;font-weight:500}
+.pk-curbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin-bottom:22px;font-size:14px}
+.pk-curbar label{font-weight:600;margin:0;display:inline}
+.pk-curbar select{width:auto;max-width:100%;min-width:0;margin:0;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);font:inherit;font-size:14px}
+.pk-curnote{color:var(--muted);font-size:13px}
 .pk-addons{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
 .pk-addon{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:14px 16px;display:flex;justify-content:space-between;gap:12px;align-items:baseline}
 .pk-addon b{font:700 15px var(--mono);white-space:nowrap}
@@ -301,8 +327,9 @@ CSS = '''
 .steps h3{font-size:17px}
 '''
 css = open(f"{D}/site.css").read()
-if "v6: packages" not in css:
-    open(f"{D}/site.css", "w").write(css + CSS)
+# v6 is the last block in site.css: replace it on every build so CSS edits apply
+css = css.split("\n/* ===== v6: packages")[0].rstrip("\n") + "\n"
+open(f"{D}/site.css", "w").write(css + CSS)
 
 # sitemap
 pages = sorted(os.path.basename(p) for p in glob.glob(f"{D}/*.html") if not p.endswith("thank-you.html"))
