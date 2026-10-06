@@ -4,14 +4,6 @@ import { stripe, stripeOn } from "./_stripe.mjs";
 import { RATES, localPrice } from "./_fx.mjs";
 
 export default async (req) => {
-  if (req.method === "GET" && new URL(req.url).searchParams.get("diag") === "wizz-1006") {
-    // temporary diagnostic: tries a real Stripe session and reports Stripe's own error text
-    const k = process.env.STRIPE_SECRET_KEY || "";
-    const info = { stripe_key_set: Boolean(k), key_type: k.slice(0, 8).replace(/[^a-z_]/gi, "") };
-    try { const s = await stripe("/checkout/sessions", { method: "POST", body: { mode: "payment", success_url: "https://wizz.com.my/thank-you.html", line_items: { 0: { quantity: 1, price_data: { currency: "usd", unit_amount: 100, product_data: { name: "Diagnostic" } } } } } }); info.ok = Boolean(s.url); }
-    catch (e) { info.ok = false; info.error = String(e.message).replace(/(sk|rk)_(live|test)_[A-Za-z0-9*]+/g, "[key]"); }
-    return json(200, info);
-  }
   if (req.method !== "POST") return json(405, { error: "Use POST" });
   if (!stripeOn() && !configured()) return json(503, { error: "not_configured" });
   let input = {};
@@ -53,6 +45,6 @@ export default async (req) => {
     return json(200, { provider: "airwallex", env, intent_id: intent.id, client_secret: intent.client_secret, currency: intent.currency, order_id: orderId, package: item.name, amount });
   } catch (e) {
     console.error(e);
-    return json(502, { error: "payment_unavailable", detail: String(e.message).replace(/(sk|rk)_(live|test)_[A-Za-z0-9*]+/g, "[key]") });
+    return json(502, { error: "payment_unavailable" });
   }
 };
