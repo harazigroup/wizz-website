@@ -99,6 +99,7 @@ function renderArticle(){
 }
 
 // ---- language
+if (window.WIZZ_AR) Object.assign(AR, window.WIZZ_AR); // page-specific Arabic (packages, thank-you)
 const EN = {};
 const nodes = document.querySelectorAll('[data-i18n]');
 nodes.forEach(n => { EN[n.dataset.i18n] = n.hasAttribute('data-html') ? n.innerHTML : n.textContent; });
@@ -110,6 +111,7 @@ function setLang(l){
   document.querySelectorAll('[data-i18n-ph]').forEach(n => { n.placeholder = d[n.dataset.i18nPh] ?? EN[n.dataset.i18nPh]; });
   const lb = document.getElementById('langBtn'); if (lb) lb.textContent = l === 'ar' ? 'English' : 'العربية';
   try { localStorage.setItem('wizz-lang', l); } catch(e) {}
+  document.dispatchEvent(new CustomEvent('wizz:lang', { detail: l }));
   renderBlog(); renderArticle();
   const out = document.getElementById('out'); if (out && !out.hidden) buildMsg();
 }

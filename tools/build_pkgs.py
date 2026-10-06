@@ -26,6 +26,37 @@ def page(fname, title, desc, body, current=None, extra_head="", scripts=""):
     foot = FOOT.replace('<script src="site.js"></script>', scripts + '<script src="site.js"></script>') if scripts else FOOT
     open(f"{D}/{fname}", "w").write(h + '<main id="top">\n' + body + "\n</main>" + foot)
 
+from catalog_ar import AR as AR_SRC
+import hashlib
+AR_OUT = {}
+RAW = lambda x: x
+def tk(en, render=None):
+    """data-i18n attributes for an English string; records its Arabic for this page."""
+    if en not in AR_SRC: raise SystemExit(f"Missing Arabic in tools/catalog_ar.py for: {en!r}")
+    key = "pk_" + hashlib.md5(en.encode()).hexdigest()[:8]
+    AR_OUT[key] = (render or esc)(AR_SRC[en])
+    return f' data-i18n="{key}" data-html'
+def kph(en):
+    if en not in AR_SRC: raise SystemExit(f"Missing Arabic in tools/catalog_ar.py for: {en!r}")
+    key = "pk_" + hashlib.md5(en.encode()).hexdigest()[:8]
+    AR_OUT[key] = AR_SRC[en]
+    return f' data-i18n-ph="{key}"'
+def ar_script():
+    """Arabic strings for site.js to merge before it applies the language. Clears the page buffer."""
+    out = "<script>window.WIZZ_AR=" + json.dumps(AR_OUT, ensure_ascii=False).replace("</", "<\\/") + ";</script>\n"
+    AR_OUT.clear()
+    return out
+def hero_t(eyebrow, title, lede):
+    return f'''<section class="page-hero night">
+  <div class="wrap noimg">
+    <div>
+      <p class="eyebrow"{tk(eyebrow)}>{esc(eyebrow)}</p>
+      <h1{tk(title)}>{esc(title)}</h1>
+      <p class="lede"{tk(lede)}>{esc(lede)}</p>
+    </div>
+  </div>
+</section>'''
+
 def hero(eyebrow, title, lede):
     return f'''<section class="page-hero night">
   <div class="wrap noimg">
@@ -46,20 +77,20 @@ def money_text(txt):
 
 def tier_html(c, t):
     if t["p"] is None:
-        price = '<div class="pk-price">Quote</div>'
+        price = f'<div class="pk-price"{tk("Quote")}>Quote</div>'
     else:
-        price = f'<div class="pk-price">{"<span class=\"from\">from</span>" if t.get("frm") else ""}{money(t["p"])}<small class="cur">USD</small></div>'
+        price = f'<div class="pk-price">{f'<span class="from"{tk("from")}>from</span>' if t.get("frm") else ""}{money(t["p"])}<small class="cur">USD</small></div>'
     if t.get("sku") and t.get("deposit"):
-        cta = f'<button class="btn solid pk-buy" type="button" data-sku="{t["sku"]}">Pay {money(t["deposit"])} deposit</button>'
+        cta = f'<button class="btn solid pk-buy" type="button" data-sku="{t["sku"]}"><span{tk("Pay")}>Pay</span> {money(t["deposit"])} <span{tk("deposit")}>deposit</span></button>'
     elif t.get("sku"):
-        cta = f'<button class="btn solid pk-buy" type="button" data-sku="{t["sku"]}">Buy now</button>'
+        cta = f'<button class="btn solid pk-buy" type="button" data-sku="{t["sku"]}"{tk("Buy now")}>Buy now</button>'
     else:
-        cta = f'<a class="btn ghost" href="contact.html">Get a quote</a>'
-    plus = f'<p class="pk-plus">{money_text(t["plus"])}</p>' if t.get("plus") else ""
-    items = "".join(f"<li>{esc(i)}</li>" for i in t["i"])
-    flag = '<span class="pk-flag">Most popular</span>' if t.get("pop") else ""
+        cta = f'<a class="btn ghost" href="contact.html"{tk("Get a quote")}>Get a quote</a>'
+    plus = f'<p class="pk-plus"{tk(t["plus"], money_text)}>{money_text(t["plus"])}</p>' if t.get("plus") else ""
+    items = "".join(f"<li{tk(i)}>{esc(i)}</li>" for i in t["i"])
+    flag = f'<span class="pk-flag"{tk("Most popular")}>Most popular</span>' if t.get("pop") else ""
     return f'''<article class="pk{' pop' if t.get('pop') else ''}">{flag}
-        <h3>{esc(t["n"])}</h3>{price}{plus}
+        <h3{tk(t["n"])}>{esc(t["n"])}</h3>{price}{plus}
         <ul>{items}</ul>
         <div class="pk-cta">{cta}</div>
       </article>'''
@@ -68,20 +99,21 @@ tabs, panels = [], []
 for idx, c in enumerate(COUNTRIES):
     k = c["c"].lower()
     sel = "true" if idx == 0 else "false"
-    tabs.append(f'<button type="button" role="tab" id="tab-{k}" aria-controls="p-{k}" aria-selected="{sel}" tabindex="{0 if idx==0 else -1}" data-k="{k}"><b class="ltr">{c["c"]}</b><span>{esc(c["n"])}</span></button>')
-    notes = "".join(f'<p class="pk-note">{money_text(n)}</p>' for n in c["notes"])
+    tabs.append(f'<button type="button" role="tab" id="tab-{k}" aria-controls="p-{k}" aria-selected="{sel}" tabindex="{0 if idx==0 else -1}" data-k="{k}"><b class="ltr">{c["c"]}</b><span{tk(c["n"])}>{esc(c["n"])}</span></button>')
+    notes = "".join(f'<p class="pk-note"{tk(n, money_text)}>{money_text(n)}</p>' for n in c["notes"])
     panels.append(f'''<div class="pk-panel" role="tabpanel" id="p-{k}" aria-labelledby="tab-{k}"{'' if idx==0 else ' hidden'}>
-    <div class="pk-head"><span class="pk-code ltr">{c["c"]}<i>.</i></span><div><h2>{esc(c["n"])}</h2><p>{esc(c["e"])}</p></div></div>
+    <div class="pk-head"><span class="pk-code ltr">{c["c"]}<i>.</i></span><div><h2{tk(c["n"])}>{esc(c["n"])}</h2><p{tk(c["e"])}>{esc(c["e"])}</p></div></div>
     <div class="pk-grid">{"".join(tier_html(c, t) for t in c["tiers"])}</div>
     {notes}
   </div>''')
-addons = "".join(f'<div class="pk-addon"><span>{esc(a)}</span><b>{money_text(p)}</b></div>' for a, p in ADDONS)
+addons = "".join(f'<div class="pk-addon"><span{tk(a)}>{esc(a)}</span><b{tk(p, money_text)}>{money_text(p)}</b></div>' for a, p in ADDONS)
 
-pk_body = hero("Packages", "Clear prices for forming your company abroad",
+FP = 'By paying you agree to our <a href="terms.html">Terms of Service</a> and <a href="refund.html">Refund Policy</a>. If we find your case can\'t go ahead, you get a refund under the Refund Policy.'
+pk_body = hero_t("Packages", "Clear prices for forming your company abroad",
                "Pick a country and a package. Prices show in your local currency, and you pay exactly the price you see. They include government filing fees unless a note says otherwise. Not sure which fits? Book a free consultation first.") + f'''
 <section class="block">
   <div class="wrap">
-    <div class="pk-curbar"><label for="pkCur">Prices in</label><select id="pkCur"><option value="USD">USD · US dollar</option></select><span class="pk-curnote" id="pkCurNote">Set in US dollars. Change the currency if you prefer.</span></div>
+    <div class="pk-curbar"><label for="pkCur"{tk("Prices in")}>Prices in</label><select id="pkCur"><option value="USD">USD · US dollar</option></select><span class="pk-curnote" id="pkCurNote">Set in US dollars. Change the currency if you prefer.</span></div>
     <div class="pk-tabs" role="tablist" aria-label="Countries">{"".join(tabs)}</div>
     {"".join(panels)}
     <div class="pk-msg" id="pkMsg" role="status" hidden></div>
@@ -89,21 +121,21 @@ pk_body = hero("Packages", "Clear prices for forming your company abroad",
 </section>
 <section class="block alt">
   <div class="wrap">
-    <div class="sec-head"><p class="eyebrow">Add-ons</p><h2>Add to any package</h2><p>Bank, payment and marketplace accounts are approved by each provider. Our add-ons cover preparing and submitting a complete application.</p></div>
+    <div class="sec-head"><p class="eyebrow"{tk('Add-ons')}>Add-ons</p><h2{tk('Add to any package')}>Add to any package</h2><p{tk('Bank, payment and marketplace accounts are approved by each provider. Our add-ons cover preparing and submitting a complete application.')}>Bank, payment and marketplace accounts are approved by each provider. Our add-ons cover preparing and submitting a complete application.</p></div>
     <div class="pk-addons">{addons}</div>
   </div>
 </section>
 <section class="block">
   <div class="wrap">
-    <div class="sec-head"><p class="eyebrow">After you pay</p><h2>What happens next</h2></div>
+    <div class="sec-head"><p class="eyebrow"{tk('After you pay')}>After you pay</p><h2{tk('What happens next')}>What happens next</h2></div>
     <ol class="steps">
-      <li><h3>Secure payment</h3><p>You pay by card on a secure checkout page run by our payment provider.</p></li>
-      <li><h3>Onboarding form</h3><p>You send your details and documents so we can check eligibility.</p></li>
-      <li><h3>Review</h3><p>We confirm everything with you before anything is filed.</p></li>
-      <li><h3>Filing</h3><p>We register the company and send your documents as each step completes.</p></li>
-      <li><h3>Handover</h3><p>You receive your company documents and next-step checklist.</p></li>
+      <li><h3{tk('Secure payment')}>Secure payment</h3><p{tk('You pay by card on a secure checkout page run by our payment provider.')}>You pay by card on a secure checkout page run by our payment provider.</p></li>
+      <li><h3{tk('Onboarding form')}>Onboarding form</h3><p{tk('You send your details and documents so we can check eligibility.')}>You send your details and documents so we can check eligibility.</p></li>
+      <li><h3{tk('Review')}>Review</h3><p{tk('We confirm everything with you before anything is filed.')}>We confirm everything with you before anything is filed.</p></li>
+      <li><h3{tk('Filing')}>Filing</h3><p{tk('We register the company and send your documents as each step completes.')}>We register the company and send your documents as each step completes.</p></li>
+      <li><h3{tk('Handover')}>Handover</h3><p{tk('You receive your company documents and next-step checklist.')}>You receive your company documents and next-step checklist.</p></li>
     </ol>
-    <p class="fineprint">By paying you agree to our <a href="terms.html">Terms of Service</a> and <a href="refund.html">Refund Policy</a>. If we find your case can't go ahead, you get a refund under the Refund Policy.</p>
+    <p class="fineprint"{tk(FP, RAW)}>By paying you agree to our <a href="terms.html">Terms of Service</a> and <a href="refund.html">Refund Policy</a>. If we find your case can't go ahead, you get a refund under the Refund Policy.</p>
   </div>
 </section>'''
 
@@ -115,6 +147,9 @@ PK_JS = '''<script src="https://static.airwallex.com/components/sdk/v1/index.js"
   tabs.forEach((t,i)=>{t.addEventListener('click',()=>sel(t));t.addEventListener('keydown',e=>{let j=null;if(e.key==='ArrowRight'||e.key==='ArrowDown')j=(i+1)%tabs.length;if(e.key==='ArrowLeft'||e.key==='ArrowUp')j=(i-1+tabs.length)%tabs.length;if(j!==null){e.preventDefault();sel(tabs[j],true)}})});
   const h=location.hash.slice(1);const start=tabs.find(t=>t.dataset.k===h);if(start)sel(start);
   const NAMES={USD:'US dollar',GBP:'British pound',EUR:'Euro',CAD:'Canadian dollar',AUD:'Australian dollar',SGD:'Singapore dollar',AED:'UAE dirham',SAR:'Saudi riyal',QAR:'Qatari riyal',MYR:'Malaysian ringgit',THB:'Thai baht'};
+  const NAMES_AR={USD:'دولار أمريكي',GBP:'جنيه إسترليني',EUR:'يورو',CAD:'دولار كندي',AUD:'دولار أسترالي',SGD:'دولار سنغافوري',AED:'درهم إماراتي',SAR:'ريال سعودي',QAR:'ريال قطري',MYR:'رينغيت ماليزي',THB:'بات تايلاندي'};
+  const ar=()=>document.documentElement.lang==='ar';
+  const T=(en,a)=>ar()?a:en;
   const cs=document.getElementById('pkCur'),note=document.getElementById('pkCurNote');
   let FX=null,cur='USD';
   function local(usd,c){const r=FX&&FX.rates[c];if(!r||c==='USD')return usd;const raw=usd*r.rate*(1+FX.buffer);const up=Math.ceil(raw/r.step)*r.step;return r.nine?up-1:up;}
@@ -122,9 +157,11 @@ PK_JS = '''<script src="https://static.airwallex.com/components/sdk/v1/index.js"
   function apply(c){cur=(FX&&FX.rates[c])?c:'USD';
     document.querySelectorAll('.m[data-usd]').forEach(el=>{el.textContent=fmt(local(+el.dataset.usd,cur),cur)});
     document.querySelectorAll('.pk-price .cur').forEach(el=>{const shown=el.previousElementSibling?el.previousElementSibling.textContent:'';el.textContent=/[A-Z]{3}/.test(shown)?'':cur;});
-    cs.value=cur;note.textContent=cur==='USD'?'Set in US dollars. Change the currency if you prefer.':'Converted from our US dollar prices at a recent rate. You pay exactly this amount in '+cur+'.';}
+    cs.value=cur;note.textContent=cur==='USD'?T('Set in US dollars. Change the currency if you prefer.','الأسعار بالدولار الأمريكي، ويمكنك تغيير العملة.'):T('Converted from our US dollar prices at a recent rate. You pay exactly this amount in '+cur+'.','محوّلة من أسعارنا بالدولار الأمريكي حسب سعر صرف حديث، وتدفع هذا المبلغ نفسه بعملة '+cur+'.');}
+  function fill(){const list=FX?Object.keys(FX.rates):['USD'];cs.innerHTML=list.map(c=>'<option value="'+c+'">'+c+' · '+((ar()?NAMES_AR:NAMES)[c]||c)+'</option>').join('');}
+  document.addEventListener('wizz:lang',()=>{fill();apply(cur);});
   fetch('/.netlify/functions/prices').then(r=>r.ok?r.json():Promise.reject()).then(d=>{FX=d;
-    cs.innerHTML=Object.keys(d.rates).map(c=>'<option value="'+c+'">'+c+' · '+(NAMES[c]||c)+'</option>').join('');
+    fill();
     let pick=d.currency;try{const s=localStorage.getItem('wizz-cur');if(s&&d.rates[s])pick=s}catch(e){}
     apply(pick);
   }).catch(()=>{});
@@ -132,27 +169,27 @@ PK_JS = '''<script src="https://static.airwallex.com/components/sdk/v1/index.js"
   const msg=document.getElementById('pkMsg');
   function say(text){msg.textContent=text;msg.hidden=false;msg.scrollIntoView({block:'nearest',behavior:'smooth'});}
   document.querySelectorAll('.pk-buy').forEach(btn=>btn.addEventListener('click',async()=>{
-    const label=btn.textContent;btn.disabled=true;btn.textContent='Opening secure checkout…';msg.hidden=true;
+    const kids=[...btn.childNodes];btn.disabled=true;btn.textContent=T('Opening secure checkout…','جارٍ فتح صفحة الدفع الآمنة…');msg.hidden=true;
     try{
       const r=await fetch('/.netlify/functions/checkout',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({sku:btn.dataset.sku,currency:cur})});
       const d=await r.json().catch(()=>({}));
-      if(!r.ok){throw new Error(d.error==='not_configured'?'Online payment is being set up. Message us on WhatsApp at +60 11-2447 7685 and we will send you a payment link.':'We couldn\\'t open the checkout. Please try again, or message us on WhatsApp at +60 11-2447 7685.');}
+      if(!r.ok){throw new Error(d.error==='not_configured'?T('Online payment is being set up. Message us on WhatsApp at +60 11-2447 7685 and we will send you a payment link.','الدفع الإلكتروني قيد الإعداد. راسلنا على واتساب على الرقم ‎+60 11-2447 7685 وسنرسل لك رابط الدفع.'):T('We couldn\\'t open the checkout. Please try again, or message us on WhatsApp at +60 11-2447 7685.','تعذّر فتح صفحة الدفع. حاول مرة أخرى، أو راسلنا على واتساب على الرقم ‎+60 11-2447 7685.'));}
       if(d.url){try{sessionStorage.setItem('wizz-order',JSON.stringify({order:d.order_id,pkg:d.package}))}catch(e){}location.href=d.url;return;}
-      if(!window.AirwallexComponentsSDK)throw new Error('The payment page didn\\'t load. Check your connection and try again.');
+      if(!window.AirwallexComponentsSDK)throw new Error(T('The payment page didn\\'t load. Check your connection and try again.','لم تُحمَّل صفحة الدفع. تحقّق من اتصالك وحاول مرة أخرى.'));
       const {payments}=await window.AirwallexComponentsSDK.init({env:d.env,enabledElements:['payments']});
       try{sessionStorage.setItem('wizz-order',JSON.stringify({order:d.order_id,pkg:d.package}))}catch(e){}
       payments.redirectToCheckout({env:d.env,mode:'payment',currency:d.currency,intent_id:d.intent_id,client_secret:d.client_secret,successUrl:location.origin+'/thank-you.html?intent='+encodeURIComponent(d.intent_id)});
-    }catch(err){say(err.message);btn.disabled=false;btn.textContent=label;}
+    }catch(err){say(err.message);btn.disabled=false;btn.replaceChildren(...kids);}
   }));
 })();
 </script>
 '''
 page("packages.html", "Packages | Wizz Smart Services",
      "Company formation packages with clear prices in your currency for the USA, UK, Canada, Estonia, France, Malaysia, UAE, Saudi Arabia and more.",
-     pk_body, current="packages.html", scripts=PK_JS)
+     pk_body, current="packages.html", scripts=ar_script() + PK_JS)
 
 # ---------------- thank you + onboarding
-ty_body = hero("Payment", "Thank you", "We're confirming your payment.") + '''
+ty_body = hero_t("Payment", "Thank you", "We're confirming your payment.") + '''
 <section class="block">
   <div class="wrap ty">
     <div class="ty-status" id="tyStatus" role="status">Checking your payment…</div>
@@ -178,32 +215,45 @@ ty_body = hero("Payment", "Thank you", "We're confirming your payment.") + '''
         <div><label for="ob_brand">If selling online</label><select id="ob_brand" name="brand_model"><option>Not applicable</option><option>My own private brand</option><option>Reselling other brands</option></select></div>
         <div class="full"><label for="ob_notes">Anything else we should know?</label><textarea id="ob_notes" name="notes"></textarea></div>
       </div>
-      <label class="ty-agree"><input type="checkbox" required name="agree" value="yes"> I confirm these details are correct and I agree to the <a href="terms.html">Terms of Service</a> and <a href="privacy.html">Privacy Policy</a>.</label>
+      <label class="ty-agree"><input type="checkbox" required name="agree" value="yes"> <span>I confirm these details are correct and I agree to the <a href="terms.html">Terms of Service</a> and <a href="privacy.html">Privacy Policy</a>.</span></label>
       <button class="btn solid" type="submit"><span class="dot"></span>Send my details</button>
     </form>
     <div class="ty-done" id="tyDone" hidden><h2>Details received</h2><p>Thank you. We'll review your details and contact you on WhatsApp or email within one business day.</p></div>
   </div>
 </section>'''
+def auto_i18n(h):
+    """Adds data-i18n to every element whose whole content is a string we have Arabic for."""
+    def tag(m):
+        name, attrs, inner = m.group(1), m.group(2), m.group(3)
+        key = inner.strip()
+        if "data-i18n" in attrs or key not in AR_SRC: return m.group(0)
+        if name == "option" and "value=" not in attrs: attrs += f' value="{esc(key)}"'
+        return f"<{name}{attrs}{tk(key, RAW)}>{inner}</{name}>"
+    h = re.sub(r'<(\w+)((?:\s[^<>]*)?)>((?:[^<]|<a [^>]*>[^<]*</a>|<span class="dot"></span>)+?)</\1>', tag, h)
+    return re.sub(r'placeholder="([^"]+)"', lambda m: m.group(0) + (kph(html.unescape(m.group(1))) if html.unescape(m.group(1)) in AR_SRC else ""), h)
+ty_body = auto_i18n(ty_body)
+
 TY_JS = '''<script>
 (function(){
   const st=document.getElementById('tyStatus'),f=document.getElementById('onboard');
+  const T=(en,a)=>document.documentElement.lang==='ar'?a:en;
   const qs=new URLSearchParams(location.search);const sid=qs.get('session_id')||'';const intent=qs.get('intent')||sid;
   let saved={};try{saved=JSON.parse(sessionStorage.getItem('wizz-order')||'{}')}catch(e){}
   function showForm(d){f.hidden=false;document.getElementById('ob_order').value=d.order_id||saved.order||'';document.getElementById('ob_intent').value=intent;document.getElementById('ob_pkg').value=d.package||saved.pkg||'';}
-  if(!intent){st.innerHTML='We couldn\\'t find a payment reference. If you paid, message us on WhatsApp at <span class="ltr">+60 11-2447 7685</span> with your receipt.';return;}
+  if(!intent){st.innerHTML=T('We couldn\\'t find a payment reference. If you paid, message us on WhatsApp at <span class="ltr">+60 11-2447 7685</span> with your receipt.','لم نجد مرجعاً للدفع. إذا كنت قد دفعت، راسلنا على واتساب على الرقم <span class="ltr">+60 11-2447 7685</span> مع إيصال الدفع.');return;}
   fetch('/.netlify/functions/verify?'+(sid?'session_id=':'intent=')+encodeURIComponent(intent)).then(r=>r.json()).then(d=>{
-    if(d.paid){st.className='ty-status ok';st.textContent='Payment received: '+(d.package||'your package')+' · '+d.currency+' '+Number(d.amount).toLocaleString('en-US')+' · Order '+d.order_id;showForm(d);}
-    else{st.innerHTML='Your payment isn\\'t confirmed yet (status: '+(d.status||'unknown')+'). If you completed it, refresh in a minute or message us on WhatsApp at <span class="ltr">+60 11-2447 7685</span>.';}
-  }).catch(()=>{st.innerHTML='We couldn\\'t check the payment right now. Fill in the form below and we\\'ll match it to your payment.';showForm({});});
+    if(d.paid){st.className='ty-status ok';st.textContent=T('Payment received: ','تم استلام الدفع: ')+(d.package||T('your package','باقتك'))+' · '+d.currency+' '+Number(d.amount).toLocaleString('en-US')+' · '+T('Order ','رقم الطلب ')+d.order_id;showForm(d);}
+    else{st.innerHTML=T('Your payment isn\\'t confirmed yet (status: '+(d.status||'unknown')+'). If you completed it, refresh in a minute or message us on WhatsApp at <span class="ltr">+60 11-2447 7685</span>.','لم يتم تأكيد الدفع بعد (الحالة: '+(d.status||'غير معروفة')+'). إذا أكملت الدفع، حدّث الصفحة بعد دقيقة أو راسلنا على واتساب على الرقم <span class="ltr">+60 11-2447 7685</span>.');}
+  }).catch(()=>{st.innerHTML=T('We couldn\\'t check the payment right now. Fill in the form below and we\\'ll match it to your payment.','تعذّر التحقق من الدفع الآن. املأ النموذج أدناه وسنطابقه مع دفعتك.');showForm({});});
   f.addEventListener('submit',async e=>{e.preventDefault();if(!f.reportValidity())return;
     const b=f.querySelector('button[type=submit]');b.disabled=true;
     try{const r=await fetch('/',{method:'POST',headers:{'content-type':'application/x-www-form-urlencoded'},body:new URLSearchParams(new FormData(f)).toString()});if(!r.ok)throw 0;f.hidden=true;document.getElementById('tyDone').hidden=false;}
-    catch(_){b.disabled=false;st.textContent='We couldn\\'t send the form. Please try again or email info@wizz.com.my.';}
+    catch(_){b.disabled=false;st.textContent=T('We couldn\\'t send the form. Please try again or email info@wizz.com.my.','تعذّر إرسال النموذج. حاول مرة أخرى أو راسلنا على info@wizz.com.my.');}
   });
 })();
 </script>
 '''
-page("thank-you.html", "Thank you | Wizz Smart Services", "Payment confirmation and onboarding.", ty_body, scripts=TY_JS,
+page("thank-you.html", "Thank you | Wizz Smart Services", "Payment confirmation and onboarding.", ty_body, scripts=ar_script() + TY_JS,
      extra_head='<meta name="robots" content="noindex">')
 
 # ---------------- legal pages
@@ -304,6 +354,7 @@ CSS = '''
 .pk-curbar label{font-weight:600;margin:0;display:inline}
 .pk-curbar select{width:auto;max-width:100%;min-width:0;margin:0;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);font:inherit;font-size:14px}
 .pk-curnote{color:var(--muted);font-size:13px}
+[dir=rtl] .pk-flag,[dir=rtl] .pk-price .from{letter-spacing:0;font-family:var(--body);text-transform:none}
 .pk-addons{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
 .pk-addon{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:14px 16px;display:flex;justify-content:space-between;gap:12px;align-items:baseline}
 .pk-addon b{font:700 15px var(--mono);white-space:nowrap}

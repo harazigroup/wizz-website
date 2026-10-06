@@ -37,7 +37,7 @@ COUNTRIES = [
    dict(sku="ae-deposit", n="Free zone, no visa", p=2490, frm=True, deposit=500, i=["Licence in a cost-effective free zone","Company documents & registration","Bank account application support"]),
    dict(sku="ae-deposit-visa", n="Free zone + 1 visa", p=4990, frm=True, deposit=500, pop=True, plus="Everything in no-visa, plus", i=["One investor/employee visa","Emirates ID & medical coordination","Corporate tax registration"]),
    dict(sku=None, n="Mainland LLC", p=None, i=["Licence, office and approvals","Quoted after a short call"])],
-  notes=["Pay a $500 deposit online. It's credited to your package; the final price depends on the free zone and activity.","Licences renew yearly at roughly the first-year cost."]),
+  notes=["Pay a deposit of $500 online. It's credited to your package; the final price depends on the free zone and activity.","Licences renew yearly at roughly the first-year cost."]),
  dict(c="SA", n="Saudi Arabia", g="Middle East", e="LLC with an investment licence (MISA) for foreign owners.",
   tiers=[
    dict(sku="sa-assessment", n="Market-entry assessment", p=299, buy=True, i=["Activity & licence route review","Capital and Saudization overview","Written plan and quote","Credited if you go ahead"]),

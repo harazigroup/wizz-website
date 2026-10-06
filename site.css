@@ -571,6 +571,7 @@ footer.site .logo{color:#F3F5F7}
 .pk-curbar label{font-weight:600;margin:0;display:inline}
 .pk-curbar select{width:auto;max-width:100%;min-width:0;margin:0;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);font:inherit;font-size:14px}
 .pk-curnote{color:var(--muted);font-size:13px}
+[dir=rtl] .pk-flag,[dir=rtl] .pk-price .from{letter-spacing:0;font-family:var(--body);text-transform:none}
 .pk-addons{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
 .pk-addon{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:14px 16px;display:flex;justify-content:space-between;gap:12px;align-items:baseline}
 .pk-addon b{font:700 15px var(--mono);white-space:nowrap}
