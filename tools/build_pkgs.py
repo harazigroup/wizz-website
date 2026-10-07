@@ -322,6 +322,10 @@ legal("privacy.html", "Privacy Policy", "How we collect, use and protect your pe
 ])
 
 # ---------------- nav + footer links on every page
+# Payment methods shown in the footer. Keep this in line with what is switched on in Stripe.
+PAY_METHODS = ["Visa", "Mastercard", "UnionPay", "Apple Pay", "Google Pay", "Link", "FPX", "GrabPay"]
+PAY_ROW = ('      <div class="pay-row"><span class="pay-label" data-i18n="pay_secure">Secure payments by Stripe</span>'
+           '<ul class="pay-list" aria-label="Accepted payment methods">' + "".join(f'<li>{m}</li>' for m in PAY_METHODS) + '</ul></div>\n')
 LEGAL_COL = """      <div><h4 data-i18n="nav_legal">Legal</h4><ul>
           <li><a href="terms.html" data-i18n="lg_terms">Terms of Service</a></li>
           <li><a href="refund.html" data-i18n="lg_refund">Refund Policy</a></li>
@@ -341,6 +345,9 @@ for f in glob.glob(f"{D}/*.html"):
     if 'data-i18n="nav_legal"' not in s:
         s, n = re.subn(r'(        </ul></div>\n)(    </div>\n    <div class="legal">)', r'\1' + LEGAL_COL + r'\2', s, count=1)
         assert n == 1, f
+    # accepted payment methods, above the copyright line
+    if 'class="pay-row"' not in s:
+        s = s.replace('    <div class="legal">\n', '    <div class="legal">\n' + PAY_ROW, 1)
     # floating WhatsApp button on every page
     if 'class="wa-float"' not in s:
         s = s.replace("</body>", WA_FLOAT + "</body>", 1)
@@ -349,6 +356,10 @@ for f in glob.glob(f"{D}/*.html"):
 
 # Arabic label for the new nav item
 js = open(f"{D}/site.js").read()
+if '"pay_secure"' not in js:
+    js = js.replace('"nav_mp": ', '"pay_secure": "دفع آمن عبر Stripe", "nav_mp": ', 1)
+    assert '"pay_secure"' in js
+    open(f"{D}/site.js", "w").write(js)
 if '"nav_legal"' not in js:
     js = js.replace('"nav_mp": ', '"nav_legal": "قانوني", "lg_terms": "شروط الخدمة", "lg_refund": "سياسة الاسترداد", "lg_privacy": "سياسة الخصوصية", "wa_chat": "تواصل معنا", "nav_mp": ', 1)
     assert '"nav_legal"' in js
@@ -394,6 +405,11 @@ CSS = '''
 .pk-curbar select{width:auto;max-width:100%;min-width:0;margin:0;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);font:inherit;font-size:14px}
 .pk-curnote{color:var(--muted);font-size:13px}
 footer.site{padding-bottom:96px}
+.pay-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding-bottom:6px}
+.pay-label{display:inline-flex;align-items:center;gap:6px;font-weight:600;color:color-mix(in srgb,var(--on-ink) 80%,transparent)}
+.pay-label::before{content:"";width:12px;height:12px;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 1a5 5 0 0 0-5 5v4H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5zm-3 9V6a3 3 0 1 1 6 0v4z'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 1a5 5 0 0 0-5 5v4H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5zm-3 9V6a3 3 0 1 1 6 0v4z'/%3E%3C/svg%3E") center/contain no-repeat}
+.pay-list{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.pay-list li{background:#fff;color:#1F2328;border-radius:5px;padding:4px 9px;font:700 12px/1.2 var(--body);letter-spacing:.01em}
 footer.site .foot{grid-template-columns:1.4fr repeat(4,1fr)}
 @media (max-width:1000px){footer.site .foot{grid-template-columns:1fr 1fr}}
 @media (max-width:560px){footer.site .foot{grid-template-columns:1fr}}
