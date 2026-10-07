@@ -71,3 +71,10 @@ COUNTRIES = [
   notes=["Foreign directors and shareholders need security clearance, which can take 8–14 weeks."]),
 ]
 ADDONS = [("Amazon seller account application support","$299"),("Marketplace onboarding: Noon, TikTok Shop, Shopee and others","$249 each"),("Shopify store setup","from $490"),("Business bank or payment account application (per provider)","$199"),("Amazon FBA prep from Malaysia","quote"),("Document attestation / apostille","quote")]
+
+# Add-ons that can be bought online (label must match ADDONS above). Prices in USD per unit.
+ADDON_SKUS = {
+ "Amazon seller account application support": ("addon-amazon", 299),
+ "Marketplace onboarding: Noon, TikTok Shop, Shopee and others": ("addon-marketplace", 249),
+ "Business bank or payment account application (per provider)": ("addon-bank", 199),
+}

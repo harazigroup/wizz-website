@@ -131,5 +131,26 @@
   "currency": "USD",
   "desc": "Everything in Starter, plus: Bank account application support; Shopee / Lazada / TikTok Shop setup call; SST & licence check.",
   "image": "https://wizz.com.my/img/pay/my.png"
+ },
+ "addon-amazon": {
+  "name": "Amazon seller account application support",
+  "amount": 299,
+  "currency": "USD",
+  "desc": "Add-on service. Approval of any account is decided by the provider.",
+  "image": ""
+ },
+ "addon-marketplace": {
+  "name": "Marketplace onboarding: Noon, TikTok Shop, Shopee and others",
+  "amount": 249,
+  "currency": "USD",
+  "desc": "Add-on service. Approval of any account is decided by the provider.",
+  "image": ""
+ },
+ "addon-bank": {
+  "name": "Business bank or payment account application (per provider)",
+  "amount": 199,
+  "currency": "USD",
+  "desc": "Add-on service. Approval of any account is decided by the provider.",
+  "image": ""
  }
 }

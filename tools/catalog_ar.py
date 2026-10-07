@@ -334,3 +334,13 @@ AR.update({
 "Questions? WhatsApp us": "لديك سؤال؟ راسلنا على واتساب",
 "Loading secure payment form…": "جارٍ تحميل نموذج الدفع الآمن…",
 })
+
+# ---- cart
+AR.update({
+"Add": "أضف",
+"deposit to cart": "عربون إلى السلة",
+"Add to cart": "أضف إلى السلة",
+"Order summary": "ملخص الطلب",
+"Total": "الإجمالي",
+"Add-on": "خدمة إضافية",
+})

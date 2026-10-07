@@ -6,19 +6,6 @@ import { stripe, stripeOn } from "./_stripe.mjs";
 import { RATES, localPrice } from "./_fx.mjs";
 
 export default async (req) => {
-  if (req.method === "GET" && new URL(req.url).searchParams.get("diag") === "wizz-emb") {
-    // temporary: try an embedded session and report Stripe's answer
-    const out = { pk: (process.env.STRIPE_PUBLISHABLE_KEY || "").slice(0, 8) };
-    for (const [ui, ver] of [["embedded_page", "2026-03-25.dahlia"], ["embedded", undefined]]) {
-      try {
-        const s = await stripe("/checkout/sessions", { method: "POST", version: ver, body: { mode: "payment", ui_mode: ui, return_url: "https://wizz.com.my/thank-you.html?session_id={CHECKOUT_SESSION_ID}", line_items: { 0: { quantity: 1, price_data: { currency: "usd", unit_amount: 100, product_data: { name: "Diagnostic" } } } } } });
-        out[ui] = { ok: Boolean(s.client_secret), cs_prefix: (s.client_secret || "").slice(0, 8) };
-      } catch (e) { out[ui] = { ok: false, error: String(e.message).replace(/(sk|rk)_(live|test)_[A-Za-z0-9*]+/g, "[key]") }; }
-    }
-    const r = await handler(new Request(req.url, { method: "POST", body: JSON.stringify({ sku: "sa-assessment", currency: "MYR", embedded: true }) }));
-    const j = await r.json(); out.real = { embedded: j.embedded || false, has_secret: Boolean(j.client_secret), error: j.embedded_error || null };
-    return json(200, out);
-  }
   return handler(req);
 };
 
@@ -27,10 +14,22 @@ async function handler(req) {
   if (!stripeOn() && !configured()) return json(503, { error: "not_configured" });
   let input = {};
   try { input = await req.json(); } catch {}
-  const item = products[input.sku];
-  if (!item) return json(400, { error: "unknown_package" }); // price always comes from the server catalog
+  // items: [{sku, qty}] from the cart, or a single {sku}. Prices always come from the server catalog.
+  const raw = Array.isArray(input.items) ? input.items : [{ sku: input.sku, qty: 1 }];
+  const seen = new Map();
+  for (const it of raw.slice(0, 10)) {
+    if (!it || !products[it.sku]) return json(400, { error: "unknown_package" });
+    const max = String(it.sku).startsWith("addon-") ? 10 : 1;
+    seen.set(it.sku, Math.max(1, Math.min(max, (seen.get(it.sku) || 0) + (parseInt(it.qty, 10) || 1))));
+  }
+  if (!seen.size) return json(400, { error: "unknown_package" });
   const cur = RATES[(input.currency || "").toUpperCase()] ? input.currency.toUpperCase() : "USD";
-  const amount = localPrice(item.amount, cur); // same rule the page used to show the price
+  const lines = [...seen].map(([sku, qty]) => ({ sku, qty, item: products[sku], unit: localPrice(products[sku].amount, cur) }));
+  lines.forEach(l => { l.amount = Math.round(l.unit * l.qty * 100) / 100; });
+  const amount = Math.round(lines.reduce((a, l) => a + l.amount, 0) * 100) / 100;
+  const label = lines.map(l => l.item.name + (l.qty > 1 ? ` ×${l.qty}` : "")).join(" + ").slice(0, 480);
+  const skus = lines.map(l => `${l.sku}x${l.qty}`).join(",").slice(0, 480);
+  const usdTotal = lines.reduce((a, l) => a + l.item.amount * l.qty, 0);
   const site = process.env.SITE_URL || process.env.URL || new URL(req.url).origin;
   const orderId = `WZ-${new Date().toISOString().slice(2, 10).replace(/-/g, "")}-${Math.random().toString(36).slice(2, 7).toUpperCase()}`;
   try {
@@ -38,13 +37,13 @@ async function handler(req) {
       const base = {
         mode: "payment",
         client_reference_id: orderId,
-        line_items: { 0: { quantity: 1, price_data: { currency: cur.toLowerCase(), unit_amount: Math.round(amount * 100), product_data: { name: item.name, description: item.desc, images: item.image ? { 0: item.image } : undefined } } } },
+        line_items: Object.fromEntries(lines.map((l, i) => [i, { quantity: l.qty, price_data: { currency: cur.toLowerCase(), unit_amount: Math.round(l.unit * 100), product_data: { name: l.item.name, description: l.item.desc || undefined, images: l.item.image ? { 0: l.item.image } : undefined } } }])),
         phone_number_collection: { enabled: true },
         custom_text: { submit: { message: `By paying you agree to our [Terms of Service](${site}/terms.html) and [Refund Policy](${site}/refund.html). After payment you will fill in a short onboarding form, and we confirm everything with you before filing.` } },
-        metadata: { sku: input.sku, package: item.name, order_id: orderId, usd_price: String(item.amount) },
-        payment_intent_data: { description: `${item.name} · ${orderId}`, metadata: { sku: input.sku, order_id: orderId } }
+        metadata: { sku: skus, package: label, order_id: orderId, usd_price: String(usdTotal) },
+        payment_intent_data: { description: `${label} · ${orderId}`.slice(0, 990), metadata: { sku: skus, order_id: orderId } }
       };
-      const done = { order_id: orderId, package: item.name, amount, currency: cur };
+      const done = { order_id: orderId, package: label, amount, currency: cur, lines: lines.map(l => ({ sku: l.sku, qty: l.qty, amount: l.amount })) };
       const pk = process.env.STRIPE_PUBLISHABLE_KEY || "";
       let embErr = "";
       if (input.embedded && pk.startsWith("pk_")) {
@@ -71,10 +70,10 @@ async function handler(req) {
         merchant_order_id: orderId,
         descriptor: "WIZZ SMART SERVICES",
         return_url: `${site}/thank-you.html`,
-        metadata: { sku: input.sku, package: item.name }
+        metadata: { sku: skus, package: label }
       }
     });
-    return json(200, { provider: "airwallex", env, intent_id: intent.id, client_secret: intent.client_secret, currency: intent.currency, order_id: orderId, package: item.name, amount });
+    return json(200, { provider: "airwallex", env, intent_id: intent.id, client_secret: intent.client_secret, currency: intent.currency, order_id: orderId, package: label, amount });
   } catch (e) {
     console.error(e);
     return json(502, { error: "payment_unavailable" });

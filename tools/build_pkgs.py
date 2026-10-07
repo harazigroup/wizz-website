@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Adds Packages, Thank-you and legal pages to /home/claude/wizz-dist using about.html as the template."""
 import re, html, glob, os, json
-from catalog import COUNTRIES, ADDONS
+from catalog import COUNTRIES, ADDONS, ADDON_SKUS
 
 D = "/home/claude/wizz-dist"
 esc = lambda s: html.escape(s, quote=True)
@@ -81,9 +81,9 @@ def tier_html(c, t):
     else:
         price = f'<div class="pk-price">{f'<span class="from"{tk("from")}>from</span>' if t.get("frm") else ""}{money(t["p"])}<small class="cur">USD</small></div>'
     if t.get("sku") and t.get("deposit"):
-        cta = f'<button class="btn solid pk-buy" type="button" data-sku="{t["sku"]}"><span{tk("Pay")}>Pay</span> {money(t["deposit"])} <span{tk("deposit")}>deposit</span></button>'
+        cta = f'<button class="btn solid pk-buy" type="button" data-sku="{t["sku"]}"><span{tk("Add")}>Add</span> {money(t["deposit"])} <span{tk("deposit to cart")}>deposit to cart</span></button>'
     elif t.get("sku"):
-        cta = f'<button class="btn solid pk-buy" type="button" data-sku="{t["sku"]}"{tk("Buy now")}>Buy now</button>'
+        cta = f'<button class="btn solid pk-buy" type="button" data-sku="{t["sku"]}"{tk("Add to cart")}>Add to cart</button>'
     else:
         cta = f'<a class="btn ghost" href="contact.html"{tk("Get a quote")}>Get a quote</a>'
     plus = f'<p class="pk-plus"{tk(t["plus"], money_text)}>{money_text(t["plus"])}</p>' if t.get("plus") else ""
@@ -106,7 +106,10 @@ for idx, c in enumerate(COUNTRIES):
     <div class="pk-grid">{"".join(tier_html(c, t) for t in c["tiers"])}</div>
     {notes}
   </div>''')
-addons = "".join(f'<div class="pk-addon"><span{tk(a)}>{esc(a)}</span><b{tk(p, money_text)}>{money_text(p)}</b></div>' for a, p in ADDONS)
+def addon_html(a, p):
+    btn = f'<button class="pk-add pk-buy" type="button" data-sku="{ADDON_SKUS[a][0]}"{tk("Add")}>Add</button>' if a in ADDON_SKUS else ""
+    return f'<div class="pk-addon"><span{tk(a)}>{esc(a)}</span><span class="pk-addon-r"><b{tk(p, money_text)}>{money_text(p)}</b>{btn}</span></div>'
+addons = "".join(addon_html(a, p) for a, p in ADDONS)
 
 FP = 'By paying you agree to our <a href="terms.html">Terms of Service</a> and <a href="refund.html">Refund Policy</a>. If we find your case can\'t go ahead, you get a refund under the Refund Policy.'
 pk_body = hero_t("Packages", "Clear prices for forming your company abroad",
@@ -156,7 +159,7 @@ PK_JS = '''<script>
   function apply(c){cur=(FX&&FX.rates[c])?c:'USD';
     document.querySelectorAll('.m[data-usd]').forEach(el=>{el.textContent=fmt(local(+el.dataset.usd,cur),cur)});
     document.querySelectorAll('.pk-price .cur').forEach(el=>{const shown=el.previousElementSibling?el.previousElementSibling.textContent:'';el.textContent=/[A-Z]{3}/.test(shown)?'':cur;});
-    cs.value=cur;note.textContent=cur==='USD'?T('Set in US dollars. Change the currency if you prefer.','الأسعار بالدولار الأمريكي، ويمكنك تغيير العملة.'):T('Converted from our US dollar prices at a recent rate. You pay exactly this amount in '+cur+'.','محوّلة من أسعارنا بالدولار الأمريكي حسب سعر صرف حديث، وتدفع هذا المبلغ نفسه بعملة '+cur+'.');}
+    cs.value=cur;document.dispatchEvent(new CustomEvent('wizz:fx',{detail:{fx:FX,cur:cur}}));note.textContent=cur==='USD'?T('Set in US dollars. Change the currency if you prefer.','الأسعار بالدولار الأمريكي، ويمكنك تغيير العملة.'):T('Converted from our US dollar prices at a recent rate. You pay exactly this amount in '+cur+'.','محوّلة من أسعارنا بالدولار الأمريكي حسب سعر صرف حديث، وتدفع هذا المبلغ نفسه بعملة '+cur+'.');}
   function fill(){const list=FX?Object.keys(FX.rates):['USD'];cs.innerHTML=list.map(c=>'<option value="'+c+'">'+c+' · '+((ar()?NAMES_AR:NAMES)[c]||c)+'</option>').join('');}
   document.addEventListener('wizz:lang',()=>{fill();apply(cur);});
   fetch('/.netlify/functions/prices').then(r=>r.ok?r.json():Promise.reject()).then(d=>{FX=d;
@@ -167,7 +170,7 @@ PK_JS = '''<script>
   cs.addEventListener('change',()=>{apply(cs.value);try{localStorage.setItem('wizz-cur',cur)}catch(e){}});
   const msg=document.getElementById('pkMsg');
   function say(text){msg.textContent=text;msg.hidden=false;msg.scrollIntoView({block:'nearest',behavior:'smooth'});}
-  document.querySelectorAll('.pk-buy').forEach(btn=>btn.addEventListener('click',e=>{location.href='checkout.html?sku='+encodeURIComponent(btn.dataset.sku)+'&cur='+encodeURIComponent(cur);}));
+  document.querySelectorAll('.pk-buy').forEach(btn=>btn.addEventListener('click',()=>{if(window.WizzCart)window.WizzCart.add(btn.dataset.sku);else location.href='checkout.html?sku='+encodeURIComponent(btn.dataset.sku)+'&cur='+encodeURIComponent(cur);}));
 })();
 </script>
 '''
@@ -188,6 +191,8 @@ for c in COUNTRIES:
         SERVER[t["sku"]] = {"name": f'{c["n"]} - {t["n"]}' + (" (deposit)" if t.get("deposit") else ""),
                             "amount": t.get("deposit") or t["p"], "currency": "USD",
                             "desc": checkout_desc(t)[:480], "image": f'https://wizz.com.my/img/pay/{c["c"].lower()}.png'}
+for a, (sku, usd) in ADDON_SKUS.items():
+    SERVER[sku] = {"name": a, "amount": usd, "currency": "USD", "desc": "Add-on service. Approval of any account is decided by the provider.", "image": ""}
 open(f"{D}/netlify/functions/catalog.json", "w").write(json.dumps(SERVER, indent=1, ensure_ascii=False) + "\n")
 
 # ---------------- thank you + onboarding
@@ -244,7 +249,7 @@ TY_JS = '''<script>
   function showForm(d){f.hidden=false;document.getElementById('ob_order').value=d.order_id||saved.order||'';document.getElementById('ob_intent').value=intent;document.getElementById('ob_pkg').value=d.package||saved.pkg||'';}
   if(!intent){st.innerHTML=T('We couldn\\'t find a payment reference. If you paid, message us on WhatsApp at <span class="ltr">+60 11-2447 7685</span> with your receipt.','لم نجد مرجعاً للدفع. إذا كنت قد دفعت، راسلنا على واتساب على الرقم <span class="ltr">+60 11-2447 7685</span> مع إيصال الدفع.');return;}
   fetch('/.netlify/functions/verify?'+(sid?'session_id=':'intent=')+encodeURIComponent(intent)).then(r=>r.json()).then(d=>{
-    if(d.paid){st.className='ty-status ok';st.textContent=T('Payment received: ','تم استلام الدفع: ')+(d.package||T('your package','باقتك'))+' · '+d.currency+' '+Number(d.amount).toLocaleString('en-US')+' · '+T('Order ','رقم الطلب ')+d.order_id;showForm(d);}
+    if(d.paid){try{if(window.WizzCart)window.WizzCart.clear();else localStorage.removeItem('wizz-cart')}catch(e){}st.className='ty-status ok';st.textContent=T('Payment received: ','تم استلام الدفع: ')+(d.package||T('your package','باقتك'))+' · '+d.currency+' '+Number(d.amount).toLocaleString('en-US')+' · '+T('Order ','رقم الطلب ')+d.order_id;showForm(d);}
     else{st.innerHTML=T('Your payment isn\\'t confirmed yet (status: '+(d.status||'unknown')+'). If you completed it, refresh in a minute or message us on WhatsApp at <span class="ltr">+60 11-2447 7685</span>.','لم يتم تأكيد الدفع بعد (الحالة: '+(d.status||'غير معروفة')+'). إذا أكملت الدفع، حدّث الصفحة بعد دقيقة أو راسلنا على واتساب على الرقم <span class="ltr">+60 11-2447 7685</span>.');}
   }).catch(()=>{st.innerHTML=T('We couldn\\'t check the payment right now. Fill in the form below and we\\'ll match it to your payment.','تعذّر التحقق من الدفع الآن. املأ النموذج أدناه وسنطابقه مع دفعتك.');showForm({});});
   f.addEventListener('submit',async e=>{e.preventDefault();if(!f.reportValidity())return;
@@ -258,6 +263,67 @@ TY_JS = '''<script>
 page("thank-you.html", "Thank you | Wizz Smart Services", "Payment confirmation and onboarding.", ty_body, scripts=ar_script() + TY_JS,
      extra_head='<meta name="robots" content="noindex">')
 
+# ---------------- cart (cart.js on every page): stored in the visitor's browser, prices shown in their currency
+CART_DATA = {}
+for c in COUNTRIES:
+    for t in c["tiers"]:
+        if t.get("sku"):
+            dep = bool(t.get("deposit"))
+            CART_DATA[t["sku"]] = {"c": c["c"], "n": [f'{c["n"]} · {t["n"]}' + (" (deposit)" if dep else ""), f'{AR_SRC[c["n"]]} · {AR_SRC[t["n"]]}' + (" (عربون)" if dep else "")],
+                                   "usd": t.get("deposit") or t["p"], "max": 1}
+for a, (sku, usd) in ADDON_SKUS.items():
+    CART_DATA[sku] = {"c": "", "n": [a, AR_SRC[a]], "usd": usd, "max": 10}
+CART_JS = "/* Wizz cart: generated by tools/build_pkgs.py, do not edit by hand */\n(function(){\n  const DATA=" + json.dumps(CART_DATA, ensure_ascii=False) + r""";
+  const KEY='wizz-cart';
+  const ar=()=>document.documentElement.lang==='ar';const T=(en,a)=>ar()?a:en;
+  function read(){try{const v=JSON.parse(localStorage.getItem(KEY)||'[]');return Array.isArray(v)?v.filter(x=>x&&DATA[x.sku]).map(x=>({sku:x.sku,qty:Math.max(1,Math.min(DATA[x.sku].max,x.qty|0||1))})):[]}catch(e){return []}}
+  let items=read();
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(items))}catch(e){}render();}
+  let FX=null,cur='USD';try{cur=localStorage.getItem('wizz-cur')||'USD'}catch(e){}
+  function local(usd){const r=FX&&FX.rates[cur];if(!r||cur==='USD')return usd;const raw=usd*r.rate*(1+FX.buffer);const up=Math.ceil(raw/r.step)*r.step;return r.nine?up-1:up;}
+  function fmt(n){const c=(FX&&FX.rates[cur])?cur:'USD';try{return new Intl.NumberFormat('en-US',{style:'currency',currency:c,currencyDisplay:'narrowSymbol',maximumFractionDigits:0}).format(n)}catch(e){return c+' '+n}}
+  function loadFx(){if(FX||loadFx.busy)return;loadFx.busy=1;fetch('/.netlify/functions/prices').then(r=>r.ok?r.json():null).then(d=>{if(!d)return;FX=d;let s=null;try{s=localStorage.getItem('wizz-cur')}catch(e){}cur=(s&&d.rates[s])?s:d.currency;render();}).catch(()=>{});}
+  document.addEventListener('wizz:fx',e=>{FX=e.detail.fx;cur=e.detail.cur;render();});
+  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  // header button
+  const bag='<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M5 8h14l-1.2 11.1a2 2 0 0 1-2 1.9H8.2a2 2 0 0 1-2-1.9L5 8zm4 0V6.5a3 3 0 0 1 6 0V8"/></svg>';
+  const btn=document.createElement('button');btn.type='button';btn.className='cart-btn';btn.id='cartBtn';btn.innerHTML=bag+'<span class="cart-n" id="cartN" hidden>0</span>';
+  const tools=document.querySelector('header.site .tools');if(tools)tools.insertBefore(btn,tools.firstChild);
+  // drawer
+  const wrap=document.createElement('div');wrap.className='cart-wrap';wrap.hidden=true;
+  wrap.innerHTML='<div class="cart-scrim" data-close></div><aside class="cart" role="dialog" aria-modal="true" aria-labelledby="cartTitle"><div class="cart-top"><h2 id="cartTitle"></h2><button type="button" class="cart-x" data-close aria-label="Close">×</button></div><div class="cart-body" id="cartBody"></div><div class="cart-foot" id="cartFoot"></div></aside>';
+  document.body.appendChild(wrap);
+  let lastFocus=null;
+  function open(){loadFx();lastFocus=document.activeElement;wrap.hidden=false;document.documentElement.classList.add('cart-open');render();setTimeout(()=>wrap.querySelector('.cart-x').focus(),30);}
+  function close(){wrap.hidden=true;document.documentElement.classList.remove('cart-open');if(lastFocus&&lastFocus.focus)lastFocus.focus();}
+  btn.addEventListener('click',open);
+  wrap.addEventListener('click',e=>{if(e.target.closest('[data-close]'))close();const q=e.target.closest('[data-q]');if(q){const it=items.find(x=>x.sku===q.dataset.sku);if(it){it.qty=Math.max(1,Math.min(DATA[it.sku].max,it.qty+(+q.dataset.q)));save();}}const rm=e.target.closest('[data-rm]');if(rm){items=items.filter(x=>x.sku!==rm.dataset.rm);save();}});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!wrap.hidden)close();});
+  function render(){
+    const n=items.reduce((a,x)=>a+x.qty,0);const badge=document.getElementById('cartN');badge.textContent=n;badge.hidden=!n;
+    btn.setAttribute('aria-label',T('Cart','السلة')+(n?' ('+n+')':''));
+    document.getElementById('cartTitle').textContent=T('Your cart','سلتك');
+    wrap.querySelector('.cart-x').setAttribute('aria-label',T('Close','إغلاق'));
+    const body=document.getElementById('cartBody'),foot=document.getElementById('cartFoot');
+    if(!items.length){body.innerHTML='<p class="cart-empty">'+T('Your cart is empty.','سلتك فارغة.')+'</p>';foot.innerHTML='<a class="btn ghost" href="packages.html">'+T('Browse packages','تصفّح الباقات')+'</a>';return;}
+    let total=0;
+    body.innerHTML='<ul class="cart-list">'+items.map(x=>{const d=DATA[x.sku];const line=local(d.usd)*x.qty;total+=line;
+      const code=d.c?'<span class="cart-code ltr">'+d.c+'<i>.</i></span>':'<span class="cart-code plus">+</span>';
+      const qty=d.max>1?'<span class="cart-qty"><button type="button" data-q="-1" data-sku="'+x.sku+'" aria-label="'+T('Fewer','أقل')+'">−</button><b>'+x.qty+'</b><button type="button" data-q="1" data-sku="'+x.sku+'" aria-label="'+T('More','أكثر')+'">+</button></span>':'';
+      return '<li>'+code+'<div class="cart-info"><b>'+esc(d.n[ar()?1:0])+'</b><span class="cart-row">'+qty+'<button type="button" class="cart-rm" data-rm="'+x.sku+'">'+T('Remove','إزالة')+'</button></span></div><span class="cart-price ltr">'+fmt(line)+'</span></li>';}).join('')+'</ul>';
+    foot.innerHTML='<div class="cart-total"><span>'+T('Total','الإجمالي')+'</span><b class="ltr">'+fmt(total)+'</b></div><a class="btn solid cart-go" href="checkout.html?cart=1&cur='+encodeURIComponent((FX&&FX.rates[cur])?cur:'USD')+'"><span class="dot"></span>'+T('Checkout','إتمام الطلب')+'</a><p class="cart-fine">'+T('Prices include government filing fees unless a note says otherwise.','تشمل الأسعار الرسوم الحكومية ما لم تذكر الملاحظة غير ذلك.')+'</p>';
+  }
+  document.addEventListener('wizz:lang',render);
+  window.WizzCart={
+    add(sku){if(!DATA[sku])return;const it=items.find(x=>x.sku===sku);if(it){if(it.qty<DATA[sku].max)it.qty++;}else items.push({sku,qty:1});save();open();},
+    items(){return items.map(x=>({...x}))},
+    clear(){items=[];save();}
+  };
+  render();
+})();
+"""
+open(f"{D}/cart.js", "w").write(CART_JS)
+
 # ---------------- checkout page: our order summary + Stripe's embedded payment form
 CK_DATA = {}
 for c in COUNTRIES:
@@ -266,17 +332,17 @@ for c in COUNTRIES:
         CK_DATA[t["sku"]] = {"c": c["c"], "n": [c["n"], AR_SRC[c["n"]]], "t": [t["n"], AR_SRC[t["n"]]],
             "plus": [t["plus"], AR_SRC[t["plus"]]] if t.get("plus") else None,
             "i": [t["i"], [AR_SRC[x] for x in t["i"]]], "dep": bool(t.get("deposit"))}
+for a_, (sku, usd) in ADDON_SKUS.items():
+    CK_DATA[sku] = {"c": "", "n": [a_, AR_SRC[a_]], "t": None, "plus": None, "i": None, "dep": False, "addon": True}
 LOCK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 1a5 5 0 0 0-5 5v4H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5zm-3 9V6a3 3 0 1 1 6 0v4z"/></svg>'
 ck_body = f"""<section class="block ck">
   <div class="wrap ck-grid">
     <aside class="ck-sum" aria-labelledby="ckTitle">
       <a class="ck-back" href="packages.html"{tk("All packages")}>All packages</a>
       <p class="eyebrow"{tk("Secure checkout")}>Secure checkout</p>
-      <div class="ck-head"><span class="pk-code ltr" id="ckCode"></span><div><h1 id="ckTitle"></h1><p id="ckCountry"></p></div></div>
-      <div class="ck-price"><span id="ckPrice" class="ltr">…</span><small id="ckCur"></small></div>
-      <p class="ck-dep" id="ckDep" hidden{tk("Deposit, credited to your final package price.")}>Deposit, credited to your final package price.</p>
-      <p class="pk-plus" id="ckPlus" hidden></p>
-      <ul class="ck-items" id="ckItems"></ul>
+      <h1 class="ck-title" id="ckTitle"{tk("Order summary")}>Order summary</h1>
+      <ul class="ck-lines" id="ckLines"></ul>
+      <div class="ck-totalrow"><span{tk("Total")}>Total</span><b id="ckTotal" class="ltr">…</b></div>
     </aside>
     <div class="ck-more">
       <h2 class="ck-h"{tk("What happens next")}>What happens next</h2>
@@ -291,56 +357,66 @@ ck_body = f"""<section class="block ck">
       </div>
     </div>
     <div class="ck-pay">
-      <div id="ckMount" class="ck-mount"><div class="ck-loading" id="ckLoading"><span class="ck-spin" aria-hidden="true"></span><span{tk("Loading secure payment form…")}>Loading secure payment form…</span></div></div>
+      <div class="ck-loading" id="ckLoading"><span class="ck-spin" aria-hidden="true"></span><span{tk("Loading secure payment form…")}>Loading secure payment form…</span></div>
+      <div id="ckForm"></div>
       <div class="pk-msg" id="ckMsg" role="status" hidden></div>
     </div>
   </div>
 </section>"""
 CK_JS = """<script>
 (function(){
-  const DATA=""" + json.dumps(CK_DATA, ensure_ascii=False) + """;
-  const qs=new URLSearchParams(location.search);const sku=qs.get('sku')||'';const cur=(qs.get('cur')||'USD').toUpperCase();
-  const d=DATA[sku];if(!d){location.replace('packages.html');return;}
-  const ar=()=>document.documentElement.lang==='ar';const L=a=>a[ar()?1:0];const T=(en,a)=>ar()?a:en;
-  const $=id=>document.getElementById(id);let paid=null;
+  const DATA=""" + json.dumps(CK_DATA, ensure_ascii=False) + r""";
+  const qs=new URLSearchParams(location.search);const cur=(qs.get('cur')||'USD').toUpperCase();
+  let list=[];
+  if(qs.get('sku')){list=[{sku:qs.get('sku'),qty:1}];}
+  else{try{const v=JSON.parse(localStorage.getItem('wizz-cart')||'[]');if(Array.isArray(v))list=v.map(x=>({sku:x.sku,qty:Math.max(1,Math.min(10,x.qty|0||1))}));}catch(e){}}
+  list=list.filter(x=>DATA[x.sku]);
+  if(!list.length){location.replace('packages.html');return;}
+  const ar=()=>document.documentElement.lang==='ar';const L=a=>a?a[ar()?1:0]:'';const T=(en,a)=>ar()?a:en;
+  const $=id=>document.getElementById(id);let res=null;
+  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   function fmt(n,c){try{return new Intl.NumberFormat('en-US',{style:'currency',currency:c,currencyDisplay:'narrowSymbol',maximumFractionDigits:2,minimumFractionDigits:0}).format(n)}catch(e){return c+' '+n}}
   function render(){
-    $('ckCode').innerHTML=d.c+'<i>.</i>';$('ckTitle').textContent=L(d.t);$('ckCountry').textContent=L(d.n);
-    $('ckDep').hidden=!d.dep;
-    if(d.plus){$('ckPlus').hidden=false;$('ckPlus').textContent=L(d.plus);}
-    $('ckItems').innerHTML=L(d.i).map(x=>'<li>'+x.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))+'</li>').join('');
-    if(paid){$('ckPrice').textContent=fmt(paid.amount,paid.currency);$('ckCur').textContent=/[A-Z]{3}/.test($('ckPrice').textContent)?'':paid.currency;}
-    document.title=L(d.t)+' · '+L(d.n)+' | Wizz Smart Services';
+    $('ckLines').innerHTML=list.map(x=>{const d=DATA[x.sku];const line=res&&res.lines?res.lines.find(l=>l.sku===x.sku):null;
+      const code=d.c?'<span class="cart-code ltr">'+d.c+'<i>.</i></span>':'<span class="cart-code plus">+</span>';
+      const name=d.addon?esc(L(d.n)):esc(L(d.t))+(d.dep?' · '+T('deposit','عربون'):'')+'<small>'+esc(L(d.n))+'</small>';
+      const inc=d.i?'<ul class="ck-items">'+(d.plus?'<li class="ck-plus">'+esc(L(d.plus))+'</li>':'')+L(d.i).map(i=>'<li>'+esc(i)+'</li>').join('')+'</ul>':'';
+      const dep=d.dep?'<p class="ck-dep">'+T('Credited to your final package price.','يُخصم من السعر النهائي لباقتك.')+'</p>':'';
+      return '<li><div class="ck-line">'+code+'<div class="ck-name"><b>'+name+'</b>'+(x.qty>1?'<span class="ck-qty">× '+x.qty+'</span>':'')+'</div><span class="ck-amt ltr">'+(line?fmt(line.amount,res.currency):'')+'</span></div>'+dep+inc+'</li>';}).join('');
+    $('ckTotal').textContent=res?fmt(res.amount,res.currency):'…';
+    document.title=T('Checkout','إتمام الطلب')+' | Wizz Smart Services';
   }
   document.addEventListener('wizz:lang',render);render();
   function fail(msg){$('ckLoading').hidden=true;const m=$('ckMsg');m.innerHTML=msg;m.hidden=false;}
   const WA='<span class="ltr">+60 11-2447 7685</span>';
   async function start(embedded){
-    const r=await fetch('/.netlify/functions/checkout',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({sku,currency:cur,embedded})});
+    const r=await fetch('/.netlify/functions/checkout',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({items:list,currency:cur,embedded})});
     const j=await r.json().catch(()=>({}));
     if(!r.ok)throw Object.assign(new Error('server'),{code:j.error});
     return j;
   }
-  function loadStripe(){return new Promise((ok,no)=>{if(window.Stripe)return ok();const s=document.createElement('script');s.src='https://js.stripe.com/dahlia/stripe.js';s.onload=ok;s.onerror=no;document.head.appendChild(s);});}
+  function loadStripe(){return new Promise((ok,no)=>{if(window.Stripe)return ok();const s=document.createElement('script');s.src='https://js.stripe.com/dahlia/stripe.js';s.onload=()=>window.Stripe?ok():no(new Error('Stripe.js did not start'));s.onerror=()=>no(new Error('Stripe.js could not load'));document.head.appendChild(s);});}
+  function remember(j){try{sessionStorage.setItem('wizz-order',JSON.stringify({order:j.order_id,pkg:j.package}))}catch(e){}}
   (async()=>{
     let j;
     try{j=await start(true);}catch(e){
-      return fail(e.code==='not_configured'?T('Online payment is being set up. Message us on WhatsApp at '+WA+' and we will send you a payment link.','الدفع الإلكتروني قيد الإعداد. راسلنا على واتساب على الرقم '+WA+' وسنرسل لك رابط الدفع.'):T('We couldn\\'t open the checkout. Please try again, or message us on WhatsApp at '+WA+'.','تعذّر فتح صفحة الدفع. حاول مرة أخرى، أو راسلنا على واتساب على الرقم '+WA+'.'));
+      return fail(e.code==='not_configured'?T('Online payment is being set up. Message us on WhatsApp at '+WA+' and we will send you a payment link.','الدفع الإلكتروني قيد الإعداد. راسلنا على واتساب على الرقم '+WA+' وسنرسل لك رابط الدفع.'):T('We couldn\'t open the checkout. Please try again, or message us on WhatsApp at '+WA+'.','تعذّر فتح صفحة الدفع. حاول مرة أخرى، أو راسلنا على واتساب على الرقم '+WA+'.'));
     }
-    paid={amount:j.amount,currency:j.currency};render();
-    try{sessionStorage.setItem('wizz-order',JSON.stringify({order:j.order_id,pkg:j.package}))}catch(e){}
+    res=j;render();remember(j);
     if(j.url){location.replace(j.url);return;}
     if(!j.embedded){return fail(T('Please message us on WhatsApp at '+WA+' to complete your payment.','راسلنا على واتساب على الرقم '+WA+' لإكمال الدفع.'));}
     try{
       await loadStripe();
       const stripe=window.Stripe(j.publishable_key);
       const make=stripe.createEmbeddedCheckoutPage||stripe.initEmbeddedCheckout;
+      if(!make)throw new Error('This Stripe.js has no embedded checkout');
       const page=await make.call(stripe,{fetchClientSecret:()=>Promise.resolve(j.client_secret)});
-      $('ckLoading').hidden=true;page.mount('#ckMount');
+      page.mount('#ckForm');$('ckLoading').hidden=true;
     }catch(e){
-      // embedded form couldn't load here: fall back to Stripe's own payment page
-      try{const h=await start(false);if(h.url){location.replace(h.url);return;}}catch(_){}
-      fail(T('We couldn\\'t load the payment form. Please refresh, or message us on WhatsApp at '+WA+'.','تعذّر تحميل نموذج الدفع. حدّث الصفحة، أو راسلنا على واتساب على الرقم '+WA+'.'));
+      console.error('Embedded checkout failed:',e);
+      $('ckLoading').hidden=true;const m=$('ckMsg');m.textContent=T('Opening Stripe\'s secure payment page…','جارٍ فتح صفحة الدفع الآمنة من Stripe…')+' ('+String(e&&e.message||e).slice(0,140)+')';m.hidden=false;
+      setTimeout(async()=>{try{const h=await start(false);remember(h);if(h.url){location.replace(h.url);return;}}catch(_){}
+        fail(T('We couldn\'t load the payment form. Please refresh, or message us on WhatsApp at '+WA+'.','تعذّر تحميل نموذج الدفع. حدّث الصفحة، أو راسلنا على واتساب على الرقم '+WA+'.'));},2500);
     }
   })();
 })();
@@ -426,6 +502,8 @@ for f in glob.glob(f"{D}/*.html"):
     # accepted payment methods, above the copyright line
     if 'class="pay-row"' not in s:
         s = s.replace('    <div class="legal">\n', '    <div class="legal">\n' + PAY_ROW, 1)
+    if 'src="cart.js"' not in s:
+        s = s.replace('<script src="site.js"></script>', '<script src="cart.js"></script>\n<script src="site.js"></script>', 1)
     # floating WhatsApp button on every page
     if 'class="wa-float"' not in s:
         s = s.replace("</body>", WA_FLOAT + "</body>", 1)
@@ -483,6 +561,43 @@ CSS = '''
 .pk-curbar select{width:auto;max-width:100%;min-width:0;margin:0;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);font:inherit;font-size:14px}
 .pk-curnote{color:var(--muted);font-size:13px}
 footer.site{padding-bottom:96px}
+.cart-btn{position:relative;display:inline-grid;place-items:center;width:40px;height:40px;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--ink);cursor:pointer}
+.cart-btn svg{width:21px;height:21px}
+.cart-btn:hover{background:var(--surface)}
+.cart-n{position:absolute;top:-6px;inset-inline-end:-6px;min-width:19px;height:19px;padding:0 5px;border-radius:999px;background:var(--red);color:#fff;font:700 11px/19px var(--body);text-align:center}
+.cart-wrap{position:fixed;inset:0;z-index:80}
+.cart-scrim{position:absolute;inset:0;background:rgba(15,18,22,.42);animation:cfade .2s ease}
+.cart{position:absolute;top:0;bottom:0;inset-inline-end:0;width:min(420px,100%);background:var(--bg,#fff);color:var(--ink);display:flex;flex-direction:column;box-shadow:-12px 0 40px rgba(0,0,0,.15);animation:cslide .25s ease}
+[dir=rtl] .cart{box-shadow:12px 0 40px rgba(0,0,0,.15);animation-name:cslider}
+@keyframes cfade{from{opacity:0}}@keyframes cslide{from{transform:translateX(30px);opacity:.6}}@keyframes cslider{from{transform:translateX(-30px);opacity:.6}}
+.cart-top{display:flex;justify-content:space-between;align-items:center;padding:18px 20px;border-bottom:1px solid var(--line)}
+.cart-top h2{margin:0;font:800 20px var(--display)}
+.cart-x{width:36px;height:36px;border:0;background:transparent;font-size:26px;line-height:1;color:var(--muted);cursor:pointer;border-radius:8px}
+.cart-x:hover{background:var(--surface);color:var(--ink)}
+.cart-body{flex:1;overflow:auto;padding:8px 20px}
+.cart-empty{color:var(--muted);padding:30px 0}
+.cart-list{list-style:none;margin:0;padding:0}
+.cart-list li{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:start;padding:16px 0;border-bottom:1px solid var(--line)}
+.cart-code{display:flex;align-items:center;justify-content:center;flex:none;width:46px;height:46px;border-radius:8px;background:var(--surface);font:900 17px var(--display);font-stretch:120%}
+.cart-code i{font-style:normal;color:var(--red)}
+.cart-code.plus{font-size:22px;color:var(--muted)}
+.cart-info b{display:block;font-size:14.5px;line-height:1.35}
+.cart-row{display:flex;gap:12px;align-items:center;margin-top:8px}
+.cart-qty{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:7px}
+.cart-qty button{width:28px;height:28px;border:0;background:transparent;cursor:pointer;font-size:16px;color:var(--ink)}
+.cart-qty b{min-width:20px;text-align:center;font-size:13px}
+.cart-rm{border:0;background:none;padding:0;color:var(--muted);text-decoration:underline;cursor:pointer;font-size:13px}
+.cart-price{font:700 15px var(--body);white-space:nowrap}
+.cart-foot{padding:16px 20px 20px;border-top:1px solid var(--line);display:grid;gap:12px}
+.cart-total{display:flex;justify-content:space-between;align-items:baseline;font-size:15px}
+.cart-total b{font:850 24px var(--display)}
+.cart-go{justify-content:center;width:100%}
+.cart-fine{margin:0;font-size:12px;color:var(--muted)}
+html.cart-open{overflow:hidden}
+.pk-addon:has(.pk-add){flex-direction:column;align-items:stretch;justify-content:space-between}
+.pk-addon-r{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.pk-add{border:1px solid var(--ink);background:var(--ink);color:var(--on-ink);border-radius:6px;padding:5px 12px;font:600 13px var(--body);cursor:pointer}
+.pk-add:hover{opacity:.88}
 .ck{padding-top:clamp(28px,4vw,48px)}
 .ck-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,520px);grid-template-areas:"sum pay" "more pay";column-gap:clamp(24px,4vw,56px);row-gap:22px;align-items:start;grid-template-rows:auto 1fr}
 .ck-more{grid-area:more;display:grid;gap:14px;align-content:start}
@@ -493,6 +608,23 @@ footer.site{padding-bottom:96px}
 [dir=rtl] .ck-back::before{content:"→ "}
 .ck-back:hover{color:var(--ink)}
 .ck-head{display:flex;gap:16px;align-items:center}
+.ck-title{font:800 clamp(26px,3vw,34px)/1.1 var(--display);margin:0}
+.ck-lines{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.ck-lines>li{padding:16px 0;border-bottom:1px solid var(--line);display:grid;gap:10px}
+.ck-line{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center}
+.ck-name b{display:block;font-size:16px}
+.ck-name small{display:block;font-weight:500;color:var(--muted);font-size:13.5px;margin-top:2px}
+.ck-qty{font-size:13px;color:var(--muted)}
+.ck-amt{font:700 16px var(--body);white-space:nowrap}
+.ck-lines .ck-items{border-top:0;padding:0;padding-inline-start:58px;gap:6px}
+.ck-lines .ck-items li{font-size:13.5px;color:var(--muted);padding-inline-start:22px}
+.ck-lines .ck-items li::before{width:13px;height:13px;background-size:10px}
+.ck-lines .ck-plus{font-style:italic;padding-inline-start:0!important}
+.ck-lines .ck-plus::before{display:none}
+.ck-lines .ck-dep{padding-inline-start:58px}
+.ck-totalrow{display:flex;justify-content:space-between;align-items:baseline;padding-top:4px}
+.ck-totalrow span{font-weight:600}
+.ck-totalrow b{font:850 clamp(28px,3vw,36px)/1 var(--display);font-variant-numeric:tabular-nums}
 .ck-head h1{font:800 clamp(26px,3vw,34px)/1.1 var(--display);margin:0}
 .ck-head p{margin:4px 0 0;color:var(--muted)}
 .ck-price{display:flex;align-items:baseline;gap:8px;font:850 clamp(34px,4vw,44px)/1 var(--display);font-variant-numeric:tabular-nums}
@@ -508,8 +640,7 @@ footer.site{padding-bottom:96px}
 .ck-trust svg{width:15px;height:15px;flex:none;margin-top:2px;color:var(--ink)}
 .ck-trust a{color:inherit}
 .ck-pay{background:#fff;border:1px solid var(--line);border-radius:14px;padding:clamp(8px,1.5vw,16px);box-shadow:0 10px 40px rgba(16,24,40,.06);min-height:420px}
-.ck-mount{min-height:400px}
-.ck-loading{display:flex;align-items:center;justify-content:center;gap:12px;min-height:400px;color:var(--muted);font-size:15px}
+.ck-loading{display:flex;align-items:center;justify-content:center;gap:12px;min-height:380px;color:var(--muted);font-size:15px}
 .ck-spin{width:18px;height:18px;border:2px solid var(--line);border-top-color:var(--ink);border-radius:50%;animation:ckspin .8s linear infinite}
 @keyframes ckspin{to{transform:rotate(360deg)}}
 @media (max-width:900px){.ck-grid{grid-template-columns:1fr;grid-template-areas:"sum" "pay" "more";grid-template-rows:auto}}

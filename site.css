@@ -572,6 +572,43 @@ footer.site .logo{color:#F3F5F7}
 .pk-curbar select{width:auto;max-width:100%;min-width:0;margin:0;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);font:inherit;font-size:14px}
 .pk-curnote{color:var(--muted);font-size:13px}
 footer.site{padding-bottom:96px}
+.cart-btn{position:relative;display:inline-grid;place-items:center;width:40px;height:40px;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--ink);cursor:pointer}
+.cart-btn svg{width:21px;height:21px}
+.cart-btn:hover{background:var(--surface)}
+.cart-n{position:absolute;top:-6px;inset-inline-end:-6px;min-width:19px;height:19px;padding:0 5px;border-radius:999px;background:var(--red);color:#fff;font:700 11px/19px var(--body);text-align:center}
+.cart-wrap{position:fixed;inset:0;z-index:80}
+.cart-scrim{position:absolute;inset:0;background:rgba(15,18,22,.42);animation:cfade .2s ease}
+.cart{position:absolute;top:0;bottom:0;inset-inline-end:0;width:min(420px,100%);background:var(--bg,#fff);color:var(--ink);display:flex;flex-direction:column;box-shadow:-12px 0 40px rgba(0,0,0,.15);animation:cslide .25s ease}
+[dir=rtl] .cart{box-shadow:12px 0 40px rgba(0,0,0,.15);animation-name:cslider}
+@keyframes cfade{from{opacity:0}}@keyframes cslide{from{transform:translateX(30px);opacity:.6}}@keyframes cslider{from{transform:translateX(-30px);opacity:.6}}
+.cart-top{display:flex;justify-content:space-between;align-items:center;padding:18px 20px;border-bottom:1px solid var(--line)}
+.cart-top h2{margin:0;font:800 20px var(--display)}
+.cart-x{width:36px;height:36px;border:0;background:transparent;font-size:26px;line-height:1;color:var(--muted);cursor:pointer;border-radius:8px}
+.cart-x:hover{background:var(--surface);color:var(--ink)}
+.cart-body{flex:1;overflow:auto;padding:8px 20px}
+.cart-empty{color:var(--muted);padding:30px 0}
+.cart-list{list-style:none;margin:0;padding:0}
+.cart-list li{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:start;padding:16px 0;border-bottom:1px solid var(--line)}
+.cart-code{display:flex;align-items:center;justify-content:center;flex:none;width:46px;height:46px;border-radius:8px;background:var(--surface);font:900 17px var(--display);font-stretch:120%}
+.cart-code i{font-style:normal;color:var(--red)}
+.cart-code.plus{font-size:22px;color:var(--muted)}
+.cart-info b{display:block;font-size:14.5px;line-height:1.35}
+.cart-row{display:flex;gap:12px;align-items:center;margin-top:8px}
+.cart-qty{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:7px}
+.cart-qty button{width:28px;height:28px;border:0;background:transparent;cursor:pointer;font-size:16px;color:var(--ink)}
+.cart-qty b{min-width:20px;text-align:center;font-size:13px}
+.cart-rm{border:0;background:none;padding:0;color:var(--muted);text-decoration:underline;cursor:pointer;font-size:13px}
+.cart-price{font:700 15px var(--body);white-space:nowrap}
+.cart-foot{padding:16px 20px 20px;border-top:1px solid var(--line);display:grid;gap:12px}
+.cart-total{display:flex;justify-content:space-between;align-items:baseline;font-size:15px}
+.cart-total b{font:850 24px var(--display)}
+.cart-go{justify-content:center;width:100%}
+.cart-fine{margin:0;font-size:12px;color:var(--muted)}
+html.cart-open{overflow:hidden}
+.pk-addon:has(.pk-add){flex-direction:column;align-items:stretch;justify-content:space-between}
+.pk-addon-r{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.pk-add{border:1px solid var(--ink);background:var(--ink);color:var(--on-ink);border-radius:6px;padding:5px 12px;font:600 13px var(--body);cursor:pointer}
+.pk-add:hover{opacity:.88}
 .ck{padding-top:clamp(28px,4vw,48px)}
 .ck-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,520px);grid-template-areas:"sum pay" "more pay";column-gap:clamp(24px,4vw,56px);row-gap:22px;align-items:start;grid-template-rows:auto 1fr}
 .ck-more{grid-area:more;display:grid;gap:14px;align-content:start}
@@ -582,6 +619,23 @@ footer.site{padding-bottom:96px}
 [dir=rtl] .ck-back::before{content:"→ "}
 .ck-back:hover{color:var(--ink)}
 .ck-head{display:flex;gap:16px;align-items:center}
+.ck-title{font:800 clamp(26px,3vw,34px)/1.1 var(--display);margin:0}
+.ck-lines{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.ck-lines>li{padding:16px 0;border-bottom:1px solid var(--line);display:grid;gap:10px}
+.ck-line{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center}
+.ck-name b{display:block;font-size:16px}
+.ck-name small{display:block;font-weight:500;color:var(--muted);font-size:13.5px;margin-top:2px}
+.ck-qty{font-size:13px;color:var(--muted)}
+.ck-amt{font:700 16px var(--body);white-space:nowrap}
+.ck-lines .ck-items{border-top:0;padding:0;padding-inline-start:58px;gap:6px}
+.ck-lines .ck-items li{font-size:13.5px;color:var(--muted);padding-inline-start:22px}
+.ck-lines .ck-items li::before{width:13px;height:13px;background-size:10px}
+.ck-lines .ck-plus{font-style:italic;padding-inline-start:0!important}
+.ck-lines .ck-plus::before{display:none}
+.ck-lines .ck-dep{padding-inline-start:58px}
+.ck-totalrow{display:flex;justify-content:space-between;align-items:baseline;padding-top:4px}
+.ck-totalrow span{font-weight:600}
+.ck-totalrow b{font:850 clamp(28px,3vw,36px)/1 var(--display);font-variant-numeric:tabular-nums}
 .ck-head h1{font:800 clamp(26px,3vw,34px)/1.1 var(--display);margin:0}
 .ck-head p{margin:4px 0 0;color:var(--muted)}
 .ck-price{display:flex;align-items:baseline;gap:8px;font:850 clamp(34px,4vw,44px)/1 var(--display);font-variant-numeric:tabular-nums}
@@ -597,8 +651,7 @@ footer.site{padding-bottom:96px}
 .ck-trust svg{width:15px;height:15px;flex:none;margin-top:2px;color:var(--ink)}
 .ck-trust a{color:inherit}
 .ck-pay{background:#fff;border:1px solid var(--line);border-radius:14px;padding:clamp(8px,1.5vw,16px);box-shadow:0 10px 40px rgba(16,24,40,.06);min-height:420px}
-.ck-mount{min-height:400px}
-.ck-loading{display:flex;align-items:center;justify-content:center;gap:12px;min-height:400px;color:var(--muted);font-size:15px}
+.ck-loading{display:flex;align-items:center;justify-content:center;gap:12px;min-height:380px;color:var(--muted);font-size:15px}
 .ck-spin{width:18px;height:18px;border:2px solid var(--line);border-top-color:var(--ink);border-radius:50%;animation:ckspin .8s linear infinite}
 @keyframes ckspin{to{transform:rotate(360deg)}}
 @media (max-width:900px){.ck-grid{grid-template-columns:1fr;grid-template-areas:"sum" "pay" "more";grid-template-rows:auto}}
