@@ -139,8 +139,7 @@ pk_body = hero_t("Packages", "Clear prices for forming your company abroad",
   </div>
 </section>'''
 
-PK_JS = '''<script src="https://static.airwallex.com/components/sdk/v1/index.js"></script>
-<script>
+PK_JS = '''<script>
 (function(){
   const tabs=[...document.querySelectorAll('.pk-tabs [role=tab]')];
   function sel(t,focus){tabs.forEach(b=>{const on=b===t;b.setAttribute('aria-selected',on);b.tabIndex=on?0:-1;document.getElementById(b.getAttribute('aria-controls')).hidden=!on;});if(focus)t.focus();try{history.replaceState(null,'','#'+t.dataset.k)}catch(e){}}
@@ -168,19 +167,7 @@ PK_JS = '''<script src="https://static.airwallex.com/components/sdk/v1/index.js"
   cs.addEventListener('change',()=>{apply(cs.value);try{localStorage.setItem('wizz-cur',cur)}catch(e){}});
   const msg=document.getElementById('pkMsg');
   function say(text){msg.textContent=text;msg.hidden=false;msg.scrollIntoView({block:'nearest',behavior:'smooth'});}
-  document.querySelectorAll('.pk-buy').forEach(btn=>btn.addEventListener('click',async()=>{
-    const kids=[...btn.childNodes];btn.disabled=true;btn.textContent=T('Opening secure checkout…','جارٍ فتح صفحة الدفع الآمنة…');msg.hidden=true;
-    try{
-      const r=await fetch('/.netlify/functions/checkout',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({sku:btn.dataset.sku,currency:cur})});
-      const d=await r.json().catch(()=>({}));
-      if(!r.ok){throw new Error(d.error==='not_configured'?T('Online payment is being set up. Message us on WhatsApp at +60 11-2447 7685 and we will send you a payment link.','الدفع الإلكتروني قيد الإعداد. راسلنا على واتساب على الرقم ‎+60 11-2447 7685 وسنرسل لك رابط الدفع.'):T('We couldn\\'t open the checkout. Please try again, or message us on WhatsApp at +60 11-2447 7685.','تعذّر فتح صفحة الدفع. حاول مرة أخرى، أو راسلنا على واتساب على الرقم ‎+60 11-2447 7685.'));}
-      if(d.url){try{sessionStorage.setItem('wizz-order',JSON.stringify({order:d.order_id,pkg:d.package}))}catch(e){}location.href=d.url;return;}
-      if(!window.AirwallexComponentsSDK)throw new Error(T('The payment page didn\\'t load. Check your connection and try again.','لم تُحمَّل صفحة الدفع. تحقّق من اتصالك وحاول مرة أخرى.'));
-      const {payments}=await window.AirwallexComponentsSDK.init({env:d.env,enabledElements:['payments']});
-      try{sessionStorage.setItem('wizz-order',JSON.stringify({order:d.order_id,pkg:d.package}))}catch(e){}
-      payments.redirectToCheckout({env:d.env,mode:'payment',currency:d.currency,intent_id:d.intent_id,client_secret:d.client_secret,successUrl:location.origin+'/thank-you.html?intent='+encodeURIComponent(d.intent_id)});
-    }catch(err){say(err.message);btn.disabled=false;btn.replaceChildren(...kids);}
-  }));
+  document.querySelectorAll('.pk-buy').forEach(btn=>btn.addEventListener('click',e=>{location.href='checkout.html?sku='+encodeURIComponent(btn.dataset.sku)+'&cur='+encodeURIComponent(cur);}));
 })();
 </script>
 '''
@@ -269,6 +256,97 @@ TY_JS = '''<script>
 </script>
 '''
 page("thank-you.html", "Thank you | Wizz Smart Services", "Payment confirmation and onboarding.", ty_body, scripts=ar_script() + TY_JS,
+     extra_head='<meta name="robots" content="noindex">')
+
+# ---------------- checkout page: our order summary + Stripe's embedded payment form
+CK_DATA = {}
+for c in COUNTRIES:
+    for t in c["tiers"]:
+        if not t.get("sku"): continue
+        CK_DATA[t["sku"]] = {"c": c["c"], "n": [c["n"], AR_SRC[c["n"]]], "t": [t["n"], AR_SRC[t["n"]]],
+            "plus": [t["plus"], AR_SRC[t["plus"]]] if t.get("plus") else None,
+            "i": [t["i"], [AR_SRC[x] for x in t["i"]]], "dep": bool(t.get("deposit"))}
+LOCK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 1a5 5 0 0 0-5 5v4H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5zm-3 9V6a3 3 0 1 1 6 0v4z"/></svg>'
+ck_body = f"""<section class="block ck">
+  <div class="wrap ck-grid">
+    <aside class="ck-sum" aria-labelledby="ckTitle">
+      <a class="ck-back" href="packages.html"{tk("All packages")}>All packages</a>
+      <p class="eyebrow"{tk("Secure checkout")}>Secure checkout</p>
+      <div class="ck-head"><span class="pk-code ltr" id="ckCode"></span><div><h1 id="ckTitle"></h1><p id="ckCountry"></p></div></div>
+      <div class="ck-price"><span id="ckPrice" class="ltr">…</span><small id="ckCur"></small></div>
+      <p class="ck-dep" id="ckDep" hidden{tk("Deposit, credited to your final package price.")}>Deposit, credited to your final package price.</p>
+      <p class="pk-plus" id="ckPlus" hidden></p>
+      <ul class="ck-items" id="ckItems"></ul>
+    </aside>
+    <div class="ck-more">
+      <h2 class="ck-h"{tk("What happens next")}>What happens next</h2>
+      <ol class="ck-steps">
+        <li{tk("You pay securely on this page.")}>You pay securely on this page.</li>
+        <li{tk("You fill in a short onboarding form.")}>You fill in a short onboarding form.</li>
+        <li{tk("We confirm everything with you before anything is filed.")}>We confirm everything with you before anything is filed.</li>
+      </ol>
+      <div class="ck-trust">
+        <p>{LOCK}<span{tk("Payments are processed by Stripe. We never see your full card details.")}>Payments are processed by Stripe. We never see your full card details.</span></p>
+        <p><a href="refund.html"{tk("Refund Policy")}>Refund Policy</a> · <a href="terms.html"{tk("Terms of Service")}>Terms of Service</a> · <a href="https://wa.me/601124477685" target="_blank" rel="noopener"{tk("Questions? WhatsApp us")}>Questions? WhatsApp us</a></p>
+      </div>
+    </div>
+    <div class="ck-pay">
+      <div id="ckMount" class="ck-mount"><div class="ck-loading" id="ckLoading"><span class="ck-spin" aria-hidden="true"></span><span{tk("Loading secure payment form…")}>Loading secure payment form…</span></div></div>
+      <div class="pk-msg" id="ckMsg" role="status" hidden></div>
+    </div>
+  </div>
+</section>"""
+CK_JS = """<script>
+(function(){
+  const DATA=""" + json.dumps(CK_DATA, ensure_ascii=False) + """;
+  const qs=new URLSearchParams(location.search);const sku=qs.get('sku')||'';const cur=(qs.get('cur')||'USD').toUpperCase();
+  const d=DATA[sku];if(!d){location.replace('packages.html');return;}
+  const ar=()=>document.documentElement.lang==='ar';const L=a=>a[ar()?1:0];const T=(en,a)=>ar()?a:en;
+  const $=id=>document.getElementById(id);let paid=null;
+  function fmt(n,c){try{return new Intl.NumberFormat('en-US',{style:'currency',currency:c,currencyDisplay:'narrowSymbol',maximumFractionDigits:2,minimumFractionDigits:0}).format(n)}catch(e){return c+' '+n}}
+  function render(){
+    $('ckCode').innerHTML=d.c+'<i>.</i>';$('ckTitle').textContent=L(d.t);$('ckCountry').textContent=L(d.n);
+    $('ckDep').hidden=!d.dep;
+    if(d.plus){$('ckPlus').hidden=false;$('ckPlus').textContent=L(d.plus);}
+    $('ckItems').innerHTML=L(d.i).map(x=>'<li>'+x.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))+'</li>').join('');
+    if(paid){$('ckPrice').textContent=fmt(paid.amount,paid.currency);$('ckCur').textContent=/[A-Z]{3}/.test($('ckPrice').textContent)?'':paid.currency;}
+    document.title=L(d.t)+' · '+L(d.n)+' | Wizz Smart Services';
+  }
+  document.addEventListener('wizz:lang',render);render();
+  function fail(msg){$('ckLoading').hidden=true;const m=$('ckMsg');m.innerHTML=msg;m.hidden=false;}
+  const WA='<span class="ltr">+60 11-2447 7685</span>';
+  async function start(embedded){
+    const r=await fetch('/.netlify/functions/checkout',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({sku,currency:cur,embedded})});
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok)throw Object.assign(new Error('server'),{code:j.error});
+    return j;
+  }
+  function loadStripe(){return new Promise((ok,no)=>{if(window.Stripe)return ok();const s=document.createElement('script');s.src='https://js.stripe.com/dahlia/stripe.js';s.onload=ok;s.onerror=no;document.head.appendChild(s);});}
+  (async()=>{
+    let j;
+    try{j=await start(true);}catch(e){
+      return fail(e.code==='not_configured'?T('Online payment is being set up. Message us on WhatsApp at '+WA+' and we will send you a payment link.','الدفع الإلكتروني قيد الإعداد. راسلنا على واتساب على الرقم '+WA+' وسنرسل لك رابط الدفع.'):T('We couldn\\'t open the checkout. Please try again, or message us on WhatsApp at '+WA+'.','تعذّر فتح صفحة الدفع. حاول مرة أخرى، أو راسلنا على واتساب على الرقم '+WA+'.'));
+    }
+    paid={amount:j.amount,currency:j.currency};render();
+    try{sessionStorage.setItem('wizz-order',JSON.stringify({order:j.order_id,pkg:j.package}))}catch(e){}
+    if(j.url){location.replace(j.url);return;}
+    if(!j.embedded){return fail(T('Please message us on WhatsApp at '+WA+' to complete your payment.','راسلنا على واتساب على الرقم '+WA+' لإكمال الدفع.'));}
+    try{
+      await loadStripe();
+      const stripe=window.Stripe(j.publishable_key);
+      const make=stripe.createEmbeddedCheckoutPage||stripe.initEmbeddedCheckout;
+      const page=await make.call(stripe,{fetchClientSecret:()=>Promise.resolve(j.client_secret)});
+      $('ckLoading').hidden=true;page.mount('#ckMount');
+    }catch(e){
+      // embedded form couldn't load here: fall back to Stripe's own payment page
+      try{const h=await start(false);if(h.url){location.replace(h.url);return;}}catch(_){}
+      fail(T('We couldn\\'t load the payment form. Please refresh, or message us on WhatsApp at '+WA+'.','تعذّر تحميل نموذج الدفع. حدّث الصفحة، أو راسلنا على واتساب على الرقم '+WA+'.'));
+    }
+  })();
+})();
+</script>
+"""
+page("checkout.html", "Checkout | Wizz Smart Services", "Secure checkout for Wizz Smart Services packages.", ck_body, scripts=ar_script() + CK_JS,
      extra_head='<meta name="robots" content="noindex">')
 
 # ---------------- legal pages
@@ -405,6 +483,38 @@ CSS = '''
 .pk-curbar select{width:auto;max-width:100%;min-width:0;margin:0;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);font:inherit;font-size:14px}
 .pk-curnote{color:var(--muted);font-size:13px}
 footer.site{padding-bottom:96px}
+.ck{padding-top:clamp(28px,4vw,48px)}
+.ck-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,520px);grid-template-areas:"sum pay" "more pay";column-gap:clamp(24px,4vw,56px);row-gap:22px;align-items:start;grid-template-rows:auto 1fr}
+.ck-more{grid-area:more;display:grid;gap:14px;align-content:start}
+.ck-pay{grid-area:pay}
+.ck-sum{grid-area:sum;display:grid;gap:14px}
+.ck-back{font-size:14px;color:var(--muted);text-decoration:none;width:fit-content}
+.ck-back::before{content:"← "}
+[dir=rtl] .ck-back::before{content:"→ "}
+.ck-back:hover{color:var(--ink)}
+.ck-head{display:flex;gap:16px;align-items:center}
+.ck-head h1{font:800 clamp(26px,3vw,34px)/1.1 var(--display);margin:0}
+.ck-head p{margin:4px 0 0;color:var(--muted)}
+.ck-price{display:flex;align-items:baseline;gap:8px;font:850 clamp(34px,4vw,44px)/1 var(--display);font-variant-numeric:tabular-nums}
+.ck-price small{font:500 14px var(--body);color:var(--muted)}
+.ck-dep{margin:0;color:var(--muted);font-size:14px}
+.ck-items{list-style:none;margin:0;padding:16px 0 0;border-top:1px solid var(--line);display:grid;gap:10px}
+.ck-items li{position:relative;padding-inline-start:26px;font-size:15px}
+.ck-items li::before{content:"";position:absolute;inset-inline-start:0;top:3px;width:16px;height:16px;border-radius:50%;background:var(--ink) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8.2l2.4 2.4L12 5' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/12px no-repeat}
+.ck-h{font:700 15px var(--body);margin:10px 0 0}
+.ck-steps{margin:0;padding-inline-start:20px;display:grid;gap:6px;color:var(--muted);font-size:14.5px}
+.ck-trust{border-top:1px solid var(--line);padding-top:14px;display:grid;gap:8px;font-size:13.5px;color:var(--muted)}
+.ck-trust p{margin:0;display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap}
+.ck-trust svg{width:15px;height:15px;flex:none;margin-top:2px;color:var(--ink)}
+.ck-trust a{color:inherit}
+.ck-pay{background:#fff;border:1px solid var(--line);border-radius:14px;padding:clamp(8px,1.5vw,16px);box-shadow:0 10px 40px rgba(16,24,40,.06);min-height:420px}
+.ck-mount{min-height:400px}
+.ck-loading{display:flex;align-items:center;justify-content:center;gap:12px;min-height:400px;color:var(--muted);font-size:15px}
+.ck-spin{width:18px;height:18px;border:2px solid var(--line);border-top-color:var(--ink);border-radius:50%;animation:ckspin .8s linear infinite}
+@keyframes ckspin{to{transform:rotate(360deg)}}
+@media (max-width:900px){.ck-grid{grid-template-columns:1fr;grid-template-areas:"sum" "pay" "more";grid-template-rows:auto}}
+body[data-page="checkout"] .wa-float .wa-tip{display:none}
+body[data-page="checkout"] .wa-float{width:56px;padding:0;justify-content:center}
 .g-label.g-uk{margin-left:-30px}
 .g-label.g-nl{margin:-20px 0 0 2px}
 .g-label.g-fr{margin-left:-30px}
@@ -452,6 +562,6 @@ css = css.split("\n/* ===== v6: packages")[0].rstrip("\n") + "\n"
 open(f"{D}/site.css", "w").write(css + CSS)
 
 # sitemap
-pages = sorted(os.path.basename(p) for p in glob.glob(f"{D}/*.html") if not p.endswith("thank-you.html"))
+pages = sorted(os.path.basename(p) for p in glob.glob(f"{D}/*.html") if not p.endswith(("thank-you.html", "checkout.html")))
 open(f"{D}/sitemap.xml", "w").write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "".join(f'  <url><loc>https://wizz.com.my/{"" if p=="index.html" else p}</loc></url>\n' for p in pages) + "</urlset>\n")
 print("built", pages)

@@ -321,3 +321,16 @@ AR.update({
 "Passport copies must be certified with an apostille for the notary; we arrange this at cost.": "يجب توثيق نسخ جوازات السفر بالأبوستيل لكاتب العدل، ونرتّب ذلك بتكلفته الفعلية.",
 "Bookkeeping, VAT returns and annual accounts are yearly obligations, quoted separately.": "مسك الدفاتر وإقرارات ضريبة القيمة المضافة والحسابات السنوية التزامات سنوية لها عرض سعر منفصل.",
 })
+
+# ---- checkout page
+AR.update({
+"All packages": "كل الباقات",
+"Secure checkout": "دفع آمن",
+"Deposit, credited to your final package price.": "عربون يُخصم من السعر النهائي لباقتك.",
+"You pay securely on this page.": "تدفع بأمان في هذه الصفحة.",
+"You fill in a short onboarding form.": "تملأ نموذج بيانات قصيراً.",
+"We confirm everything with you before anything is filed.": "نؤكّد معك كل التفاصيل قبل تقديم أي شيء.",
+"Payments are processed by Stripe. We never see your full card details.": "تتم معالجة المدفوعات عبر Stripe، ولا نطّلع على بيانات بطاقتك الكاملة.",
+"Questions? WhatsApp us": "لديك سؤال؟ راسلنا على واتساب",
+"Loading secure payment form…": "جارٍ تحميل نموذج الدفع الآمن…",
+})

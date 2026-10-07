@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Checkout | Wizz Smart Services</title>
+<meta name="description" content="Secure checkout for Wizz Smart Services packages.">
+<meta property="og:title" content="Checkout | Wizz Smart Services">
+<meta property="og:description" content="Secure checkout for Wizz Smart Services packages.">
+<meta property="og:image" content="https://wizz.com.my/og.png">
+<meta property="og:url" content="https://wizz.com.my/checkout.html">
+<link rel="canonical" href="https://wizz.com.my/checkout.html">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#F3F5F7">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="site.css">
+<meta name="robots" content="noindex">
+</head>
+<body data-page="checkout">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="wz" viewBox="330 428 420 204">
+    <g fill="currentColor">
+      <polygon points="332,485 369,485 369,530 405,485 441,485 441,557 459,557 459,485 495,485 495,593 405,593 405,549 369,593 332,593"/>
+      <rect x="513" y="485" width="36" height="108"/>
+      <polygon points="567,485 657,485 657,521 621,557 657,557 657,593 567,593 567,557 603,521 567,521"/>
+      <polygon points="657,521 747,521 747,557 711,593 747,593 747,629 657,629 657,593 693,557 657,557"/>
+    </g>
+    <circle cx="530.5" cy="449.5" r="19.5" fill="#E01B22"/>
+  </symbol>
+</svg>
+<header class="site">
+  <div class="wrap bar">
+    <a class="logo" href="index.html" aria-label="Wizz Smart Services home"><svg viewBox="330 428 420 204" aria-hidden="true"><use href="#wz"/></svg></a>
+    <nav class="main" id="mainNav" aria-label="Main">
+      <a href="packages.html" data-i18n="nav_pkgs">Packages</a>
+      <a href="services.html" data-i18n="nav_services">Services</a>
+      <a href="countries.html" data-i18n="nav_countries">Countries</a>
+      <a href="marketplaces.html" data-i18n="nav_mp">Marketplaces</a>
+      <a href="about.html" data-i18n="nav_about">About</a>
+      <a href="blog.html" data-i18n="nav_blog">Blog</a>
+      <a href="contact.html" data-i18n="nav_contact">Contact</a>
+    </nav>
+    <div class="tools">
+      <button class="lang" id="langBtn" type="button" aria-label="Switch language">العربية</button>
+      <a class="btn solid small hide-sm" href="contact.html"><span class="dot"></span><span data-i18n="cta_short">Free consultation</span></a>
+      <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="mainNav"><span></span><span></span><span class="sr" data-i18n="menu">Menu</span></button>
+    </div>
+  </div>
+</header>
+<main id="top">
+<section class="block ck">
+  <div class="wrap ck-grid">
+    <aside class="ck-sum" aria-labelledby="ckTitle">
+      <a class="ck-back" href="packages.html" data-i18n="pk_febf7a91" data-html>All packages</a>
+      <p class="eyebrow" data-i18n="pk_4d1d24de" data-html>Secure checkout</p>
+      <div class="ck-head"><span class="pk-code ltr" id="ckCode"></span><div><h1 id="ckTitle"></h1><p id="ckCountry"></p></div></div>
+      <div class="ck-price"><span id="ckPrice" class="ltr">…</span><small id="ckCur"></small></div>
+      <p class="ck-dep" id="ckDep" hidden data-i18n="pk_f8ad2d90" data-html>Deposit, credited to your final package price.</p>
+      <p class="pk-plus" id="ckPlus" hidden></p>
+      <ul class="ck-items" id="ckItems"></ul>
+    </aside>
+    <div class="ck-more">
+      <h2 class="ck-h" data-i18n="pk_a273f1bc" data-html>What happens next</h2>
+      <ol class="ck-steps">
+        <li data-i18n="pk_7178137d" data-html>You pay securely on this page.</li>
+        <li data-i18n="pk_5f640fbb" data-html>You fill in a short onboarding form.</li>
+        <li data-i18n="pk_b5806ff6" data-html>We confirm everything with you before anything is filed.</li>
+      </ol>
+      <div class="ck-trust">
+        <p><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 1a5 5 0 0 0-5 5v4H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5zm-3 9V6a3 3 0 1 1 6 0v4z"/></svg><span data-i18n="pk_2c804c70" data-html>Payments are processed by Stripe. We never see your full card details.</span></p>
+        <p><a href="refund.html" data-i18n="pk_b3966088" data-html>Refund Policy</a> · <a href="terms.html" data-i18n="pk_3b6c2b4c" data-html>Terms of Service</a> · <a href="https://wa.me/601124477685" target="_blank" rel="noopener" data-i18n="pk_f2a607ce" data-html>Questions? WhatsApp us</a></p>
+      </div>
+    </div>
+    <div class="ck-pay">
+      <div id="ckMount" class="ck-mount"><div class="ck-loading" id="ckLoading"><span class="ck-spin" aria-hidden="true"></span><span data-i18n="pk_92178acb" data-html>Loading secure payment form…</span></div></div>
+      <div class="pk-msg" id="ckMsg" role="status" hidden></div>
+    </div>
+  </div>
+</section>
+</main>
+<footer class="site">
+  <div class="wrap">
+    <div class="foot">
+      <div class="foot-brand">
+        <a class="logo" href="index.html" aria-label="Wizz"><svg viewBox="330 428 420 204" aria-hidden="true"><use href="#wz"/></svg></a>
+        <p data-i18n="f_tag">Build your business beyond borders. Company formation, banking setup, marketplaces, Amazon FBA prep and logistics across 13 countries.</p>
+      </div>
+      <div><h4 data-i18n="nav_services">Services</h4><ul>
+          <li><a href="services.html#formation" data-i18n="s1_t">International company formation</a></li>
+          <li><a href="services.html#banking" data-i18n="s3_t">Business banking and payment setup</a></li>
+          <li><a href="services.html#ecommerce" data-i18n="s4_t">E-commerce business setup</a></li>
+          <li><a href="services.html#fba" data-i18n="s8_t">Amazon FBA preparation from Malaysia</a></li>
+          <li><a href="services.html#logistics" data-i18n="s7_t">Logistics and shipping</a></li>
+        </ul></div>
+      <div><h4 data-i18n="nav_countries">Countries</h4><ul>
+          <li><a href="countries.html#na" data-i18n="rg_na">North America</a></li>
+          <li><a href="countries.html#eu" data-i18n="rg_eu">Europe</a></li>
+          <li><a href="countries.html#me" data-i18n="rg_me">Middle East</a></li>
+          <li><a href="countries.html#as" data-i18n="rg_as">Asia</a></li>
+        </ul></div>
+      <div><h4 data-i18n="nav_contact">Contact</h4><ul>
+          <li class="ltr"><a href="https://wa.me/601124477685" target="_blank" rel="noopener">+60 11-2447 7685</a></li>
+          <li class="ltr"><a href="mailto:info@wizz.com.my">info@wizz.com.my</a></li>
+          <li class="social"><a href="https://www.instagram.com/wizz.com.my/" target="_blank" rel="noopener">Instagram</a> · <a href="https://www.tiktok.com/@wizz.com.my" target="_blank" rel="noopener">TikTok</a> <span class="ltr">@wizz.com.my</span></li>
+          <li><a href="about.html" data-i18n="nav_about">About</a> · <a href="blog.html" data-i18n="nav_blog">Blog</a></li>
+        </ul></div>
+      <div><h4 data-i18n="nav_legal">Legal</h4><ul>
+          <li><a href="terms.html" data-i18n="lg_terms">Terms of Service</a></li>
+          <li><a href="refund.html" data-i18n="lg_refund">Refund Policy</a></li>
+          <li><a href="privacy.html" data-i18n="lg_privacy">Privacy Policy</a></li>
+        </ul></div>
+    </div>
+    <div class="legal">
+      <div class="pay-row"><span class="pay-label" data-i18n="pay_secure">Secure payments by Stripe</span><ul class="pay-list" aria-label="Accepted payment methods"><li>Visa</li><li>Mastercard</li><li>UnionPay</li><li>Apple Pay</li><li>Google Pay</li><li>Link</li><li>FPX</li><li>GrabPay</li></ul></div>
+      <span class="ltr">© 2026 WIZZ SMART SERVICES SDN. BHD. · Reg. No. 202501029005 · B2-2-3, Publika, Solaris Dutamas, 50480 Kuala Lumpur, Malaysia</span>
+      <span data-i18n="disclaimer">Wizz Smart Services is a business services company and does not provide legal or tax advice. Bank, payment-provider, marketplace and government approvals are made by those third parties and are not guaranteed. Forming a company does not grant a visa or residency.</span>
+    </div>
+  </div>
+</footer>
+<script>window.WIZZ_AR={"pk_febf7a91": "كل الباقات", "pk_4d1d24de": "دفع آمن", "pk_f8ad2d90": "عربون يُخصم من السعر النهائي لباقتك.", "pk_a273f1bc": "ماذا يحدث بعد ذلك", "pk_7178137d": "تدفع بأمان في هذه الصفحة.", "pk_5f640fbb": "تملأ نموذج بيانات قصيراً.", "pk_b5806ff6": "نؤكّد معك كل التفاصيل قبل تقديم أي شيء.", "pk_2c804c70": "تتم معالجة المدفوعات عبر Stripe، ولا نطّلع على بيانات بطاقتك الكاملة.", "pk_b3966088": "سياسة الاسترداد", "pk_3b6c2b4c": "شروط الخدمة", "pk_f2a607ce": "لديك سؤال؟ راسلنا على واتساب", "pk_92178acb": "جارٍ تحميل نموذج الدفع الآمن…"};</script>
+<script>
+(function(){
+  const DATA={"us-starter": {"c": "US", "n": ["United States", "الولايات المتحدة"], "t": ["Starter", "الأساسية"], "plus": null, "i": [["State filing fee included", "Articles of organization & operating agreement", "EIN application for non-residents", "Registered agent, 12 months", "Digital document pack"], ["رسوم التسجيل في الولاية مشمولة", "عقد التأسيس واتفاقية التشغيل", "طلب الرقم الضريبي (EIN) لغير المقيمين", "وكيل مسجّل لمدة 12 شهراً", "ملف المستندات الرقمية"]], "dep": false}, "us-business": {"c": "US", "n": ["United States", "الولايات المتحدة"], "t": ["Business", "الأعمال"], "plus": ["Everything in Starter, plus", "كل ما في الأساسية، بالإضافة إلى"], "i": [["US business mailing address, 12 months", "Business account application support (one provider)", "Amazon / Shopify readiness call"], ["عنوان بريدي تجاري في أمريكا لمدة 12 شهراً", "دعم طلب حساب تجاري (مزوّد واحد)", "مكالمة تجهيز للبيع على أمازون / شوبيفاي"]], "dep": false}, "us-complete": {"c": "US", "n": ["United States", "الولايات المتحدة"], "t": ["Complete", "الشاملة"], "plus": ["Everything in Business, plus", "كل ما في الأعمال، بالإضافة إلى"], "i": [["First-year Form 5472 + pro-forma 1120 filing", "State annual report filing", "Compliance calendar & reminders"], ["تقديم نموذج 5472 ونموذج 1120 الشكلي للسنة الأولى", "تقديم التقرير السنوي للولاية", "تقويم الالتزامات وتذكيرات بالمواعيد"]], "dep": false}, "uk-starter": {"c": "UK", "n": ["United Kingdom", "المملكة المتحدة"], "t": ["Starter", "الأساسية"], "plus": null, "i": [["Companies House fee (£100) included", "Director identity verification", "Registered office address, 12 months", "Share certificates & digital documents"], ["رسوم Companies House (100 جنيه إسترليني) مشمولة", "التحقق من هوية المدير", "عنوان مكتب مسجّل لمدة 12 شهراً", "شهادات الأسهم والمستندات الرقمية"]], "dep": false}, "uk-business": {"c": "UK", "n": ["United Kingdom", "المملكة المتحدة"], "t": ["Business", "الأعمال"], "plus": ["Everything in Starter, plus", "كل ما في الأساسية، بالإضافة إلى"], "i": [["Director service address, 12 months", "HMRC Corporation Tax (UTR) registration", "Business account application support", "VAT registration if needed"], ["عنوان خدمة للمدير لمدة 12 شهراً", "التسجيل في ضريبة الشركات لدى HMRC (رقم UTR)", "دعم طلب الحساب التجاري", "التسجيل في ضريبة القيمة المضافة عند الحاجة"]], "dep": false}, "uk-complete": {"c": "UK", "n": ["United Kingdom", "المملكة المتحدة"], "t": ["Complete", "الشاملة"], "plus": ["Everything in Business, plus", "كل ما في الأعمال، بالإضافة إلى"], "i": [["First-year accounts via our accountant partner", "Confirmation statement filing (£50 fee included)"], ["حسابات السنة الأولى عبر المحاسب الشريك لنا", "تقديم بيان التأكيد السنوي (رسوم 50 جنيهاً إسترلينياً مشمولة)"]], "dep": false}, "ca-starter": {"c": "CA", "n": ["Canada", "كندا"], "t": ["Starter", "الأساسية"], "plus": null, "i": [["Government fees & NUANS name search included", "Articles & bylaws", "Business Number (BN) registration", "Digital minute book"], ["الرسوم الحكومية والبحث عن الاسم عبر NUANS مشمولة", "عقد التأسيس واللوائح الداخلية", "التسجيل للحصول على رقم الأعمال (BN)", "سجل المحاضر الرقمي"]], "dep": false}, "ca-business": {"c": "CA", "n": ["Canada", "كندا"], "t": ["Business", "الأعمال"], "plus": ["Everything in Starter, plus", "كل ما في الأساسية، بالإضافة إلى"], "i": [["Registered office address, 12 months", "GST/HST registration", "Business account application support", "Amazon.ca readiness call"], ["عنوان مكتب مسجّل لمدة 12 شهراً", "التسجيل في ضريبة GST/HST", "دعم طلب الحساب التجاري", "مكالمة تجهيز للبيع على Amazon.ca"]], "dep": false}, "ee-starter": {"c": "EE", "n": ["Estonia", "إستونيا"], "t": ["Starter", "الأساسية"], "plus": null, "i": [["State fee (€265) included", "Articles of association", "Legal address & contact person, 12 months", "Registration guidance for e-Residency holders"], ["الرسوم الحكومية (265 يورو) مشمولة", "النظام الأساسي للشركة", "عنوان قانوني وشخص اتصال لمدة 12 شهراً", "إرشاد التسجيل لحاملي الإقامة الإلكترونية"]], "dep": false}, "ee-business": {"c": "EE", "n": ["Estonia", "إستونيا"], "t": ["Business", "الأعمال"], "plus": ["Everything in Starter, plus", "كل ما في الأساسية، بالإضافة إلى"], "i": [["VAT registration if needed", "Business account (EMI) application support", "Accounting partner introduction"], ["التسجيل في ضريبة القيمة المضافة عند الحاجة", "دعم طلب حساب تجاري لدى مؤسسة نقود إلكترونية (EMI)", "تعريفك بمحاسب شريك"]], "dep": false}, "fr-starter": {"c": "FR", "n": ["France", "فرنسا"], "t": ["Starter", "الأساسية"], "plus": null, "i": [["Articles (statuts) drafted", "Legal notice publication included", "Guichet unique filing & registration", "Registered address (domiciliation), 12 months"], ["صياغة النظام الأساسي (statuts)", "نشر الإعلان القانوني مشمول", "التقديم والتسجيل عبر البوابة الموحّدة (Guichet unique)", "عنوان مسجّل (domiciliation) لمدة 12 شهراً"]], "dep": false}, "fr-business": {"c": "FR", "n": ["France", "فرنسا"], "t": ["Business", "الأعمال"], "plus": ["Everything in Starter, plus", "كل ما في الأساسية، بالإضافة إلى"], "i": [["Capital deposit & bank account support", "EU VAT number registration", "Cdiscount / Octopia seller readiness"], ["إيداع رأس المال ودعم فتح الحساب البنكي", "التسجيل للحصول على رقم ضريبة القيمة المضافة الأوروبي", "التجهيز للبيع على Cdiscount / Octopia"]], "dep": false}, "nl-starter": {"c": "NL", "n": ["Netherlands", "هولندا"], "t": ["Starter", "الأساسية"], "plus": null, "i": [["Notary deed & articles of association", "Chamber of Commerce (KVK) registration fee included", "Shareholder register & UBO registration", "Dutch business address, 12 months", "Remote signing by power of attorney"], ["عقد التأسيس لدى كاتب العدل والنظام الأساسي", "رسوم التسجيل في غرفة التجارة (KVK) مشمولة", "سجل المساهمين وتسجيل المستفيد الحقيقي (UBO)", "عنوان تجاري في هولندا لمدة 12 شهراً", "التوقيع عن بُعد بموجب توكيل"]], "dep": false}, "nl-business": {"c": "NL", "n": ["Netherlands", "هولندا"], "t": ["Business", "الأعمال"], "plus": ["Everything in Starter, plus", "كل ما في الأساسية، بالإضافة إلى"], "i": [["VAT number & EORI registration", "Business account (EMI) application support", "Amazon EU / Bol.com readiness call", "Accounting partner introduction"], ["رقم ضريبة القيمة المضافة والتسجيل في EORI", "دعم طلب حساب تجاري لدى مؤسسة نقود إلكترونية (EMI)", "مكالمة تجهيز للبيع على أمازون أوروبا / Bol.com", "تعريفك بمحاسب شريك"]], "dep": false}, "ae-deposit": {"c": "AE", "n": ["UAE", "الإمارات"], "t": ["Free zone, no visa", "منطقة حرة بدون تأشيرة"], "plus": null, "i": [["Licence in a cost-effective free zone", "Company documents & registration", "Bank account application support"], ["رخصة في منطقة حرة مناسبة التكلفة", "مستندات الشركة والتسجيل", "دعم طلب الحساب البنكي"]], "dep": true}, "ae-deposit-visa": {"c": "AE", "n": ["UAE", "الإمارات"], "t": ["Free zone + 1 visa", "منطقة حرة + تأشيرة واحدة"], "plus": ["Everything in no-visa, plus", "كل ما في باقة بدون تأشيرة، بالإضافة إلى"], "i": [["One investor/employee visa", "Emirates ID & medical coordination", "Corporate tax registration"], ["تأشيرة واحدة لمستثمر أو موظف", "تنسيق الهوية الإماراتية والفحص الطبي", "التسجيل في ضريبة الشركات"]], "dep": true}, "sa-assessment": {"c": "SA", "n": ["Saudi Arabia", "السعودية"], "t": ["Market-entry assessment", "تقييم دخول السوق"], "plus": null, "i": [["Activity & licence route review", "Capital and Saudization overview", "Written plan and quote", "Credited if you go ahead"], ["مراجعة النشاط ومسار الترخيص", "نظرة عامة على رأس المال ونسب السعودة", "خطة مكتوبة وعرض سعر", "يُخصم المبلغ إذا قررت المتابعة"]], "dep": false}, "my-starter": {"c": "MY", "n": ["Malaysia", "ماليزيا"], "t": ["Starter", "الأساسية"], "plus": null, "i": [["SSM incorporation fee included", "Company secretary, 12 months", "Registered address, 12 months", "Constitution & company documents"], ["رسوم التأسيس لدى SSM مشمولة", "سكرتير الشركة لمدة 12 شهراً", "عنوان مسجّل لمدة 12 شهراً", "دستور الشركة ومستنداتها"]], "dep": false}, "my-business": {"c": "MY", "n": ["Malaysia", "ماليزيا"], "t": ["Business", "الأعمال"], "plus": ["Everything in Starter, plus", "كل ما في الأساسية، بالإضافة إلى"], "i": [["Bank account application support", "Shopee / Lazada / TikTok Shop setup call", "SST & licence check"], ["دعم طلب الحساب البنكي", "مكالمة إعداد للبيع على شوبي / لازادا / تيك توك شوب", "مراجعة ضريبة المبيعات والخدمات (SST) والتراخيص"]], "dep": false}};
+  const qs=new URLSearchParams(location.search);const sku=qs.get('sku')||'';const cur=(qs.get('cur')||'USD').toUpperCase();
+  const d=DATA[sku];if(!d){location.replace('packages.html');return;}
+  const ar=()=>document.documentElement.lang==='ar';const L=a=>a[ar()?1:0];const T=(en,a)=>ar()?a:en;
+  const $=id=>document.getElementById(id);let paid=null;
+  function fmt(n,c){try{return new Intl.NumberFormat('en-US',{style:'currency',currency:c,currencyDisplay:'narrowSymbol',maximumFractionDigits:2,minimumFractionDigits:0}).format(n)}catch(e){return c+' '+n}}
+  function render(){
+    $('ckCode').innerHTML=d.c+'<i>.</i>';$('ckTitle').textContent=L(d.t);$('ckCountry').textContent=L(d.n);
+    $('ckDep').hidden=!d.dep;
+    if(d.plus){$('ckPlus').hidden=false;$('ckPlus').textContent=L(d.plus);}
+    $('ckItems').innerHTML=L(d.i).map(x=>'<li>'+x.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))+'</li>').join('');
+    if(paid){$('ckPrice').textContent=fmt(paid.amount,paid.currency);$('ckCur').textContent=/[A-Z]{3}/.test($('ckPrice').textContent)?'':paid.currency;}
+    document.title=L(d.t)+' · '+L(d.n)+' | Wizz Smart Services';
+  }
+  document.addEventListener('wizz:lang',render);render();
+  function fail(msg){$('ckLoading').hidden=true;const m=$('ckMsg');m.innerHTML=msg;m.hidden=false;}
+  const WA='<span class="ltr">+60 11-2447 7685</span>';
+  async function start(embedded){
+    const r=await fetch('/.netlify/functions/checkout',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({sku,currency:cur,embedded})});
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok)throw Object.assign(new Error('server'),{code:j.error});
+    return j;
+  }
+  function loadStripe(){return new Promise((ok,no)=>{if(window.Stripe)return ok();const s=document.createElement('script');s.src='https://js.stripe.com/dahlia/stripe.js';s.onload=ok;s.onerror=no;document.head.appendChild(s);});}
+  (async()=>{
+    let j;
+    try{j=await start(true);}catch(e){
+      return fail(e.code==='not_configured'?T('Online payment is being set up. Message us on WhatsApp at '+WA+' and we will send you a payment link.','الدفع الإلكتروني قيد الإعداد. راسلنا على واتساب على الرقم '+WA+' وسنرسل لك رابط الدفع.'):T('We couldn\'t open the checkout. Please try again, or message us on WhatsApp at '+WA+'.','تعذّر فتح صفحة الدفع. حاول مرة أخرى، أو راسلنا على واتساب على الرقم '+WA+'.'));
+    }
+    paid={amount:j.amount,currency:j.currency};render();
+    try{sessionStorage.setItem('wizz-order',JSON.stringify({order:j.order_id,pkg:j.package}))}catch(e){}
+    if(j.url){location.replace(j.url);return;}
+    if(!j.embedded){return fail(T('Please message us on WhatsApp at '+WA+' to complete your payment.','راسلنا على واتساب على الرقم '+WA+' لإكمال الدفع.'));}
+    try{
+      await loadStripe();
+      const stripe=window.Stripe(j.publishable_key);
+      const make=stripe.createEmbeddedCheckoutPage||stripe.initEmbeddedCheckout;
+      const page=await make.call(stripe,{fetchClientSecret:()=>Promise.resolve(j.client_secret)});
+      $('ckLoading').hidden=true;page.mount('#ckMount');
+    }catch(e){
+      // embedded form couldn't load here: fall back to Stripe's own payment page
+      try{const h=await start(false);if(h.url){location.replace(h.url);return;}}catch(_){}
+      fail(T('We couldn\'t load the payment form. Please refresh, or message us on WhatsApp at '+WA+'.','تعذّر تحميل نموذج الدفع. حدّث الصفحة، أو راسلنا على واتساب على الرقم '+WA+'.'));
+    }
+  })();
+})();
+</script>
+<script src="site.js"></script>
+<script src="fx.js"></script>
+<a class="wa-float" href="https://wa.me/601124477685?text=Hi%20Wizz%2C%20I%27d%20like%20to%20ask%20about%20your%20services." target="_blank" rel="noopener" aria-label="Chat with us on WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg><span class="wa-tip" data-i18n="wa_chat">Chat with us</span></a>
+</body>
+</html>

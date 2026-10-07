@@ -11,10 +11,10 @@ function form(obj, prefix = "", out = new URLSearchParams()) {
   return out;
 }
 
-export async function stripe(path, { method = "GET", body } = {}) {
+export async function stripe(path, { method = "GET", body, version } = {}) {
   const r = await fetch(`${API}${path}`, {
     method,
-    headers: { authorization: `Bearer ${process.env.STRIPE_SECRET_KEY}`, "content-type": "application/x-www-form-urlencoded" },
+    headers: { authorization: `Bearer ${process.env.STRIPE_SECRET_KEY}`, "content-type": "application/x-www-form-urlencoded", ...(version ? { "stripe-version": version } : {}) },
     body: body ? form(body).toString() : undefined
   });
   const d = await r.json().catch(() => ({}));
