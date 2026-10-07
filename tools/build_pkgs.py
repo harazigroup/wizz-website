@@ -439,8 +439,8 @@ ac_body = f"""<section class="block ac">
     <div class="ac-msg bad" id="acErr" hidden></div>
     <div class="ac-card ac-signin" id="acOutBox" hidden>
       <p class="eyebrow"{tk("Client account")}>Client account</p>
-      <h1{tk("Sign in to your account")}>Sign in to your account</h1>
-      <p class="muted"{tk("Use the email you paid with. We'll email you a secure sign-in link, so there's no password to remember.")}>Use the email you paid with. We'll email you a secure sign-in link, so there's no password to remember.</p>
+      <h1{tk("Sign in or create your account")}>Sign in or create your account</h1>
+      <p class="muted"{tk("New here? Just enter your email. Your account is created the first time you sign in. If you've already paid, use the same email so your orders appear. We'll email you a secure sign-in link, so there's no password to remember.")}>New here? Just enter your email. Your account is created the first time you sign in. If you've already paid, use the same email so your orders appear. We'll email you a secure sign-in link, so there's no password to remember.</p>
       <form id="acForm" class="ac-form">
         <label for="acEmail"{tk("Email")}>Email</label>
         <input id="acEmail" type="email" required autocomplete="email">

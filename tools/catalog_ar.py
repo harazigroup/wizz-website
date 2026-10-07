@@ -374,3 +374,8 @@ AR.update({
 "You sign in with a one-time link sent to your email; we don't store passwords. Documents you upload are kept in private storage in the European Union. Only you and the members of our team who handle your order can open them, and each download link expires after a minute.": "تسجّل الدخول برابط يُستخدم مرة واحدة يصل إلى بريدك الإلكتروني، ولا نحتفظ بكلمات مرور. تُحفظ المستندات التي ترفعها في تخزين خاص داخل الاتحاد الأوروبي، ولا يفتحها إلا أنت وأعضاء فريقنا المسؤولون عن طلبك، وتنتهي صلاحية كل رابط تحميل بعد دقيقة.",
 "You can delete a file you uploaded at any time from your account, or ask us to delete your account and files by emailing <span class=\"ltr\">info@wizz.com.my</span>, unless the law requires us to keep them.": "يمكنك حذف أي ملف رفعته في أي وقت من حسابك، أو أن تطلب منا حذف حسابك وملفاتك بمراسلتنا على <span class=\"ltr\">info@wizz.com.my</span>، ما لم يُلزمنا القانون بالاحتفاظ بها.",
 })
+
+AR.update({
+"Sign in or create your account": "سجّل الدخول أو أنشئ حسابك",
+"New here? Just enter your email. Your account is created the first time you sign in. If you've already paid, use the same email so your orders appear. We'll email you a secure sign-in link, so there's no password to remember.": "جديد هنا؟ أدخل بريدك الإلكتروني فقط، وسيُنشأ حسابك عند أول تسجيل دخول. إذا كنت قد دفعت بالفعل، فاستخدم البريد نفسه لتظهر طلباتك. سنرسل لك رابط دخول آمناً، فلا حاجة لتذكّر كلمة مرور.",
+})
