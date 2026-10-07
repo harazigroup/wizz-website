@@ -207,7 +207,7 @@ ty_body = hero_t("Payment", "Thank you", "We're confirming your payment.") + '''
       <input type="hidden" name="package" id="ob_pkg">
       <p class="hp"><label>Leave this empty <input name="company_website"></label></p>
       <h2>Onboarding details</h2>
-      <p class="muted">We use these details to check eligibility and prepare your filings. We'll ask for passport copies separately over a secure channel.</p>
+      <p class="muted">We use these details to check eligibility and prepare your filings. You can upload passport copies securely in your client account.</p>
       <div class="ty-grid">
         <div><label for="ob_name">Full name (as on passport)</label><input id="ob_name" name="full_name" required autocomplete="name"></div>
         <div><label for="ob_email">Email</label><input id="ob_email" name="email" type="email" required autocomplete="email"></div>
@@ -226,6 +226,7 @@ ty_body = hero_t("Payment", "Thank you", "We're confirming your payment.") + '''
       <button class="btn solid" type="submit"><span class="dot"></span>Send my details</button>
     </form>
     <div class="ty-done" id="tyDone" hidden><h2>Details received</h2><p>Thank you. We'll review your details and contact you on WhatsApp or email within one business day.</p></div>
+    <div class="ty-acct" id="tyAcct" hidden><h2>Your client account</h2><p>Follow your order, upload your passport copy and other documents securely, and download your company documents when they're ready. Sign in with the email you paid with.</p><a class="btn solid" id="tyAcctBtn" href="account.html"><span class="dot"></span>Open my account</a></div>
   </div>
 </section>'''
 def auto_i18n(h):
@@ -249,12 +250,14 @@ TY_JS = '''<script>
   function showForm(d){f.hidden=false;document.getElementById('ob_order').value=d.order_id||saved.order||'';document.getElementById('ob_intent').value=intent;document.getElementById('ob_pkg').value=d.package||saved.pkg||'';}
   if(!intent){st.innerHTML=T('We couldn\\'t find a payment reference. If you paid, message us on WhatsApp at <span class="ltr">+60 11-2447 7685</span> with your receipt.','لم نجد مرجعاً للدفع. إذا كنت قد دفعت، راسلنا على واتساب على الرقم <span class="ltr">+60 11-2447 7685</span> مع إيصال الدفع.');return;}
   fetch('/.netlify/functions/verify?'+(sid?'session_id=':'intent=')+encodeURIComponent(intent)).then(r=>r.json()).then(d=>{
-    if(d.paid){try{if(window.WizzCart)window.WizzCart.clear();else localStorage.removeItem('wizz-cart')}catch(e){}st.className='ty-status ok';st.textContent=T('Payment received: ','تم استلام الدفع: ')+(d.package||T('your package','باقتك'))+' · '+d.currency+' '+Number(d.amount).toLocaleString('en-US')+' · '+T('Order ','رقم الطلب ')+d.order_id;showForm(d);}
+    if(d.paid){if(sid){const a=document.getElementById('tyAcct');a.hidden=false;if(d.email)document.getElementById('tyAcctBtn').href='account.html?email='+encodeURIComponent(d.email);}try{if(window.WizzCart)window.WizzCart.clear();else localStorage.removeItem('wizz-cart')}catch(e){}st.className='ty-status ok';st.textContent=T('Payment received: ','تم استلام الدفع: ')+(d.package||T('your package','باقتك'))+' · '+d.currency+' '+Number(d.amount).toLocaleString('en-US')+' · '+T('Order ','رقم الطلب ')+d.order_id;showForm(d);}
     else{st.innerHTML=T('Your payment isn\\'t confirmed yet (status: '+(d.status||'unknown')+'). If you completed it, refresh in a minute or message us on WhatsApp at <span class="ltr">+60 11-2447 7685</span>.','لم يتم تأكيد الدفع بعد (الحالة: '+(d.status||'غير معروفة')+'). إذا أكملت الدفع، حدّث الصفحة بعد دقيقة أو راسلنا على واتساب على الرقم <span class="ltr">+60 11-2447 7685</span>.');}
   }).catch(()=>{st.innerHTML=T('We couldn\\'t check the payment right now. Fill in the form below and we\\'ll match it to your payment.','تعذّر التحقق من الدفع الآن. املأ النموذج أدناه وسنطابقه مع دفعتك.');showForm({});});
   f.addEventListener('submit',async e=>{e.preventDefault();if(!f.reportValidity())return;
     const b=f.querySelector('button[type=submit]');b.disabled=true;
-    try{const r=await fetch('/',{method:'POST',headers:{'content-type':'application/x-www-form-urlencoded'},body:new URLSearchParams(new FormData(f)).toString()});if(!r.ok)throw 0;f.hidden=true;document.getElementById('tyDone').hidden=false;}
+    try{const fd=new FormData(f);const r=await fetch('/',{method:'POST',headers:{'content-type':'application/x-www-form-urlencoded'},body:new URLSearchParams(fd).toString()});if(!r.ok)throw 0;
+      if(sid){try{await fetch('/.netlify/functions/onboarding',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({session_id:sid,data:Object.fromEntries(fd)})});}catch(_){}}
+      f.hidden=true;document.getElementById('tyDone').hidden=false;}
     catch(_){b.disabled=false;st.textContent=T('We couldn\\'t send the form. Please try again or email info@wizz.com.my.','تعذّر إرسال النموذج. حاول مرة أخرى أو راسلنا على info@wizz.com.my.');}
   });
 })();
@@ -425,6 +428,62 @@ CK_JS = """<script>
 page("checkout.html", "Checkout | Wizz Smart Services", "Secure checkout for Wizz Smart Services packages.", ck_body, scripts=ar_script() + CK_JS,
      extra_head='<meta name="robots" content="noindex">')
 
+# ---------------- client account + team admin (Supabase)
+import shutil
+SB_JS = '<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script>\n'
+for n in ("account.js", "admin.js"):
+    shutil.copy(f"{D}/tools/portal/{n}", f"{D}/{n}")
+ac_body = f"""<section class="block ac">
+  <div class="wrap ac-wrap">
+    <div class="ac-loading" id="acLoading"><span class="ck-spin" aria-hidden="true"></span></div>
+    <div class="ac-msg bad" id="acErr" hidden></div>
+    <div class="ac-card ac-signin" id="acOutBox" hidden>
+      <p class="eyebrow"{tk("Client account")}>Client account</p>
+      <h1{tk("Sign in to your account")}>Sign in to your account</h1>
+      <p class="muted"{tk("Use the email you paid with. We'll email you a secure sign-in link, so there's no password to remember.")}>Use the email you paid with. We'll email you a secure sign-in link, so there's no password to remember.</p>
+      <form id="acForm" class="ac-form">
+        <label for="acEmail"{tk("Email")}>Email</label>
+        <input id="acEmail" type="email" required autocomplete="email">
+        <button class="btn solid" id="acSend" type="submit"{tk('<span class="dot"></span>Email me a sign-in link', RAW)}><span class="dot"></span>Email me a sign-in link</button>
+        <p class="ac-msg" id="acFormMsg" hidden></p>
+      </form>
+      <div id="acSent" class="ac-sent" hidden>
+        <h2{tk("Check your email")}>Check your email</h2>
+        <p><span{tk("We sent a sign-in link to")}>We sent a sign-in link to</span> <b id="acSentTo" class="ltr"></b>. <span{tk("Open it on this device. It works once and expires in one hour.")}>Open it on this device. It works once and expires in one hour.</span></p>
+        <button type="button" class="ac-link" id="acAgain"{tk("Use a different email")}>Use a different email</button>
+      </div>
+    </div>
+    <div id="acIn" hidden>
+      <div class="ac-top">
+        <div><p class="eyebrow"{tk("Client account")}>Client account</p><h1{tk("Your orders")}>Your orders</h1><p class="muted"><span{tk("Signed in as")}>Signed in as</span> <b id="acWho" class="ltr"></b></p></div>
+        <div class="ac-actions"><a class="btn ghost small" id="acAdmin" href="admin.html" hidden>Team admin</a><button class="btn ghost small" id="acOut" type="button"{tk("Sign out")}>Sign out</button></div>
+      </div>
+      <div id="acOrders" class="ac-orders"></div>
+      <p class="ac-privacy"{tk('Your files are stored privately in the EU and only you and our team can open them. See our <a href="privacy.html">Privacy Policy</a>.', RAW)}>Your files are stored privately in the EU and only you and our team can open them. See our <a href="privacy.html">Privacy Policy</a>.</p>
+    </div>
+  </div>
+</section>"""
+page("account.html", "My account | Wizz Smart Services", "Sign in to follow your order and share documents securely.", ac_body,
+     scripts=ar_script() + SB_JS + '<script src="account.js" defer></script>\n', extra_head='<meta name="robots" content="noindex">')
+
+ad_body = """<section class="block ac">
+  <div class="wrap">
+    <div class="ac-msg" id="adMsg" hidden></div>
+    <div class="ac-card" id="adGate" hidden></div>
+    <div id="adApp" hidden>
+      <div class="ac-top"><div><p class="eyebrow">Team</p><h1>Orders</h1><p class="muted">Signed in as <b id="adWho"></b></p></div><div class="ac-actions"><button class="btn ghost small" id="adOut" type="button">Sign out</button></div></div>
+      <details class="ad-new" id="adNewBox"><summary>Add an order paid outside the website</summary>
+        <form id="adNew" class="ad-form"><input name="email" type="email" required placeholder="Client email"><input name="name" placeholder="Client name"><input name="package" required placeholder="Package, e.g. United Kingdom - Business"><input name="amount" type="number" step="0.01" min="0" required placeholder="Amount"><select name="currency"><option>USD</option><option>GBP</option><option>EUR</option><option>MYR</option><option>AED</option><option>SAR</option><option>OMR</option><option>THB</option></select><button class="btn solid small" type="submit">Add order</button></form></details>
+      <div class="ad-grid">
+        <div class="ad-side"><div class="ad-filter"><input id="adQ" placeholder="Search ref, email, name"><select id="adF"><option value="">All statuses</option><option value="paid">Paid</option><option value="docs_needed">Documents needed</option><option value="review">Under review</option><option value="filed">Filed</option><option value="registered">Company registered</option><option value="delivered">Delivered</option><option value="on_hold">On hold</option><option value="cancelled">Cancelled</option></select></div><p class="ad-count" id="adCount"></p><div id="adList" class="ad-list"></div></div>
+        <div class="ad-detail" id="adDetail"><p class="ac-none">Select an order.</p></div>
+      </div>
+    </div>
+  </div>
+</section>"""
+page("admin.html", "Team admin | Wizz Smart Services", "Team admin.", ad_body,
+     scripts=SB_JS + '<script src="admin.js" defer></script>\n', extra_head='<meta name="robots" content="noindex">')
+
 # ---------------- legal pages
 CO = "WIZZ SMART SERVICES SDN. BHD. (Registration No. 202501029005), B2-2-3, Publika, Solaris Dutamas, 50480 Kuala Lumpur, Malaysia"
 def legal(fname, title, lede, sections):
@@ -468,7 +527,8 @@ legal("refund.html", "Refund Policy", "When and how you can get your money back.
 legal("privacy.html", "Privacy Policy", "How we collect, use and protect your personal data.", [
  ("What we collect", [["Contact details: name, email, phone or WhatsApp number.","Identity details: nationality, full residential address, national ID number, passport details and copies.","Company details: proposed names, activity, shareholders and directors.","Payment details: order and payment references. Card details are handled by our payment providers (Stripe or Airwallex), not by us."]]),
  ("Why we use it", [["To provide the services you buy, including filings with registries and authorities.","To carry out identity and eligibility checks required by law and by our partners.","To contact you about your order and your yearly obligations."]]),
- ("Who we share it with", ["Only as needed to deliver your service: company registries and government authorities, registered agents, company secretaries, address providers and professional partners in the relevant country, our payment processors (Stripe and Airwallex), and our website and form host (Netlify). We don't sell your data."]),
+ ("Who we share it with", ["Only as needed to deliver your service: company registries and government authorities, registered agents, company secretaries, address providers and professional partners in the relevant country, our payment processors (Stripe and Airwallex), our website and form host (Netlify), and our client-account database and file storage (Supabase, hosted in the EU). We don't sell your data."]),
+ ("Your client account", ["You sign in with a one-time link sent to your email; we don't store passwords. Documents you upload are kept in private storage in the European Union. Only you and the members of our team who handle your order can open them, and each download link expires after a minute.", "You can delete a file you uploaded at any time from your account, or ask us to delete your account and files by emailing <span class=\"ltr\">info@wizz.com.my</span>, unless the law requires us to keep them."]),
  ("International transfers", ["Because we form companies in other countries, your data is sent to the country of your company and to our partners there."]),
  ("How long we keep it", ["We keep your records for as long as needed to provide the service and to meet legal record-keeping duties, normally up to 7 years after our work ends."]),
  ("Your rights", ["Under Malaysia's Personal Data Protection Act 2010 you can ask to access or correct your personal data, or to limit how we use it. Email <span class=\"ltr\">info@wizz.com.my</span>.", "If you live in the UK or the European Union, you also have rights under the UK GDPR or the EU GDPR, including asking us to delete your data, and you can complain to your local data protection authority."]),
@@ -502,6 +562,8 @@ for f in glob.glob(f"{D}/*.html"):
     # accepted payment methods, above the copyright line
     if 'class="pay-row"' not in s:
         s = s.replace('    <div class="legal">\n', '    <div class="legal">\n' + PAY_ROW, 1)
+    if 'class="acct-btn"' not in s:
+        s = s.replace('<button class="lang" id="langBtn"', '<a class="acct-btn" href="account.html" aria-label="My account" title="My account"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm-7 8a7 7 0 0 1 14 0"/></svg></a>\n      <button class="lang" id="langBtn"', 1)
     if 'src="cart.js"' not in s:
         s = s.replace('<script src="site.js"></script>', '<script src="cart.js"></script>\n<script src="site.js"></script>', 1)
     # floating WhatsApp button on every page
@@ -561,6 +623,91 @@ CSS = '''
 .pk-curbar select{width:auto;max-width:100%;min-width:0;margin:0;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);font:inherit;font-size:14px}
 .pk-curnote{color:var(--muted);font-size:13px}
 footer.site{padding-bottom:96px}
+.acct-btn{display:inline-grid;place-items:center;width:40px;height:40px;border:1px solid var(--line);border-radius:8px;color:var(--ink)}
+.acct-btn svg{width:21px;height:21px}
+.acct-btn:hover{background:var(--surface)}
+.ac{padding-top:clamp(28px,4vw,48px)}
+.ac-wrap{max-width:980px}
+.ac-loading{display:grid;place-items:center;min-height:300px}
+.ac-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:clamp(22px,4vw,40px);box-shadow:0 10px 40px rgba(16,24,40,.06)}
+.ac-signin{max-width:520px;margin:0 auto}
+.ac-signin h1,.ac-top h1{font:800 clamp(28px,3.4vw,38px)/1.1 var(--display);margin:6px 0 10px}
+.ac-form{display:grid;gap:10px;grid-template-columns:1fr!important;margin-top:18px}
+.ac-form label{font-weight:600;font-size:14px}
+.ac-msg{padding:12px 14px;border-radius:8px;font-size:14px;margin:0}
+.ac-msg.bad{background:#FDECEC;color:#8A1C1C}.ac-msg.good{background:#E8F6EE;color:#1D6B3A}
+.ac-sent{margin-top:18px}.ac-sent h2{font:800 22px var(--display);margin:0 0 6px}
+.ac-link{border:0;background:none;padding:0;color:var(--ink);text-decoration:underline;cursor:pointer;font:inherit;font-size:14px}
+.ac-link.danger{color:#B42318}
+.ac-top{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+.ac-actions{display:flex;gap:8px}
+.ac-orders{display:grid;gap:12px}
+.ac-order{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.ac-head{all:unset;box-sizing:border-box;width:100%;cursor:pointer;display:grid;grid-template-columns:auto 1fr auto;grid-template-areas:"ref pkg badge" "ref meta badge";gap:2px 16px;align-items:center;padding:16px 18px}
+.ac-head:hover{background:var(--surface)}
+.ac-head:focus-visible{outline:2px solid var(--ink);outline-offset:-2px}
+.ac-ref{grid-area:ref;font:700 13px var(--mono);color:var(--muted)}
+.ac-pkg{grid-area:pkg;font-weight:700}
+.ac-meta{grid-area:meta;font-size:13.5px;color:var(--muted)}
+.ac-badge{grid-area:badge;font:700 12px var(--body);padding:4px 10px;border-radius:999px;background:var(--surface);white-space:nowrap}
+.ac-badge.s-paid,.ac-badge.s-review,.ac-badge.s-filed{background:#EAF0FB;color:#1E40AF}
+.ac-badge.s-docs_needed,.ac-badge.s-on_hold{background:#FFF4E5;color:#92400E}
+.ac-badge.s-registered,.ac-badge.s-delivered{background:#E8F6EE;color:#1D6B3A}
+.ac-badge.s-cancelled{background:#F2F2F2;color:#555}
+.ac-body{padding:4px 18px 20px;display:grid;gap:18px;border-top:1px solid var(--line)}
+.ac-steps{list-style:none;margin:16px 0 0;padding:0;display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.ac-steps li{display:grid;gap:6px;font-size:12px;color:var(--muted)}
+.ac-steps li span{height:6px;border-radius:3px;background:var(--line)}
+.ac-steps li.done span{background:var(--ink)}
+.ac-steps li.now span{background:var(--red)}
+.ac-steps li.now em{color:var(--ink);font-weight:700}
+.ac-steps em{font-style:normal}
+.ac-steps.off{opacity:.45}
+.ac-note{margin:0;padding:12px 14px;border-radius:8px;background:var(--surface);font-size:14.5px}
+.ac-warn{margin:0;padding:12px 14px;border-radius:8px;background:#FFF4E5;color:#7A3E00;font-size:14px}
+.ac-cols{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.ac-cols section,.ad-box{border:1px solid var(--line);border-radius:10px;padding:14px 16px;background:#fff}
+.ac-body h3,.ad-box h3{font:700 15px var(--body);margin:0 0 8px}
+.ac-hint{font-size:13px;color:var(--muted);margin:0 0 10px}
+.ac-none{color:var(--muted);font-size:14px;margin:6px 0}
+.ac-docs{list-style:none;margin:0 0 10px;padding:0;display:grid;gap:8px}
+.ac-docs li{display:flex;gap:12px;align-items:center;justify-content:space-between;border-bottom:1px dashed var(--line);padding-bottom:8px}
+.ac-file{min-width:0;overflow-wrap:anywhere;font-size:14px}.ac-file small{display:block;color:var(--muted);font-size:12px}
+.ac-up{cursor:pointer}
+.ac-upmsg{font-size:13px;margin:8px 0 0}.ac-upmsg.bad{color:#B42318}.ac-upmsg.good{color:#1D6B3A}
+.ac-ev ul,.ac-rem ul,.ad-ev{list-style:none;margin:0;padding:0;display:grid;gap:6px;font-size:14px}
+.ac-ev small,.ac-rem small,.ad-ev small{display:block;color:var(--muted);font-size:12px}
+.ac-empty{background:#fff;border:1px solid var(--line);border-radius:12px;padding:28px;text-align:center}
+.ac-empty h3{margin:0 0 6px}
+.ac-privacy{font-size:13px;color:var(--muted);margin-top:20px}
+@media (max-width:720px){.ac-cols{grid-template-columns:1fr}.ac-head{grid-template-columns:1fr auto;grid-template-areas:"pkg badge" "meta meta" "ref ref"}.ac-steps{grid-template-columns:repeat(3,1fr)}}
+.ad-new{margin-bottom:16px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px 16px}
+.ad-new summary{cursor:pointer;font-weight:600}
+.ad-form{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+.ad-form input,.ad-form select{width:auto;flex:1 1 160px}
+.ad-grid{display:grid;grid-template-columns:minmax(260px,360px) 1fr;gap:18px;align-items:start}
+.ad-filter{display:grid;gap:8px}
+.ad-count{font-size:13px;color:var(--muted);margin:8px 0}
+.ad-list{display:grid;gap:6px;max-height:70vh;overflow:auto}
+.ad-row{all:unset;box-sizing:border-box;cursor:pointer;display:grid;gap:2px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:#fff;font-size:14px}
+.ad-row.on{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink)}
+.ad-row small{color:var(--muted);font-size:12px}.ad-row .ac-badge{justify-self:start}
+.ad-pk{color:var(--muted)}
+.ad-detail{display:grid;gap:12px}
+.ad-top{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.ad-top h2{margin:0;font:800 24px var(--display)}.ad-top p{margin:2px 0}
+.ad-sub{font-size:14px;color:var(--muted)}
+.ad-amt{font:850 26px var(--display);text-align:end}.ad-amt small{display:block;font:500 13px var(--body);color:var(--muted)}
+.ad-lbl{display:grid;gap:6px;font-size:13px;margin:12px 0 8px}
+.ad-dl{display:grid;grid-template-columns:200px 1fr;gap:6px 12px;font-size:14px;margin:0}
+.ad-dl dt{color:var(--muted)}.ad-dl dd{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
+.ad-rems{list-style:none;margin:0;padding:0;display:grid;gap:6px;font-size:14px}
+.ad-rems input{width:auto;margin-inline-end:6px}
+.ad-row .ac-badge{grid-area:auto}
+.ac-file{flex:1}
+.ac-docs li .ac-link{flex:none}
+body[data-page="admin"] .wa-float{display:none}
+@media (max-width:860px){.ad-grid{grid-template-columns:1fr}.ad-dl{grid-template-columns:1fr}}
 .cart-btn{position:relative;display:inline-grid;place-items:center;width:40px;height:40px;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--ink);cursor:pointer}
 .cart-btn svg{width:21px;height:21px}
 .cart-btn:hover{background:var(--surface)}
@@ -693,6 +840,6 @@ css = css.split("\n/* ===== v6: packages")[0].rstrip("\n") + "\n"
 open(f"{D}/site.css", "w").write(css + CSS)
 
 # sitemap
-pages = sorted(os.path.basename(p) for p in glob.glob(f"{D}/*.html") if not p.endswith(("thank-you.html", "checkout.html")))
+pages = sorted(os.path.basename(p) for p in glob.glob(f"{D}/*.html") if not p.endswith(("thank-you.html", "checkout.html", "account.html", "admin.html")))
 open(f"{D}/sitemap.xml", "w").write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "".join(f'  <url><loc>https://wizz.com.my/{"" if p=="index.html" else p}</loc></url>\n' for p in pages) + "</urlset>\n")
 print("built", pages)

@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>About | Wizz Smart Services</title>
-<meta name="description" content="Wizz Smart Services Sdn. Bhd. (202501029005) is a business services company based in Kuala Lumpur, Malaysia.">
-<meta property="og:title" content="About | Wizz Smart Services">
-<meta property="og:description" content="Wizz Smart Services Sdn. Bhd. (202501029005) is a business services company based in Kuala Lumpur, Malaysia.">
+<title>My account | Wizz Smart Services</title>
+<meta name="description" content="Sign in to follow your order and share documents securely.">
+<meta property="og:title" content="My account | Wizz Smart Services">
+<meta property="og:description" content="Sign in to follow your order and share documents securely.">
 <meta property="og:image" content="https://wizz.com.my/og.png">
-<meta property="og:url" content="https://wizz.com.my/about.html">
-<link rel="canonical" href="https://wizz.com.my/about.html">
+<meta property="og:url" content="https://wizz.com.my/account.html">
+<link rel="canonical" href="https://wizz.com.my/account.html">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#F3F5F7">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -19,8 +19,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="site.css">
+<meta name="robots" content="noindex">
 </head>
-<body data-page="about">
+<body data-page="account">
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="wz" viewBox="330 428 420 204">
     <g fill="currentColor">
@@ -40,7 +41,7 @@
       <a href="services.html" data-i18n="nav_services">Services</a>
       <a href="countries.html" data-i18n="nav_countries">Countries</a>
       <a href="marketplaces.html" data-i18n="nav_mp">Marketplaces</a>
-      <a href="about.html" data-i18n="nav_about" aria-current="page">About</a>
+      <a href="about.html" data-i18n="nav_about">About</a>
       <a href="blog.html" data-i18n="nav_blog">Blog</a>
       <a href="contact.html" data-i18n="nav_contact">Contact</a>
     </nav>
@@ -53,103 +54,33 @@
   </div>
 </header>
 <main id="top">
-<section class="page-hero night">
-  <div class="wrap">
-    <div>
-      <p class="eyebrow" data-i18n="ab_eyebrow">About us</p>
-      <h1 data-i18n="ab_title">A Malaysian company built for founders who work across borders</h1>
-      <p class="lede" data-i18n="ab_lede">Based in Kuala Lumpur, working with clients in Arabic and English.</p>
-    </div>
-    <div class="ph-img"><img src="img/skyline.webp" alt="Kuala Lumpur skyline" width="400" height="240"></div>
-  </div>
-</section>
-<section class="block">
-  <div class="wrap about">
-    <div class="story">
-      <p data-i18n="ab_p1b">Wizz Smart Services Sdn. Bhd. is a business services company registered in Malaysia and based in Kuala Lumpur. We help entrepreneurs and companies from the Gulf, the Middle East, Africa and Asia build a legal, working presence in 13 countries across North America, Europe, the Middle East and Asia.</p>
-      <p data-i18n="ab_p2">Most of our clients need more than a registration certificate. They need a company they can actually trade with: a structure that fits their activity, the right documents, a realistic plan for banking and payments, and a way to start selling. We bring those pieces together and stay with the client after formation.</p>
-      <p data-i18n="ab_p3">We handle most services directly ourselves. Where the law requires a licensed local party, such as a registered agent in US states, we work with trusted registered providers. In Malaysia we partner with a registered company secretary office in Kuala Lumpur. Either way, you deal with one team.</p>
-      <div class="values">
-        <div><h3 data-i18n="v1_t">Straight answers</h3><p data-i18n="v1_p">We tell you what is possible, what it costs and what depends on third parties before you pay.</p></div>
-        <div><h3 data-i18n="v2_t">Practical setup</h3><p data-i18n="v2_p">We focus on what you need to start operating, not on selling extra packages.</p></div>
-        <div><h3 data-i18n="v3_t">One point of contact</h3><p data-i18n="v3_p">One person follows your file from the first consultation to the delivery of your documents.</p></div>
+<section class="block ac">
+  <div class="wrap ac-wrap">
+    <div class="ac-loading" id="acLoading"><span class="ck-spin" aria-hidden="true"></span></div>
+    <div class="ac-msg bad" id="acErr" hidden></div>
+    <div class="ac-card ac-signin" id="acOutBox" hidden>
+      <p class="eyebrow" data-i18n="pk_a59823ec" data-html>Client account</p>
+      <h1 data-i18n="pk_41c7f398" data-html>Sign in to your account</h1>
+      <p class="muted" data-i18n="pk_3280cfd1" data-html>Use the email you paid with. We'll email you a secure sign-in link, so there's no password to remember.</p>
+      <form id="acForm" class="ac-form">
+        <label for="acEmail" data-i18n="pk_ce8ae9da" data-html>Email</label>
+        <input id="acEmail" type="email" required autocomplete="email">
+        <button class="btn solid" id="acSend" type="submit" data-i18n="pk_8b96583a" data-html><span class="dot"></span>Email me a sign-in link</button>
+        <p class="ac-msg" id="acFormMsg" hidden></p>
+      </form>
+      <div id="acSent" class="ac-sent" hidden>
+        <h2 data-i18n="pk_bfc9599f" data-html>Check your email</h2>
+        <p><span data-i18n="pk_7b9827fc" data-html>We sent a sign-in link to</span> <b id="acSentTo" class="ltr"></b>. <span data-i18n="pk_bb7e0230" data-html>Open it on this device. It works once and expires in one hour.</span></p>
+        <button type="button" class="ac-link" id="acAgain" data-i18n="pk_dc8d613e" data-html>Use a different email</button>
       </div>
     </div>
-    <aside class="record" aria-label="Company record">
-      <div class="record-head"><span data-i18n="rec_t">Company record</span><span class="ltr">SSM</span></div>
-      <dl>
-        <dt data-i18n="rec_name">Legal name</dt><dd class="ltr">WIZZ SMART SERVICES SDN. BHD.</dd>
-        <dt data-i18n="rec_no">Registration no. (SSM)</dt><dd class="ltr num">202501029005</dd>
-        <dt data-i18n="rec_in">Registered in</dt><dd data-i18n="my">Malaysia</dd>
-        <dt data-i18n="rec_addr">Address</dt><dd class="ltr">B2-2-3, Publika, Solaris Dutamas,<br>50480 Kuala Lumpur, Malaysia</dd>
-        <dt data-i18n="email_l">Email</dt><dd class="ltr">info@wizz.com.my</dd>
-      </dl>
-    </aside>
-  </div>
-</section>
-
-<section class="block alt">
-  <div class="wrap">
-    <div class="sec-head">
-      <p class="eyebrow" data-i18n="cl_eyebrow">Who we work with</p>
-      <h2 data-i18n="cl_title">Built for founders who sell across borders</h2>
-      <p data-i18n="cl_lede2">Our clients come from the Gulf, the Middle East, Africa and Asia and want a presence in new markets.</p>
-    </div>
-    <div class="chips">
-        <span data-i18n="c1">International entrepreneurs</span>
-        <span data-i18n="c2">Non-US residents forming a US company</span>
-        <span data-i18n="c3">Non-UK residents forming a UK company</span>
-        <span data-i18n="c4">E-commerce sellers</span>
-        <span data-i18n="c5">Private-label brand owners</span>
-        <span data-i18n="c6">Digital service businesses</span>
-        <span data-i18n="c7">International traders</span>
-        <span data-i18n="c8">SMEs expanding abroad</span>
-        <span data-i18n="c9">Investors building international structures</span>
-    </div>
-  </div>
-</section>
-
-<section class="block night">
-  <div class="wrap">
-    <div class="sec-head">
-      <p class="eyebrow" data-i18n="pm_eyebrow">Our promise</p>
-      <h2 data-i18n="pm_title">Clear about what we do, and what we can't promise</h2>
-      <p data-i18n="pm_lede">Some approvals belong to banks, platforms and governments. We tell you that up front so you can plan with real expectations.</p>
-    </div>
-    <div class="promise">
-        <div class="yes">
-          <h3 data-i18n="y_t">What we commit to</h3>
-          <ul>
-          <li data-i18n="y1">A written quotation before you pay</li>
-          <li data-i18n="y2">Advice matched to your activity and residence</li>
-          <li data-i18n="y3">Complete, carefully prepared applications</li>
-          <li data-i18n="y4">One contact person who follows your file</li>
-          <li data-i18n="y5">Original corporate documents delivered to you</li>
-          </ul>
-        </div>
-        <div class="no">
-          <h3 data-i18n="n_t">What no honest provider can guarantee</h3>
-          <ul>
-          <li data-i18n="n1">Bank account or Stripe, Wise or Payoneer approval</li>
-          <li data-i18n="n2">Amazon, TikTok Shop or other marketplace approval</li>
-          <li data-i18n="n3">A visa or residency from forming a company</li>
-          <li data-i18n="n4">Specific tax outcomes or business results</li>
-          </ul>
-          <p data-i18n="n_p">Tax and legal questions specific to your situation are referred to qualified professionals in the relevant jurisdiction.</p>
-        </div>
+    <div id="acIn" hidden>
+      <div class="ac-top">
+        <div><p class="eyebrow" data-i18n="pk_a59823ec" data-html>Client account</p><h1 data-i18n="pk_49e43429" data-html>Your orders</h1><p class="muted"><span data-i18n="pk_4b3b4f21" data-html>Signed in as</span> <b id="acWho" class="ltr"></b></p></div>
+        <div class="ac-actions"><a class="btn ghost small" id="acAdmin" href="admin.html" hidden>Team admin</a><button class="btn ghost small" id="acOut" type="button" data-i18n="pk_c87aacf5" data-html>Sign out</button></div>
       </div>
-  </div>
-</section>
-
-<section class="cta-band">
-  <div class="wrap cta-in">
-    <div>
-      <h2 data-i18n="band_t">Not sure where to start?</h2>
-      <p data-i18n="band_p">Tell us what you sell and where you live. We'll recommend a country, a structure and the next steps, with a written quote.</p>
-    </div>
-    <div class="cta-actions">
-      <a class="btn light" href="contact.html" data-i18n="cta_main">Book a free consultation</a>
-      <a class="btn outline-light" href="https://wa.me/601124477685" target="_blank" rel="noopener" data-i18n="wa_btn">Chat on WhatsApp</a>
+      <div id="acOrders" class="ac-orders"></div>
+      <p class="ac-privacy" data-i18n="pk_b2576064" data-html>Your files are stored privately in the EU and only you and our team can open them. See our <a href="privacy.html">Privacy Policy</a>.</p>
     </div>
   </div>
 </section>
@@ -194,6 +125,9 @@
   </div>
 </footer>
 <script src="cart.js"></script>
+<script>window.WIZZ_AR={"pk_a59823ec": "حساب العميل", "pk_41c7f398": "سجّل الدخول إلى حسابك", "pk_3280cfd1": "استخدم البريد الإلكتروني الذي دفعت به. سنرسل لك رابط دخول آمناً، فلا حاجة لتذكّر كلمة مرور.", "pk_ce8ae9da": "البريد الإلكتروني", "pk_8b96583a": "<span class=\"dot\"><\/span>أرسل لي رابط الدخول", "pk_bfc9599f": "تحقّق من بريدك الإلكتروني", "pk_7b9827fc": "أرسلنا رابط الدخول إلى", "pk_bb7e0230": "افتحه على هذا الجهاز. يعمل مرة واحدة وتنتهي صلاحيته خلال ساعة.", "pk_dc8d613e": "استخدم بريداً آخر", "pk_49e43429": "طلباتك", "pk_4b3b4f21": "تم الدخول باسم", "pk_c87aacf5": "تسجيل الخروج", "pk_b2576064": "تُحفظ ملفاتك بشكل خاص في الاتحاد الأوروبي، ولا يمكن فتحها إلا لك ولفريقنا. اطّلع على <a href=\"privacy.html\">سياسة الخصوصية<\/a>."};</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script>
+<script src="account.js" defer></script>
 <script src="site.js"></script>
 <script src="fx.js"></script>
 <a class="wa-float" href="https://wa.me/601124477685?text=Hi%20Wizz%2C%20I%27d%20like%20to%20ask%20about%20your%20services." target="_blank" rel="noopener" aria-label="Chat with us on WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg><span class="wa-tip" data-i18n="wa_chat">Chat with us</span></a>

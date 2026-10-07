@@ -344,3 +344,33 @@ AR.update({
 "Total": "الإجمالي",
 "Add-on": "خدمة إضافية",
 })
+
+# ---- client account
+AR.update({
+"Your client account": "حسابك كعميل",
+"Follow your order, upload your passport copy and other documents securely, and download your company documents when they're ready. Sign in with the email you paid with.": "تابع طلبك، وارفع نسخة جوازك ومستنداتك الأخرى بأمان، وحمّل مستندات شركتك عند جاهزيتها. سجّل الدخول بالبريد الإلكتروني الذي دفعت به.",
+'<span class="dot"></span>Open my account': '<span class="dot"></span>افتح حسابي',
+"We use these details to check eligibility and prepare your filings. You can upload passport copies securely in your client account.": "نستخدم هذه البيانات للتحقق من الأهلية وتجهيز طلبات التسجيل. يمكنك رفع نسخ جوازات السفر بأمان من حسابك كعميل.",
+})
+
+AR.update({
+"Client account": "حساب العميل",
+"Sign in to your account": "سجّل الدخول إلى حسابك",
+"Use the email you paid with. We'll email you a secure sign-in link, so there's no password to remember.": "استخدم البريد الإلكتروني الذي دفعت به. سنرسل لك رابط دخول آمناً، فلا حاجة لتذكّر كلمة مرور.",
+'<span class="dot"></span>Email me a sign-in link': '<span class="dot"></span>أرسل لي رابط الدخول',
+"Check your email": "تحقّق من بريدك الإلكتروني",
+"We sent a sign-in link to": "أرسلنا رابط الدخول إلى",
+"Open it on this device. It works once and expires in one hour.": "افتحه على هذا الجهاز. يعمل مرة واحدة وتنتهي صلاحيته خلال ساعة.",
+"Use a different email": "استخدم بريداً آخر",
+"Your orders": "طلباتك",
+"Signed in as": "تم الدخول باسم",
+"Sign out": "تسجيل الخروج",
+'Your files are stored privately in the EU and only you and our team can open them. See our <a href="privacy.html">Privacy Policy</a>.': 'تُحفظ ملفاتك بشكل خاص في الاتحاد الأوروبي، ولا يمكن فتحها إلا لك ولفريقنا. اطّلع على <a href="privacy.html">سياسة الخصوصية</a>.',
+})
+
+AR.update({
+"Only as needed to deliver your service: company registries and government authorities, registered agents, company secretaries, address providers and professional partners in the relevant country, our payment processors (Stripe and Airwallex), our website and form host (Netlify), and our client-account database and file storage (Supabase, hosted in the EU). We don't sell your data.": "بالقدر اللازم فقط لتقديم خدمتك: سجلات الشركات والجهات الحكومية، والوكلاء المسجّلون، وسكرتارية الشركات، ومزوّدو العناوين، والشركاء المهنيون في الدولة المعنية، ومعالجو الدفع لدينا (Stripe وAirwallex)، ومستضيف موقعنا ونماذجه (Netlify)، وقاعدة بيانات حسابات العملاء وتخزين الملفات (Supabase، داخل الاتحاد الأوروبي). نحن لا نبيع بياناتك.",
+"Your client account": "حسابك كعميل",
+"You sign in with a one-time link sent to your email; we don't store passwords. Documents you upload are kept in private storage in the European Union. Only you and the members of our team who handle your order can open them, and each download link expires after a minute.": "تسجّل الدخول برابط يُستخدم مرة واحدة يصل إلى بريدك الإلكتروني، ولا نحتفظ بكلمات مرور. تُحفظ المستندات التي ترفعها في تخزين خاص داخل الاتحاد الأوروبي، ولا يفتحها إلا أنت وأعضاء فريقنا المسؤولون عن طلبك، وتنتهي صلاحية كل رابط تحميل بعد دقيقة.",
+"You can delete a file you uploaded at any time from your account, or ask us to delete your account and files by emailing <span class=\"ltr\">info@wizz.com.my</span>, unless the law requires us to keep them.": "يمكنك حذف أي ملف رفعته في أي وقت من حسابك، أو أن تطلب منا حذف حسابك وملفاتك بمراسلتنا على <span class=\"ltr\">info@wizz.com.my</span>، ما لم يُلزمنا القانون بالاحتفاظ بها.",
+})
