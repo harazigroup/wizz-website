@@ -15,6 +15,8 @@ export default async (req) => {
         out[ui] = { ok: Boolean(s.client_secret), cs_prefix: (s.client_secret || "").slice(0, 8) };
       } catch (e) { out[ui] = { ok: false, error: String(e.message).replace(/(sk|rk)_(live|test)_[A-Za-z0-9*]+/g, "[key]") }; }
     }
+    const r = await handler(new Request(req.url, { method: "POST", body: JSON.stringify({ sku: "sa-assessment", currency: "MYR", embedded: true }) }));
+    const j = await r.json(); out.real = { embedded: j.embedded || false, has_secret: Boolean(j.client_secret), error: j.embedded_error || null };
     return json(200, out);
   }
   return handler(req);
@@ -44,6 +46,7 @@ async function handler(req) {
       };
       const done = { order_id: orderId, package: item.name, amount, currency: cur };
       const pk = process.env.STRIPE_PUBLISHABLE_KEY || "";
+      let embErr = "";
       if (input.embedded && pk.startsWith("pk_")) {
         try {
           const s = await stripe("/checkout/sessions", {
@@ -51,13 +54,13 @@ async function handler(req) {
             body: { ...base, ui_mode: "embedded_page", return_url: `${site}/thank-you.html?session_id={CHECKOUT_SESSION_ID}` }
           });
           if (s.client_secret) return json(200, { provider: "stripe", embedded: true, client_secret: s.client_secret, publishable_key: pk, ...done });
-        } catch (e) { console.error("embedded checkout failed, using hosted page", e); }
+        } catch (e) { console.error("embedded checkout failed, using hosted page", e); embErr = String(e.message).replace(/(sk|rk)_(live|test)_[A-Za-z0-9*]+/g, "[key]").slice(0, 300); }
       }
       const s = await stripe("/checkout/sessions", {
         method: "POST",
         body: { ...base, success_url: `${site}/thank-you.html?session_id={CHECKOUT_SESSION_ID}`, cancel_url: `${site}/packages.html` }
       });
-      return json(200, { provider: "stripe", url: s.url, ...done });
+      return json(200, { provider: "stripe", url: s.url, ...done, ...(embErr ? { embedded_error: embErr } : {}) });
     }
     const intent = await api("/api/v1/pa/payment_intents/create", {
       method: "POST",
