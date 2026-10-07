@@ -58,7 +58,7 @@
     <div>
       <p class="eyebrow" data-i18n="ct_eyebrow">Contact</p>
       <h1 data-i18n="ct_title">Tell us about your business</h1>
-      <p class="lede" data-i18n="ct_lede">Answer a few questions and we'll prepare a WhatsApp message for you to send. We reply with a recommendation and next steps.</p>
+      <p class="lede" data-i18n="ct_lede">Answer a few questions and send them to our team. We reply by email with a recommendation and next steps, usually within one business day.</p>
     </div>
     
   </div>
@@ -80,8 +80,15 @@
       <a class="btn" href="https://wa.me/601124477685" target="_blank" rel="noopener"><span data-i18n="wa_btn">Chat on WhatsApp</span></a>
     </div>
 
-    <form id="leadForm" novalidate>
+    <form id="leadForm" name="contact" method="POST" data-netlify="true" netlify-honeypot="company_website" novalidate>
+      <input type="hidden" name="form-name" value="contact">
+      <input type="hidden" name="subject" value="New website enquiry">
+      <input type="hidden" name="services" value="">
+      <input type="hidden" name="lang" value="en">
+      <p hidden><label>Leave this empty <input name="company_website" tabindex="-1" autocomplete="off"></label></p>
       <div><label for="f_name" data-i18n="f_name">Full name</label><input id="f_name" name="name" autocomplete="name" required></div>
+      <div><label for="f_email" data-i18n="f_email">Email</label><input id="f_email" name="email" type="email" autocomplete="email" required></div>
+      <div><label for="f_phone" data-i18n="f_phone">WhatsApp / phone (optional)</label><input id="f_phone" name="phone" type="tel" autocomplete="tel" data-i18n-ph="f_phone_ph" placeholder="+60 12 345 6789"></div>
       <div><label for="f_nat" data-i18n="f_nat">Nationality</label><input id="f_nat" name="nat" required></div>
       <div><label for="f_res" data-i18n="f_res">Country of residence</label><input id="f_res" name="res" required></div>
       <div><label for="f_mkt" data-i18n="f_mkt2">Target country</label>
@@ -129,18 +136,17 @@
         </select></div>
       <div class="full"><label for="f_msg" data-i18n="f_msg">Anything else we should know?</label><textarea id="f_msg" name="msg" data-i18n-ph="f_msg_ph" placeholder="Your goals, timeline, or questions"></textarea></div>
       <div class="full formfoot">
-        <button class="btn solid" type="submit"><span class="dot"></span><span data-i18n="f_submit">Prepare my WhatsApp message</span></button>
-        <small data-i18n="f_small">Nothing is sent until you press send in WhatsApp.</small>
+        <button class="btn solid" type="submit"><span class="dot"></span><span data-i18n="f_submit">Send my enquiry</span></button>
+        <small data-i18n="f_small" data-html>Your details go only to the Wizz team and are handled under our <a href="privacy.html">privacy policy</a>.</small>
       </div>
-      <p class="err full" id="formErr" hidden data-i18n="f_err">Please fill in your name, nationality, country of residence and business activity.</p>
-      <div class="out" id="out" hidden>
-        <strong data-i18n="out_t">Your message is ready</strong>
-        <pre id="outText"></pre>
+      <p class="err full" id="formErr" hidden data-i18n="f_err">Please fill in your name, a valid email, nationality, country of residence and business activity.</p>
+      <p class="err full" id="formFail" hidden data-i18n="f_fail">Sorry, your message could not be sent. Please try again, or contact us on WhatsApp.</p>
+      <div class="out" id="out" hidden role="status" tabindex="-1">
+        <strong data-i18n="out_t">Thank you, your enquiry has been sent</strong>
+        <p data-i18n="out_p">Our team will review it and reply by email, usually within one business day. Please check your spam folder if you don't see our reply.</p>
         <div class="row">
-          <a class="btn solid" id="waLink" href="https://wa.me/601124477685" target="_blank" rel="noopener" data-i18n="out_open">Open in WhatsApp</a>
-          <button class="btn ghost" type="button" id="copyMsg" data-i18n="out_copy">Copy message</button>
+          <a class="btn ghost" id="waLink" href="https://wa.me/601124477685" target="_blank" rel="noopener" data-i18n="out_wa">Need a faster answer? Chat on WhatsApp</a>
         </div>
-        <small class="muted" data-i18n="out_note">If WhatsApp doesn't open, copy the message and send it to +60 11-2447 7685.</small>
       </div>
     </form>
   </div>
@@ -151,7 +157,7 @@
     <div class="sec-head">
       <p class="eyebrow" data-i18n="fq_eyebrow">FAQ</p>
       <h2 data-i18n="fq_title">Common questions</h2>
-      <p data-i18n="fq_lede">Didn't find your answer? Send us a WhatsApp message.</p>
+      <p data-i18n="fq_lede">Didn't find your answer? Send us your question using the form above, or chat with us on WhatsApp.</p>
     </div>
     <div class="faq">
         <details><summary data-i18n="q1">Do I need to live in the USA or UK to own a company there?</summary><p data-i18n="a1">No. Non-residents can own US and UK companies. Some steps, such as banking and tax registration, have extra requirements for non-residents, and we explain them during the consultation.</p></details>
