@@ -571,6 +571,17 @@ footer.site .logo{color:#F3F5F7}
 .pk-curbar label{font-weight:600;margin:0;display:inline}
 .pk-curbar select{width:auto;max-width:100%;min-width:0;margin:0;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);font:inherit;font-size:14px}
 .pk-curnote{color:var(--muted);font-size:13px}
+footer.site{padding-bottom:96px}
+footer.site .foot{grid-template-columns:1.4fr repeat(4,1fr)}
+@media (max-width:1000px){footer.site .foot{grid-template-columns:1fr 1fr}}
+@media (max-width:560px){footer.site .foot{grid-template-columns:1fr}}
+.wa-float{position:fixed;inset-inline-end:20px;bottom:20px;z-index:60;display:flex;align-items:center;gap:10px;height:56px;padding:0 16px;border-radius:999px;background:#25D366;color:#fff;text-decoration:none;box-shadow:0 8px 24px rgba(0,0,0,.18);transition:transform .2s ease,box-shadow .2s ease}
+.wa-float svg{width:28px;height:28px;flex:none}
+.wa-float .wa-tip{font:600 15px var(--body);white-space:nowrap}
+.wa-float:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(0,0,0,.22)}
+.wa-float:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+@media (max-width:640px){.wa-float{width:56px;padding:0;justify-content:center;right:16px;bottom:16px}.wa-float .wa-tip{display:none}}
+@media print{.wa-float{display:none}}
 [dir=rtl] .pk-flag,[dir=rtl] .pk-price .from{letter-spacing:0;font-family:var(--body);text-transform:none}
 .pk-addons{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
 .pk-addon{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:14px 16px;display:flex;justify-content:space-between;gap:12px;align-items:baseline}

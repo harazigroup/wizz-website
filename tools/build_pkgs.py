@@ -188,6 +188,21 @@ page("packages.html", "Packages | Wizz Smart Services",
      "Company formation packages with clear prices in your currency for the USA, UK, Canada, Estonia, France, Malaysia, UAE, Saudi Arabia and more.",
      pk_body, current="packages.html", scripts=ar_script() + PK_JS)
 
+# ---------------- server catalog for checkout (price, name, checkout description and image)
+def checkout_desc(t):
+    items = "; ".join(t["i"])
+    if t.get("deposit"):
+        return f"Deposit, credited to your final package price. Includes: {items}."
+    return (f"{t['plus']}: {items}." if t.get("plus") else f"Includes: {items}.")
+SERVER = {}
+for c in COUNTRIES:
+    for t in c["tiers"]:
+        if not t.get("sku"): continue
+        SERVER[t["sku"]] = {"name": f'{c["n"]} - {t["n"]}' + (" (deposit)" if t.get("deposit") else ""),
+                            "amount": t.get("deposit") or t["p"], "currency": "USD",
+                            "desc": checkout_desc(t)[:480], "image": f'https://wizz.com.my/img/pay/{c["c"].lower()}.png'}
+open(f"{D}/netlify/functions/catalog.json", "w").write(json.dumps(SERVER, indent=1, ensure_ascii=False) + "\n")
+
 # ---------------- thank you + onboarding
 ty_body = hero_t("Payment", "Thank you", "We're confirming your payment.") + '''
 <section class="block">
@@ -259,16 +274,21 @@ page("thank-you.html", "Thank you | Wizz Smart Services", "Payment confirmation 
 # ---------------- legal pages
 CO = "WIZZ SMART SERVICES SDN. BHD. (Registration No. 202501029005), B2-2-3, Publika, Solaris Dutamas, 50480 Kuala Lumpur, Malaysia"
 def legal(fname, title, lede, sections):
-    secs = "".join(f"<h2>{esc(h)}</h2>" + "".join(f"<p>{p}</p>" if not isinstance(p, list) else "<ul>" + "".join(f"<li>{x}</li>" for x in p) + "</ul>" for p in ps) for h, ps in sections)
-    body = hero("Legal", title, lede) + f'''
+    def para(p):
+        if isinstance(p, list):
+            return "<ul>" + "".join(f"<li{tk(x, RAW)}>{x}</li>" for x in p) + "</ul>"
+        return f"<p{tk(p, RAW)}>{p}</p>"
+    secs = "".join(f"<h2{tk(h)}>{esc(h)}</h2>" + "".join(para(p) for p in ps) for h, ps in sections)
+    contact = f'{CO}. Email <span class="ltr">info@wizz.com.my</span>, WhatsApp <span class="ltr">+60 11-2447 7685</span>.'
+    body = hero_t("Legal", title, lede) + f'''
 <section class="block">
   <div class="wrap legal-doc">
-    <p class="muted">Last updated: 5 October 2026</p>
+    <p class="muted"{tk("Last updated: 7 October 2026")}>Last updated: 7 October 2026</p>
     {secs}
-    <h2>Contact</h2><p>{CO}. Email <span class="ltr">info@wizz.com.my</span>, WhatsApp <span class="ltr">+60 11-2447 7685</span>.</p>
+    <h2{tk("Contact")}>Contact</h2><p{tk(contact, RAW)}>{contact}</p>
   </div>
 </section>'''
-    page(fname, f"{title} | Wizz Smart Services", lede, body, extra_head="")
+    page(fname, f"{title} | Wizz Smart Services", lede, body, extra_head="", scripts=ar_script())
 
 legal("terms.html", "Terms of Service", "The terms that apply when you buy a package or service from Wizz Smart Services.", [
  ("Who we are", [f"These terms are between you and {CO} (\"Wizz\", \"we\")."]),
@@ -277,7 +297,7 @@ legal("terms.html", "Terms of Service", "The terms that apply when you buy a pac
  ("Third-party decisions", ["Company registries, tax authorities, immigration authorities, banks, payment providers and marketplaces make their own decisions. We do not guarantee any registration, licence, visa, work permit, bank account, payment account, marketplace account, tax result or business result."]),
  ("Your responsibilities", [["Give us accurate, complete and current information and documents.","Use the company only for lawful activities.","Pay any government or third-party fees that your package does not include.","Keep up with yearly filings and renewals after the period included in your package."]]),
  ("Eligibility checks", ["Before filing, we check your identity and eligibility under anti-money-laundering and know-your-customer rules, ours and those of our partners. We may decline or stop work if a check fails or if information is false or incomplete."]),
- ("Prices and payment", ["Prices are shown in US dollars. Payments are processed securely by our payment providers (Stripe or Airwallex); we never see or store your full card details. Prices marked \"from\" are confirmed in a written quote before work starts."]),
+ ("Prices and payment", ["Prices are set in US dollars and shown in your local currency where we support it. You pay the amount shown at checkout, in that currency. Payments are processed securely by our payment providers (Stripe or Airwallex); we never see or store your full card details. Prices marked \"from\" are confirmed in a written quote before work starts."]),
  ("Timelines", ["Timelines we give are estimates. Delays caused by authorities, providers or missing information are outside our control."]),
  ("Refunds", ["Refunds follow our <a href=\"refund.html\">Refund Policy</a>."]),
  ("Liability", ["To the extent the law allows, our total liability for any claim is limited to the fees you paid us for the service concerned. We are not liable for decisions made by third parties or for indirect losses."]),
@@ -297,23 +317,42 @@ legal("privacy.html", "Privacy Policy", "How we collect, use and protect your pe
  ("Who we share it with", ["Only as needed to deliver your service: company registries and government authorities, registered agents, company secretaries, address providers and professional partners in the relevant country, our payment processors (Stripe and Airwallex), and our website and form host (Netlify). We don't sell your data."]),
  ("International transfers", ["Because we form companies in other countries, your data is sent to the country of your company and to our partners there."]),
  ("How long we keep it", ["We keep your records for as long as needed to provide the service and to meet legal record-keeping duties, normally up to 7 years after our work ends."]),
- ("Your rights", ["Under Malaysia's Personal Data Protection Act 2010 you can ask to access or correct your personal data, or to limit how we use it. Email <span class=\"ltr\">info@wizz.com.my</span>."]),
+ ("Your rights", ["Under Malaysia's Personal Data Protection Act 2010 you can ask to access or correct your personal data, or to limit how we use it. Email <span class=\"ltr\">info@wizz.com.my</span>.", "If you live in the UK or the European Union, you also have rights under the UK GDPR or the EU GDPR, including asking us to delete your data, and you can complain to your local data protection authority."]),
  ("Security", ["We limit access to your data to the people who need it and use secure services to store and send it."]),
 ])
 
 # ---------------- nav + footer links on every page
+LEGAL_COL = """      <div><h4 data-i18n="nav_legal">Legal</h4><ul>
+          <li><a href="terms.html" data-i18n="lg_terms">Terms of Service</a></li>
+          <li><a href="refund.html" data-i18n="lg_refund">Refund Policy</a></li>
+          <li><a href="privacy.html" data-i18n="lg_privacy">Privacy Policy</a></li>
+        </ul></div>
+"""
+WA_PATH = "M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"
+WA_FLOAT = f"""<a class="wa-float" href="https://wa.me/601124477685?text=Hi%20Wizz%2C%20I%27d%20like%20to%20ask%20about%20your%20services." target="_blank" rel="noopener" aria-label="Chat with us on WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="{WA_PATH}"/></svg><span class="wa-tip" data-i18n="wa_chat">Chat with us</span></a>
+"""
 for f in glob.glob(f"{D}/*.html"):
     s = open(f).read()
     if 'data-i18n="nav_pkgs"' not in s:
         cur = ' aria-current="page"' if f.endswith("/packages.html") else ""
         s = s.replace('<a href="services.html" data-i18n="nav_services"', f'<a href="packages.html"{cur} data-i18n="nav_pkgs">Packages</a>\n      <a href="services.html" data-i18n="nav_services"', 1)
-    if 'href="terms.html">Terms</a>' not in s:
-        s = s.replace('<div class="legal">\n', '<div class="legal">\n      <span class="legal-links"><a href="terms.html">Terms</a> · <a href="refund.html">Refunds</a> · <a href="privacy.html">Privacy</a></span>\n', 1)
+    # footer: Legal column (replaces the old one-line links)
+    s = s.replace('      <span class="legal-links"><a href="terms.html">Terms</a> · <a href="refund.html">Refunds</a> · <a href="privacy.html">Privacy</a></span>\n', '')
+    if 'data-i18n="nav_legal"' not in s:
+        s, n = re.subn(r'(        </ul></div>\n)(    </div>\n    <div class="legal">)', r'\1' + LEGAL_COL + r'\2', s, count=1)
+        assert n == 1, f
+    # floating WhatsApp button on every page
+    if 'class="wa-float"' not in s:
+        s = s.replace("</body>", WA_FLOAT + "</body>", 1)
     # the hero CTA on home now points to packages as a second option
     open(f, "w").write(s)
 
 # Arabic label for the new nav item
 js = open(f"{D}/site.js").read()
+if '"nav_legal"' not in js:
+    js = js.replace('"nav_mp": ', '"nav_legal": "قانوني", "lg_terms": "شروط الخدمة", "lg_refund": "سياسة الاسترداد", "lg_privacy": "سياسة الخصوصية", "wa_chat": "تواصل معنا", "nav_mp": ', 1)
+    assert '"nav_legal"' in js
+    open(f"{D}/site.js", "w").write(js)
 if '"nav_pkgs"' not in js:
     js = js.replace('"nav_mp": ', '"nav_pkgs": "الباقات", "nav_mp": ', 1)
     assert '"nav_pkgs"' in js
@@ -354,6 +393,17 @@ CSS = '''
 .pk-curbar label{font-weight:600;margin:0;display:inline}
 .pk-curbar select{width:auto;max-width:100%;min-width:0;margin:0;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);font:inherit;font-size:14px}
 .pk-curnote{color:var(--muted);font-size:13px}
+footer.site{padding-bottom:96px}
+footer.site .foot{grid-template-columns:1.4fr repeat(4,1fr)}
+@media (max-width:1000px){footer.site .foot{grid-template-columns:1fr 1fr}}
+@media (max-width:560px){footer.site .foot{grid-template-columns:1fr}}
+.wa-float{position:fixed;inset-inline-end:20px;bottom:20px;z-index:60;display:flex;align-items:center;gap:10px;height:56px;padding:0 16px;border-radius:999px;background:#25D366;color:#fff;text-decoration:none;box-shadow:0 8px 24px rgba(0,0,0,.18);transition:transform .2s ease,box-shadow .2s ease}
+.wa-float svg{width:28px;height:28px;flex:none}
+.wa-float .wa-tip{font:600 15px var(--body);white-space:nowrap}
+.wa-float:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(0,0,0,.22)}
+.wa-float:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+@media (max-width:640px){.wa-float{width:56px;padding:0;justify-content:center;right:16px;bottom:16px}.wa-float .wa-tip{display:none}}
+@media print{.wa-float{display:none}}
 [dir=rtl] .pk-flag,[dir=rtl] .pk-price .from{letter-spacing:0;font-family:var(--body);text-transform:none}
 .pk-addons{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
 .pk-addon{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:14px 16px;display:flex;justify-content:space-between;gap:12px;align-items:baseline}
