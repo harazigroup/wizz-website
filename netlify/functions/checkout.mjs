@@ -4,11 +4,6 @@ import { stripe, stripeOn } from "./_stripe.mjs";
 import { RATES, localPrice } from "./_fx.mjs";
 
 export default async (req) => {
-  if (req.method === "GET" && new URL(req.url).searchParams.get("diag") === "wizz-1007") {
-    // temporary: run a real checkout request for the cheapest package and report Stripe's answer
-    const r = await handler(new Request(req.url, { method: "POST", body: JSON.stringify({ sku: "sa-assessment", currency: "MYR" }) }));
-    return json(200, { status: r.status, body: await r.json(), key_type: (process.env.STRIPE_SECRET_KEY || "").slice(0, 8).replace(/[^a-z_]/gi, "") });
-  }
   return handler(req);
 };
 
@@ -56,6 +51,6 @@ async function handler(req) {
     return json(200, { provider: "airwallex", env, intent_id: intent.id, client_secret: intent.client_secret, currency: intent.currency, order_id: orderId, package: item.name, amount });
   } catch (e) {
     console.error(e);
-    return json(502, { error: "payment_unavailable", detail: String(e.message).replace(/(sk|rk)_(live|test)_[A-Za-z0-9*]+/g, "[key]") });
+    return json(502, { error: "payment_unavailable" });
   }
 }
