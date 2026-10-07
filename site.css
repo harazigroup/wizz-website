@@ -580,6 +580,13 @@ footer.site{padding-bottom:96px}
 .ac-loading{display:grid;place-items:center;min-height:300px}
 .ac-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:clamp(22px,4vw,40px);box-shadow:0 10px 40px rgba(16,24,40,.06)}
 .ac-signin{max-width:520px;margin:0 auto}
+.ac-tabs{display:flex;gap:4px;background:var(--surface);border-radius:9px;padding:4px;margin:18px 0 4px}
+.ac-tabs button{flex:1;border:0;background:transparent;padding:9px 10px;border-radius:7px;font:600 14px var(--body);color:var(--muted);cursor:pointer}
+.ac-tabs button[aria-selected="true"]{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.ac-row{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:14px}
+.ac-pw{max-width:520px;margin:0 0 18px}
+.ac-pw h2{font:800 20px var(--display);margin:0 0 6px}
+.ac-pwhint{font-size:12.5px;color:var(--muted);margin:-4px 0 0}
 .ac-signin h1,.ac-top h1{font:800 clamp(28px,3.4vw,38px)/1.1 var(--display);margin:6px 0 10px}
 .ac-form{display:grid;gap:10px;grid-template-columns:1fr!important;margin-top:18px}
 .ac-form label{font-weight:600;font-size:14px}

@@ -58,27 +58,13 @@
   <div class="wrap ac-wrap">
     <div class="ac-loading" id="acLoading"><span class="ck-spin" aria-hidden="true"></span></div>
     <div class="ac-msg bad" id="acErr" hidden></div>
-    <div class="ac-card ac-signin" id="acOutBox" hidden>
-      <p class="eyebrow" data-i18n="pk_a59823ec" data-html>Client account</p>
-      <h1 data-i18n="pk_a7b9c28a" data-html>Sign in or create your account</h1>
-      <p class="muted" data-i18n="pk_36145376" data-html>New here? Just enter your email. Your account is created the first time you sign in. If you've already paid, use the same email so your orders appear. We'll email you a secure sign-in link, so there's no password to remember.</p>
-      <form id="acForm" class="ac-form">
-        <label for="acEmail" data-i18n="pk_ce8ae9da" data-html>Email</label>
-        <input id="acEmail" type="email" required autocomplete="email">
-        <button class="btn solid" id="acSend" type="submit" data-i18n="pk_8b96583a" data-html><span class="dot"></span>Email me a sign-in link</button>
-        <p class="ac-msg" id="acFormMsg" hidden></p>
-      </form>
-      <div id="acSent" class="ac-sent" hidden>
-        <h2 data-i18n="pk_bfc9599f" data-html>Check your email</h2>
-        <p><span data-i18n="pk_7b9827fc" data-html>We sent a sign-in link to</span> <b id="acSentTo" class="ltr"></b>. <span data-i18n="pk_bb7e0230" data-html>Open it on this device. It works once and expires in one hour.</span></p>
-        <button type="button" class="ac-link" id="acAgain" data-i18n="pk_dc8d613e" data-html>Use a different email</button>
-      </div>
-    </div>
+    <div class="ac-card ac-signin" id="acOutBox" hidden></div>
     <div id="acIn" hidden>
       <div class="ac-top">
         <div><p class="eyebrow" data-i18n="pk_a59823ec" data-html>Client account</p><h1 data-i18n="pk_49e43429" data-html>Your orders</h1><p class="muted"><span data-i18n="pk_4b3b4f21" data-html>Signed in as</span> <b id="acWho" class="ltr"></b></p></div>
-        <div class="ac-actions"><a class="btn ghost small" id="acAdmin" href="admin.html" hidden>Team admin</a><button class="btn ghost small" id="acOut" type="button" data-i18n="pk_c87aacf5" data-html>Sign out</button></div>
+        <div class="ac-actions"><a class="btn ghost small" id="acAdmin" href="admin.html" hidden>Team admin</a><button class="btn ghost small" id="acPwBtn" type="button" data-i18n="pk_0b39c5ac" data-html>Change password</button><button class="btn ghost small" id="acOut" type="button" data-i18n="pk_c87aacf5" data-html>Sign out</button></div>
       </div>
+      <div class="ac-card ac-pw" id="acPw" hidden></div>
       <div id="acOrders" class="ac-orders"></div>
       <p class="ac-privacy" data-i18n="pk_b2576064" data-html>Your files are stored privately in the EU and only you and our team can open them. See our <a href="privacy.html">Privacy Policy</a>.</p>
     </div>
@@ -125,7 +111,7 @@
   </div>
 </footer>
 <script src="cart.js"></script>
-<script>window.WIZZ_AR={"pk_a59823ec": "حساب العميل", "pk_a7b9c28a": "سجّل الدخول أو أنشئ حسابك", "pk_36145376": "جديد هنا؟ أدخل بريدك الإلكتروني فقط، وسيُنشأ حسابك عند أول تسجيل دخول. إذا كنت قد دفعت بالفعل، فاستخدم البريد نفسه لتظهر طلباتك. سنرسل لك رابط دخول آمناً، فلا حاجة لتذكّر كلمة مرور.", "pk_ce8ae9da": "البريد الإلكتروني", "pk_8b96583a": "<span class=\"dot\"><\/span>أرسل لي رابط الدخول", "pk_bfc9599f": "تحقّق من بريدك الإلكتروني", "pk_7b9827fc": "أرسلنا رابط الدخول إلى", "pk_bb7e0230": "افتحه على هذا الجهاز. يعمل مرة واحدة وتنتهي صلاحيته خلال ساعة.", "pk_dc8d613e": "استخدم بريداً آخر", "pk_49e43429": "طلباتك", "pk_4b3b4f21": "تم الدخول باسم", "pk_c87aacf5": "تسجيل الخروج", "pk_b2576064": "تُحفظ ملفاتك بشكل خاص في الاتحاد الأوروبي، ولا يمكن فتحها إلا لك ولفريقنا. اطّلع على <a href=\"privacy.html\">سياسة الخصوصية<\/a>."};</script>
+<script>window.WIZZ_AR={"pk_a59823ec": "حساب العميل", "pk_49e43429": "طلباتك", "pk_4b3b4f21": "تم الدخول باسم", "pk_0b39c5ac": "تغيير كلمة المرور", "pk_c87aacf5": "تسجيل الخروج", "pk_b2576064": "تُحفظ ملفاتك بشكل خاص في الاتحاد الأوروبي، ولا يمكن فتحها إلا لك ولفريقنا. اطّلع على <a href=\"privacy.html\">سياسة الخصوصية<\/a>."};</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script>
 <script src="account.js" defer></script>
 <script src="site.js"></script>

@@ -14,16 +14,61 @@
   const sb=window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,detectSessionInUrl:true,flowType:'implicit'}});
   let user=null,orders=[],openId=null,docs={},events={},rems={};
 
-  // ---------- sign in
-  const qs=new URLSearchParams(location.search);if(qs.get('email'))$('acEmail').value=qs.get('email');
-  $('acForm').addEventListener('submit',async e=>{e.preventDefault();const email=$('acEmail').value.trim();if(!email)return;
-    const b=$('acSend');b.disabled=true;$('acFormMsg').hidden=true;
-    const {error}=await sb.auth.signInWithOtp({email,options:{emailRedirectTo:location.origin+'/account.html',shouldCreateUser:true}});
-    b.disabled=false;
-    if(error){$('acFormMsg').hidden=false;$('acFormMsg').className='ac-msg bad';$('acFormMsg').textContent=T('We couldn\'t send the email: ','تعذّر إرسال البريد: ')+error.message;return;}
-    $('acForm').hidden=true;$('acSent').hidden=false;$('acSentTo').textContent=email;});
-  $('acAgain').addEventListener('click',()=>{$('acSent').hidden=true;$('acForm').hidden=false;});
+  // ---------- sign in: password (default), email link, create account, forgot / reset password
+  const qs=new URLSearchParams(location.search);
+  let mode='signin',lastEmail=qs.get('email')||'',note=null;
+  const RET=location.origin+'/account.html';
+  function card(){
+    const box=$('acOutBox');const email=esc(lastEmail);
+    const H={signin:T('Sign in to your account','سجّل الدخول إلى حسابك'),signup:T('Create your account','أنشئ حسابك'),link:T('Sign in with an email link','الدخول برابط عبر البريد'),forgot:T('Reset your password','إعادة تعيين كلمة المرور'),reset:T('Choose a new password','اختر كلمة مرور جديدة')}[mode];
+    const P={signin:T('Use the email you paid with so your orders appear.','استخدم البريد الإلكتروني الذي دفعت به لتظهر طلباتك.'),signup:T('Use the email you paid with, or the one you\'ll use at checkout. We\'ll send a link to confirm it.','استخدم البريد الذي دفعت به أو الذي ستدفع به. سنرسل رابطاً لتأكيده.'),link:T('No password needed. We\'ll email you a secure link that signs you in.','لا حاجة لكلمة مرور. سنرسل لك رابطاً آمناً لتسجيل الدخول.'),forgot:T('Enter your email and we\'ll send you a link to set a new password.','أدخل بريدك وسنرسل لك رابطاً لتعيين كلمة مرور جديدة.'),reset:T('Pick a password with at least 8 characters.','اختر كلمة مرور من 8 أحرف على الأقل.')}[mode];
+    const tabs=(mode==='signin'||mode==='link')?'<div class="ac-tabs" role="tablist"><button type="button" role="tab" data-mode="signin" aria-selected="'+(mode==='signin')+'">'+T('Password','كلمة المرور')+'</button><button type="button" role="tab" data-mode="link" aria-selected="'+(mode==='link')+'">'+T('Email link','رابط عبر البريد')+'</button></div>':'';
+    const fEmail=mode!=='reset'?'<label for="acEmail">'+T('Email','البريد الإلكتروني')+'</label><input id="acEmail" type="email" required autocomplete="email" value="'+email+'">':'';
+    const fPw=(mode==='signin'||mode==='signup'||mode==='reset')?'<label for="acPass">'+(mode==='signin'?T('Password','كلمة المرور'):T('New password','كلمة مرور جديدة'))+'</label><input id="acPass" type="password" required minlength="'+(mode==='signin'?1:8)+'" autocomplete="'+(mode==='signin'?'current-password':'new-password')+'">':'';
+    const fPw2=(mode==='signup'||mode==='reset')?'<label for="acPass2">'+T('Repeat password','أعد كتابة كلمة المرور')+'</label><input id="acPass2" type="password" required minlength="8" autocomplete="new-password"><p class="ac-pwhint">'+T('At least 8 characters.','8 أحرف على الأقل.')+'</p>':'';
+    const btn={signin:T('Sign in','تسجيل الدخول'),signup:T('Create account','إنشاء الحساب'),link:T('Email me a sign-in link','أرسل لي رابط الدخول'),forgot:T('Send reset link','أرسل رابط إعادة التعيين'),reset:T('Save new password','حفظ كلمة المرور')}[mode];
+    const links={signin:'<div class="ac-row"><button type="button" class="ac-link" data-mode="forgot">'+T('Forgot password?','نسيت كلمة المرور؟')+'</button><span>'+T('New here?','جديد هنا؟')+' <button type="button" class="ac-link" data-mode="signup">'+T('Create an account','أنشئ حساباً')+'</button></span></div>',
+      signup:'<div class="ac-row"><span>'+T('Already have an account?','لديك حساب؟')+' <button type="button" class="ac-link" data-mode="signin">'+T('Sign in','تسجيل الدخول')+'</button></span></div>',
+      link:'<div class="ac-row"><span>'+T('New here? The link also creates your account.','جديد هنا؟ الرابط يُنشئ حسابك أيضاً.')+'</span></div>',
+      forgot:'<div class="ac-row"><button type="button" class="ac-link" data-mode="signin">'+T('Back to sign in','العودة لتسجيل الدخول')+'</button></div>',reset:''}[mode];
+    const msg=note?'<p class="ac-msg '+note[0]+'">'+note[1]+'</p>':'';
+    box.innerHTML='<p class="eyebrow">'+T('Client account','حساب العميل')+'</p><h1>'+H+'</h1><p class="muted">'+P+'</p>'+tabs+
+      '<form id="acForm" class="ac-form" novalidate>'+fEmail+fPw+fPw2+'<button class="btn solid" id="acSend" type="submit"><span class="dot"></span>'+btn+'</button>'+msg+links+'</form>';
+  }
+  function setMode(m,n){const e=$('acEmail');if(e)lastEmail=e.value.trim();mode=m;note=n||null;card();const f=$('acEmail')&&!$('acEmail').value?$('acEmail'):$('acPass');if(f)f.focus();}
+  $('acOutBox').addEventListener('click',e=>{const b=e.target.closest('[data-mode]');if(b){e.preventDefault();setMode(b.dataset.mode);}});
+  const friendly=m=>{m=String(m||'');
+    if(/invalid login credentials/i.test(m))return T('Email or password is not correct. Try again, or use "Forgot password?".','البريد أو كلمة المرور غير صحيحة. حاول مرة أخرى أو استخدم "نسيت كلمة المرور؟".');
+    if(/email not confirmed/i.test(m))return T('Please confirm your email first. Check your inbox for our confirmation link.','يرجى تأكيد بريدك أولاً. تحقق من رسالة التأكيد في بريدك.');
+    if(/already registered|already been registered/i.test(m))return T('This email already has an account. Sign in, or use "Forgot password?".','هذا البريد لديه حساب بالفعل. سجّل الدخول أو استخدم "نسيت كلمة المرور؟".');
+    if(/rate limit|too many/i.test(m))return T('Too many attempts. Please wait a minute and try again.','محاولات كثيرة. انتظر دقيقة ثم حاول مرة أخرى.');
+    if(/weak|at least/i.test(m))return T('Please choose a stronger password (at least 8 characters).','اختر كلمة مرور أقوى (8 أحرف على الأقل).');
+    return T('Something went wrong: ','حدث خطأ: ')+esc(m);};
+  $('acOutBox').addEventListener('submit',async e=>{e.preventDefault();
+    const email=$('acEmail')?$('acEmail').value.trim():'';const pw=$('acPass')?$('acPass').value:'';const pw2=$('acPass2')?$('acPass2').value:'';
+    if($('acEmail')&&!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){note=['bad',T('Please enter a valid email.','يرجى إدخال بريد إلكتروني صحيح.')];lastEmail=email;return card();}
+    if((mode==='signup'||mode==='reset')&&(pw.length<8||pw!==pw2)){note=['bad',pw.length<8?T('Use at least 8 characters.','استخدم 8 أحرف على الأقل.'):T('The two passwords don\'t match.','كلمتا المرور غير متطابقتين.')];lastEmail=email;return card();}
+    lastEmail=email;const b=$('acSend');b.disabled=true;let r;
+    if(mode==='signin'){r=await sb.auth.signInWithPassword({email,password:pw});if(r.error){note=['bad',friendly(r.error.message)];return card();}return;}
+    if(mode==='signup'){r=await sb.auth.signUp({email,password:pw,options:{emailRedirectTo:RET}});if(r.error){note=['bad',friendly(r.error.message)];return card();}
+      if(r.data&&r.data.session)return; if(r.data&&r.data.user&&r.data.user.identities&&r.data.user.identities.length===0){note=['bad',friendly('already registered')];return card();}
+      return setMode('signin',['good',T('Almost done: we sent a confirmation link to ','بقيت خطوة: أرسلنا رابط تأكيد إلى ')+esc(email)+T('. Open it, then you\'re signed in.','. افتحه وسيتم تسجيل دخولك.')]);}
+    if(mode==='link'){r=await sb.auth.signInWithOtp({email,options:{emailRedirectTo:RET,shouldCreateUser:true}});if(r.error){note=['bad',friendly(r.error.message)];return card();}
+      note=['good',T('Check your email: we sent a sign-in link to ','تحقق من بريدك: أرسلنا رابط الدخول إلى ')+esc(email)+T('. It works once and expires in one hour.','. يعمل مرة واحدة وتنتهي صلاحيته خلال ساعة.')];return card();}
+    if(mode==='forgot'){r=await sb.auth.resetPasswordForEmail(email,{redirectTo:RET});if(r.error){note=['bad',friendly(r.error.message)];return card();}
+      return setMode('signin',['good',T('If an account exists for ','إذا كان هناك حساب للبريد ')+esc(email)+T(', we\'ve sent a link to set a new password.',' فقد أرسلنا رابطاً لتعيين كلمة مرور جديدة.')]);}
+    if(mode==='reset'){r=await sb.auth.updateUser({password:pw});if(r.error){note=['bad',friendly(r.error.message)];return card();}recovering=false;$('acPw').hidden=true;show(true);loadAll();return;}
+  });
+  // change password while signed in
+  function pwCard(){const c=$('acPw');c.innerHTML='<h2>'+T('Change password','تغيير كلمة المرور')+'</h2><form class="ac-form" id="acPwForm"><label for="acNp">'+T('New password','كلمة مرور جديدة')+'</label><input id="acNp" type="password" minlength="8" required autocomplete="new-password"><label for="acNp2">'+T('Repeat password','أعد كتابة كلمة المرور')+'</label><input id="acNp2" type="password" minlength="8" required autocomplete="new-password"><p class="ac-pwhint">'+T('At least 8 characters. You can still sign in with an email link too.','8 أحرف على الأقل. يمكنك أيضاً الدخول برابط البريد.')+'</p><div class="ac-row"><button class="btn solid small" type="submit">'+T('Save password','حفظ كلمة المرور')+'</button><button class="ac-link" type="button" id="acPwX">'+T('Cancel','إلغاء')+'</button></div><p class="ac-msg" id="acPwMsg" hidden></p></form>';}
+  $('acPwBtn').addEventListener('click',()=>{const c=$('acPw');if(c.hidden){pwCard();c.hidden=false;$('acNp').focus();}else c.hidden=true;});
+  $('acPw').addEventListener('click',e=>{if(e.target.id==='acPwX')$('acPw').hidden=true;});
+  $('acPw').addEventListener('submit',async e=>{e.preventDefault();const a=$('acNp').value,b=$('acNp2').value,m=$('acPwMsg');m.hidden=false;
+    if(a.length<8||a!==b){m.className='ac-msg bad';m.textContent=a.length<8?T('Use at least 8 characters.','استخدم 8 أحرف على الأقل.'):T('The two passwords don\'t match.','كلمتا المرور غير متطابقتين.');return;}
+    const r=await sb.auth.updateUser({password:a});if(r.error){m.className='ac-msg bad';m.innerHTML=friendly(r.error.message);return;}
+    m.className='ac-msg good';m.textContent=T('Password saved. Next time you can sign in with your email and password.','تم حفظ كلمة المرور. يمكنك الدخول في المرة القادمة ببريدك وكلمة المرور.');setTimeout(()=>{$('acPw').hidden=true;},2500);});
   $('acOut').addEventListener('click',async()=>{await sb.auth.signOut();location.replace('account.html');});
+  let recovering=false;
 
   // ---------- data
   async function loadAll(){
@@ -89,8 +134,12 @@
     loadOrder(id);});
 
   // ---------- session
-  function show(signed){$('acLoading').hidden=true;$('acIn').hidden=!signed;$('acOutBox').hidden=signed;}
-  sb.auth.onAuthStateChange((ev,session)=>{const u=session&&session.user;if(u&&(!user||user.id!==u.id)){user=u;show(true);loadAll();if(location.hash.includes('access_token'))history.replaceState(null,'',location.pathname);}else if(!u){user=null;show(false);}});
-  sb.auth.getSession().then(({data})=>{if(!data.session)show(false);});
-  const err=new URLSearchParams(location.hash.slice(1)).get('error_description');if(err){$('acFormMsg').hidden=false;$('acFormMsg').className='ac-msg bad';$('acFormMsg').textContent=T('That sign-in link has expired or was already used. Request a new one.','انتهت صلاحية رابط الدخول أو استُخدم من قبل. اطلب رابطاً جديداً.');}
+  function show(signed){$('acLoading').hidden=true;$('acIn').hidden=!signed;$('acOutBox').hidden=signed;if(!signed)card();}
+  sb.auth.onAuthStateChange((ev,session)=>{const u=session&&session.user;
+    if(ev==='PASSWORD_RECOVERY'){recovering=true;user=u;mode='reset';note=null;$('acLoading').hidden=true;$('acIn').hidden=true;$('acOutBox').hidden=false;card();history.replaceState(null,'',location.pathname);return;}
+    if(recovering)return;
+    if(u&&(!user||user.id!==u.id)){user=u;show(true);loadAll();if(location.hash.includes('access_token'))history.replaceState(null,'',location.pathname);}else if(!u){user=null;show(false);}});
+  sb.auth.getSession().then(({data})=>{if(!data.session&&!recovering)show(false);});
+  document.addEventListener('wizz:lang',()=>{if(!$('acOutBox').hidden)card();if(!$('acPw').hidden)pwCard();});
+  const err=new URLSearchParams(location.hash.slice(1)).get('error_description');if(err){note=['bad',T('That link has expired or was already used. Please request a new one.','انتهت صلاحية الرابط أو استُخدم من قبل. اطلب رابطاً جديداً.')];}
 })();

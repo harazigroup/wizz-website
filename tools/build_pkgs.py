@@ -437,27 +437,13 @@ ac_body = f"""<section class="block ac">
   <div class="wrap ac-wrap">
     <div class="ac-loading" id="acLoading"><span class="ck-spin" aria-hidden="true"></span></div>
     <div class="ac-msg bad" id="acErr" hidden></div>
-    <div class="ac-card ac-signin" id="acOutBox" hidden>
-      <p class="eyebrow"{tk("Client account")}>Client account</p>
-      <h1{tk("Sign in or create your account")}>Sign in or create your account</h1>
-      <p class="muted"{tk("New here? Just enter your email. Your account is created the first time you sign in. If you've already paid, use the same email so your orders appear. We'll email you a secure sign-in link, so there's no password to remember.")}>New here? Just enter your email. Your account is created the first time you sign in. If you've already paid, use the same email so your orders appear. We'll email you a secure sign-in link, so there's no password to remember.</p>
-      <form id="acForm" class="ac-form">
-        <label for="acEmail"{tk("Email")}>Email</label>
-        <input id="acEmail" type="email" required autocomplete="email">
-        <button class="btn solid" id="acSend" type="submit"{tk('<span class="dot"></span>Email me a sign-in link', RAW)}><span class="dot"></span>Email me a sign-in link</button>
-        <p class="ac-msg" id="acFormMsg" hidden></p>
-      </form>
-      <div id="acSent" class="ac-sent" hidden>
-        <h2{tk("Check your email")}>Check your email</h2>
-        <p><span{tk("We sent a sign-in link to")}>We sent a sign-in link to</span> <b id="acSentTo" class="ltr"></b>. <span{tk("Open it on this device. It works once and expires in one hour.")}>Open it on this device. It works once and expires in one hour.</span></p>
-        <button type="button" class="ac-link" id="acAgain"{tk("Use a different email")}>Use a different email</button>
-      </div>
-    </div>
+    <div class="ac-card ac-signin" id="acOutBox" hidden></div>
     <div id="acIn" hidden>
       <div class="ac-top">
         <div><p class="eyebrow"{tk("Client account")}>Client account</p><h1{tk("Your orders")}>Your orders</h1><p class="muted"><span{tk("Signed in as")}>Signed in as</span> <b id="acWho" class="ltr"></b></p></div>
-        <div class="ac-actions"><a class="btn ghost small" id="acAdmin" href="admin.html" hidden>Team admin</a><button class="btn ghost small" id="acOut" type="button"{tk("Sign out")}>Sign out</button></div>
+        <div class="ac-actions"><a class="btn ghost small" id="acAdmin" href="admin.html" hidden>Team admin</a><button class="btn ghost small" id="acPwBtn" type="button"{tk("Change password")}>Change password</button><button class="btn ghost small" id="acOut" type="button"{tk("Sign out")}>Sign out</button></div>
       </div>
+      <div class="ac-card ac-pw" id="acPw" hidden></div>
       <div id="acOrders" class="ac-orders"></div>
       <p class="ac-privacy"{tk('Your files are stored privately in the EU and only you and our team can open them. See our <a href="privacy.html">Privacy Policy</a>.', RAW)}>Your files are stored privately in the EU and only you and our team can open them. See our <a href="privacy.html">Privacy Policy</a>.</p>
     </div>
@@ -631,6 +617,13 @@ footer.site{padding-bottom:96px}
 .ac-loading{display:grid;place-items:center;min-height:300px}
 .ac-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:clamp(22px,4vw,40px);box-shadow:0 10px 40px rgba(16,24,40,.06)}
 .ac-signin{max-width:520px;margin:0 auto}
+.ac-tabs{display:flex;gap:4px;background:var(--surface);border-radius:9px;padding:4px;margin:18px 0 4px}
+.ac-tabs button{flex:1;border:0;background:transparent;padding:9px 10px;border-radius:7px;font:600 14px var(--body);color:var(--muted);cursor:pointer}
+.ac-tabs button[aria-selected="true"]{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.ac-row{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:14px}
+.ac-pw{max-width:520px;margin:0 0 18px}
+.ac-pw h2{font:800 20px var(--display);margin:0 0 6px}
+.ac-pwhint{font-size:12.5px;color:var(--muted);margin:-4px 0 0}
 .ac-signin h1,.ac-top h1{font:800 clamp(28px,3.4vw,38px)/1.1 var(--display);margin:6px 0 10px}
 .ac-form{display:grid;gap:10px;grid-template-columns:1fr!important;margin-top:18px}
 .ac-form label{font-weight:600;font-size:14px}

@@ -379,3 +379,4 @@ AR.update({
 "Sign in or create your account": "سجّل الدخول أو أنشئ حسابك",
 "New here? Just enter your email. Your account is created the first time you sign in. If you've already paid, use the same email so your orders appear. We'll email you a secure sign-in link, so there's no password to remember.": "جديد هنا؟ أدخل بريدك الإلكتروني فقط، وسيُنشأ حسابك عند أول تسجيل دخول. إذا كنت قد دفعت بالفعل، فاستخدم البريد نفسه لتظهر طلباتك. سنرسل لك رابط دخول آمناً، فلا حاجة لتذكّر كلمة مرور.",
 })
+AR.update({"Change password": "تغيير كلمة المرور"})
