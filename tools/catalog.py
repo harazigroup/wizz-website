@@ -32,6 +32,11 @@ COUNTRIES = [
    dict(sku="fr-starter", n="Starter", p=849, buy=True, i=["Articles (statuts) drafted","Legal notice publication included","Guichet unique filing & registration","Registered address (domiciliation), 12 months"]),
    dict(sku="fr-business", n="Business", p=1390, buy=True, pop=True, plus="Everything in Starter, plus", i=["Capital deposit & bank account support","EU VAT number registration","Cdiscount / Octopia seller readiness"])],
   notes=["A non-EU manager may need a French residence permit to run day-to-day operations in France."]),
+ dict(c="NL", n="Netherlands", g="Europe", e="Private limited company (BV) set up through a Dutch notary. Run it fully from abroad.",
+  tiers=[
+   dict(sku="nl-starter", n="Starter", p=2490, buy=True, i=["Notary deed & articles of association","Chamber of Commerce (KVK) registration fee included","Shareholder register & UBO registration","Dutch business address, 12 months","Remote signing by power of attorney"]),
+   dict(sku="nl-business", n="Business", p=3490, buy=True, pop=True, plus="Everything in Starter, plus", i=["VAT number & EORI registration","Business account (EMI) application support","Amazon EU / Bol.com readiness call","Accounting partner introduction"])],
+  notes=["Passport copies must be certified with an apostille for the notary; we arrange this at cost.","Bookkeeping, VAT returns and annual accounts are yearly obligations, quoted separately."]),
  dict(c="AE", n="UAE", g="Middle East", e="Free zone company (fastest) or mainland LLC (trade anywhere in the UAE).",
   tiers=[
    dict(sku="ae-deposit", n="Free zone, no visa", p=2490, frm=True, deposit=500, i=["Licence in a cost-effective free zone","Company documents & registration","Bank account application support"]),

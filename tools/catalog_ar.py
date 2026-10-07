@@ -306,3 +306,18 @@ f'These terms are between you and {CO_EN} ("Wizz", "we").': f'هذه الشرو�
 "Security": "الأمان",
 "We limit access to your data to the people who need it and use secure services to store and send it.": "نقصر الوصول إلى بياناتك على من يحتاجون إليه، ونستخدم خدمات آمنة لتخزينها وإرسالها.",
 })
+
+# ---- Netherlands
+AR.update({
+"Netherlands": "هولندا",
+"Private limited company (BV) set up through a Dutch notary. Run it fully from abroad.": "شركة خاصة محدودة (BV) تُؤسَّس عبر كاتب عدل هولندي، وتُدار بالكامل من الخارج.",
+"Notary deed & articles of association": "عقد التأسيس لدى كاتب العدل والنظام الأساسي",
+"Chamber of Commerce (KVK) registration fee included": "رسوم التسجيل في غرفة التجارة (KVK) مشمولة",
+"Shareholder register & UBO registration": "سجل المساهمين وتسجيل المستفيد الحقيقي (UBO)",
+"Dutch business address, 12 months": "عنوان تجاري في هولندا لمدة 12 شهراً",
+"Remote signing by power of attorney": "التوقيع عن بُعد بموجب توكيل",
+"VAT number & EORI registration": "رقم ضريبة القيمة المضافة والتسجيل في EORI",
+"Amazon EU / Bol.com readiness call": "مكالمة تجهيز للبيع على أمازون أوروبا / Bol.com",
+"Passport copies must be certified with an apostille for the notary; we arrange this at cost.": "يجب توثيق نسخ جوازات السفر بالأبوستيل لكاتب العدل، ونرتّب ذلك بتكلفته الفعلية.",
+"Bookkeeping, VAT returns and annual accounts are yearly obligations, quoted separately.": "مسك الدفاتر وإقرارات ضريبة القيمة المضافة والحسابات السنوية التزامات سنوية لها عرض سعر منفصل.",
+})

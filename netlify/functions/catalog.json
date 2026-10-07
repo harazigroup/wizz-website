@@ -83,6 +83,20 @@
   "desc": "Everything in Starter, plus: Capital deposit & bank account support; EU VAT number registration; Cdiscount / Octopia seller readiness.",
   "image": "https://wizz.com.my/img/pay/fr.png"
  },
+ "nl-starter": {
+  "name": "Netherlands - Starter",
+  "amount": 2490,
+  "currency": "USD",
+  "desc": "Includes: Notary deed & articles of association; Chamber of Commerce (KVK) registration fee included; Shareholder register & UBO registration; Dutch business address, 12 months; Remote signing by power of attorney.",
+  "image": "https://wizz.com.my/img/pay/nl.png"
+ },
+ "nl-business": {
+  "name": "Netherlands - Business",
+  "amount": 3490,
+  "currency": "USD",
+  "desc": "Everything in Starter, plus: VAT number & EORI registration; Business account (EMI) application support; Amazon EU / Bol.com readiness call; Accounting partner introduction.",
+  "image": "https://wizz.com.my/img/pay/nl.png"
+ },
  "ae-deposit": {
   "name": "UAE - Free zone, no visa (deposit)",
   "amount": 500,

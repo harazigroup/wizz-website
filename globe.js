@@ -61,7 +61,7 @@ const LAND = [[-53.8,-72.4],[-53.8,-68.7],[-51.6,-70.6],[-51.6,-60.0],[-49.4,-74
   const travellers = [];
   const addLabel = (code, vec, isHub) => {
     const el = document.createElement('span');
-    el.className = 'g-label' + (isHub ? ' hub' : '');
+    el.className = 'g-label g-' + code.toLowerCase() + (isHub ? ' hub' : '');
     el.textContent = isHub ? 'KUALA LUMPUR' : code;
     host.appendChild(el);
     labels.push({ el, vec });

@@ -405,6 +405,9 @@ CSS = '''
 .pk-curbar select{width:auto;max-width:100%;min-width:0;margin:0;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);font:inherit;font-size:14px}
 .pk-curnote{color:var(--muted);font-size:13px}
 footer.site{padding-bottom:96px}
+.g-label.g-uk{margin-left:-30px}
+.g-label.g-nl{margin:-20px 0 0 2px}
+.g-label.g-fr{margin-left:-30px}
 .pay-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding-bottom:6px}
 .pay-label{display:inline-flex;align-items:center;gap:6px;font-weight:600;color:color-mix(in srgb,var(--on-ink) 80%,transparent)}
 .pay-label::before{content:"";width:12px;height:12px;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 1a5 5 0 0 0-5 5v4H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5zm-3 9V6a3 3 0 1 1 6 0v4z'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 1a5 5 0 0 0-5 5v4H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5zm-3 9V6a3 3 0 1 1 6 0v4z'/%3E%3C/svg%3E") center/contain no-repeat}
