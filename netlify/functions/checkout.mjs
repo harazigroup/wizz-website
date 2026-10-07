@@ -6,6 +6,17 @@ import { stripe, stripeOn } from "./_stripe.mjs";
 import { RATES, localPrice } from "./_fx.mjs";
 
 export default async (req) => {
+  if (req.method === "GET" && new URL(req.url).searchParams.get("diag") === "wizz-emb") {
+    // temporary: try an embedded session and report Stripe's answer
+    const out = { pk: (process.env.STRIPE_PUBLISHABLE_KEY || "").slice(0, 8) };
+    for (const [ui, ver] of [["embedded_page", "2026-03-25.dahlia"], ["embedded", undefined]]) {
+      try {
+        const s = await stripe("/checkout/sessions", { method: "POST", version: ver, body: { mode: "payment", ui_mode: ui, return_url: "https://wizz.com.my/thank-you.html?session_id={CHECKOUT_SESSION_ID}", line_items: { 0: { quantity: 1, price_data: { currency: "usd", unit_amount: 100, product_data: { name: "Diagnostic" } } } } } });
+        out[ui] = { ok: Boolean(s.client_secret), cs_prefix: (s.client_secret || "").slice(0, 8) };
+      } catch (e) { out[ui] = { ok: false, error: String(e.message).replace(/(sk|rk)_(live|test)_[A-Za-z0-9*]+/g, "[key]") }; }
+    }
+    return json(200, out);
+  }
   return handler(req);
 };
 
