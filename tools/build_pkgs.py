@@ -564,6 +564,14 @@ for f in glob.glob(f"{D}/*.html"):
         s = s.replace('<button class="lang" id="langBtn"', '<a class="acct-btn" href="account.html" aria-label="My account" title="My account"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm-7 8a7 7 0 0 1 14 0"/></svg></a>\n      <button class="lang" id="langBtn"', 1)
     if 'src="cart.js"' not in s:
         s = s.replace('<script src="site.js"></script>', '<script src="cart.js"></script>\n<script src="site.js"></script>', 1)
+    # countries page: every card links to its packages tab (and the US card to its guide)
+    if f.endswith("/countries.html") and 'class="clinks"' not in s:
+        s = s.replace('\n        <a class="clink" href="usa.html"><span data-i18n="us_guide">US company formation guide</span> <span aria-hidden="true">→</span></a>', "")
+        def _links(m):
+            k = m.group(1)
+            guide = '<a class="clink" href="usa.html"><span data-i18n="us_guide">US company formation guide</span> <span aria-hidden="true">→</span></a>' if k == "us" else ""
+            return m.group(0).replace("</article>", f'  <div class="clinks"><a class="clink" href="packages.html#{k}"><span data-i18n="see_pkgs">Packages & prices</span> <span aria-hidden="true">→</span></a>{guide}</div>\n      </article>', 1)
+        s = re.sub(r'<article class="ccard"[^>]*id="c-([a-z]+)">.*?</article>', _links, s, flags=re.S)
     # floating WhatsApp button on every page
     if 'class="wa-float"' not in s:
         s = s.replace("</body>", WA_FLOAT + "</body>", 1)

@@ -863,7 +863,8 @@ footer.site .foot{grid-template-columns:1.4fr repeat(4,1fr)}
 .us-final h2{font-size:clamp(28px,4vw,46px);font-weight:850;margin:0 0 12px;color:var(--night-fg)}
 .us-final p{color:var(--night-muted);margin:0}
 .us-final .us-cta{justify-content:center}
-.ccard .clink{display:inline-flex;gap:6px;margin-top:14px;font-weight:600;color:var(--ink);text-decoration:none;border-bottom:1.5px solid var(--red)}
+.ccard .clinks{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:auto;padding-top:16px}
+.ccard .clink{display:inline-flex;gap:6px;margin-top:0;font-weight:600;color:var(--ink);text-decoration:none;border-bottom:1.5px solid var(--red)}
 .pk-guide{display:inline-flex;gap:6px;margin:6px 0 18px;font-weight:600;color:var(--ink);text-decoration:none;border-bottom:1.5px solid var(--red)}
 @media (max-width:1000px){.us-steps{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:34px}.us-whos{grid-template-columns:repeat(2,minmax(0,1fr))}.us-feats,.us-stories{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:860px){.us-hero .wrap{grid-template-columns:1fr}.us-kit{max-width:460px}}
