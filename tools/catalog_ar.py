@@ -410,3 +410,4 @@ AR.update({
 "If you set up your own Thai company instead, each foreign work permit generally needs THB 2M paid-up capital and 4 Thai employees (BOI companies differ).": "إذا أسست شركتك التايلاندية الخاصة بدلاً من ذلك، فيتطلب كل تصريح عمل لأجنبي عادةً رأس مال مدفوعاً قدره 2 مليون بات و4 موظفين تايلانديين (تختلف شركات BOI)."
 })
 AR.update({"Everything about forming a UK company": "كل شيء عن تأسيس شركة بريطانية"})
+AR.update({"Marketplace onboarding: Noon, TikTok Shop, Shopee, Lazada and others": "التسجيل في المنصات: نون وتيك توك شوب وشوبي ولازادا وغيرها", "$500": "$500", "$75 each": "$75 لكل منصة", "from $225": "من $225", "$199": "$199"})

@@ -245,15 +245,21 @@
  },
  "addon-amazon": {
   "name": "Amazon seller account application support",
-  "amount": 299,
+  "amount": 500,
   "currency": "USD",
+  "fixed": {
+   "MYR": 1999
+  },
   "desc": "Add-on service. Approval of any account is decided by the provider.",
   "image": ""
  },
  "addon-marketplace": {
-  "name": "Marketplace onboarding: Noon, TikTok Shop, Shopee and others",
-  "amount": 249,
+  "name": "Marketplace onboarding: Noon, TikTok Shop, Shopee, Lazada and others",
+  "amount": 75,
   "currency": "USD",
+  "fixed": {
+   "MYR": 300
+  },
   "desc": "Add-on service. Approval of any account is decided by the provider.",
   "image": ""
  },

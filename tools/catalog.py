@@ -85,11 +85,24 @@ COUNTRIES = [
    dict(sku=None, n="Business", p=1390, fix={"MYR": 5799}, frm=True, pop=True, plus="Everything in Starter, plus", i=["Security clearance filing for foreign shareholders","Bank account support","Chamber registration"])],
   notes=["Foreign directors and shareholders need security clearance, which can take 8–14 weeks."]),
 ]
-ADDONS = [("Amazon seller account application support","$299"),("Marketplace onboarding: Noon, TikTok Shop, Shopee and others","$249 each"),("Shopify store setup","from $490"),("Business bank or payment account application (per provider)","$199"),("Amazon FBA prep from Malaysia","quote"),("Document attestation / apostille","quote")]
+MKT = "Marketplace onboarding: Noon, TikTok Shop, Shopee, Lazada and others"
+# Add-ons set in ringgit: MYR visitors pay exactly these; others see them converted.
+ADDON_FIX = {
+ "Amazon seller account application support": {"MYR": 1999},
+ MKT: {"MYR": 300},
+ "Shopify store setup": {"MYR": 899},
+}
+_u = lambda a: fx("MYR", ADDON_FIX[a]["MYR"])
+ADDONS = [("Amazon seller account application support", f"${_u('Amazon seller account application support')}"),
+          (MKT, f"${_u(MKT)} each"),
+          ("Shopify store setup", f"from ${_u('Shopify store setup')}"),
+          ("Business bank or payment account application (per provider)", "$199"),
+          ("Amazon FBA prep from Malaysia", "quote"),
+          ("Document attestation / apostille", "quote")]
 
 # Add-ons that can be bought online (label must match ADDONS above). Prices in USD per unit.
 ADDON_SKUS = {
- "Amazon seller account application support": ("addon-amazon", 299),
- "Marketplace onboarding: Noon, TikTok Shop, Shopee and others": ("addon-marketplace", 249),
+ "Amazon seller account application support": ("addon-amazon", _u("Amazon seller account application support")),
+ MKT: ("addon-marketplace", _u(MKT)),
  "Business bank or payment account application (per provider)": ("addon-bank", 199),
 }
