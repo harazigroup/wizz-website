@@ -101,6 +101,7 @@ for idx, c in enumerate(COUNTRIES):
     sel = "true" if idx == 0 else "false"
     tabs.append(f'<button type="button" role="tab" id="tab-{k}" aria-controls="p-{k}" aria-selected="{sel}" tabindex="{0 if idx==0 else -1}" data-k="{k}"><b class="ltr">{c["c"]}</b><span{tk(c["n"])}>{esc(c["n"])}</span></button>')
     notes = "".join(f'<p class="pk-note"{tk(n, money_text)}>{money_text(n)}</p>' for n in c["notes"])
+    if k == "us": notes += f'<a class="pk-guide" href="usa.html"><span{tk("Everything about forming a US company")}>Everything about forming a US company</span> <span aria-hidden="true">→</span></a>'
     panels.append(f'''<div class="pk-panel" role="tabpanel" id="p-{k}" aria-labelledby="tab-{k}"{'' if idx==0 else ' hidden'}>
     <div class="pk-head"><span class="pk-code ltr">{c["c"]}<i>.</i></span><div><h2{tk(c["n"])}>{esc(c["n"])}</h2><p{tk(c["e"])}>{esc(c["e"])}</p></div></div>
     <div class="pk-grid">{"".join(tier_html(c, t) for t in c["tiers"])}</div>
@@ -470,6 +471,8 @@ ad_body = """<section class="block ac">
 page("admin.html", "Team admin | Wizz Smart Services", "Team admin.", ad_body,
      scripts=SB_JS + '<script src="admin.js" defer></script>\n', extra_head='<meta name="robots" content="noindex">')
 
+exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "us_page.py")).read())
+
 # ---------------- legal pages
 CO = "WIZZ SMART SERVICES SDN. BHD. (Registration No. 202501029005), B2-2-3, Publika, Solaris Dutamas, 50480 Kuala Lumpur, Malaysia"
 def legal(fname, title, lede, sections):
@@ -514,7 +517,7 @@ legal("privacy.html", "Privacy Policy", "How we collect, use and protect your pe
  ("What we collect", [["Contact details: name, email, phone or WhatsApp number.","Identity details: nationality, full residential address, national ID number, passport details and copies.","Company details: proposed names, activity, shareholders and directors.","Payment details: order and payment references. Card details are handled by our payment providers (Stripe or Airwallex), not by us."]]),
  ("Why we use it", [["To provide the services you buy, including filings with registries and authorities.","To carry out identity and eligibility checks required by law and by our partners.","To contact you about your order and your yearly obligations."]]),
  ("Who we share it with", ["Only as needed to deliver your service: company registries and government authorities, registered agents, company secretaries, address providers and professional partners in the relevant country, our payment processors (Stripe and Airwallex), our website and form host (Netlify), and our client-account database and file storage (Supabase, hosted in the EU). We don't sell your data."]),
- ("Your client account", ["You sign in with a one-time link sent to your email; we don't store passwords. Documents you upload are kept in private storage in the European Union. Only you and the members of our team who handle your order can open them, and each download link expires after a minute.", "You can delete a file you uploaded at any time from your account, or ask us to delete your account and files by emailing <span class=\"ltr\">info@wizz.com.my</span>, unless the law requires us to keep them."]),
+ ("Your client account", ["You sign in with your email and a password, or with a one-time link sent to your email. Passwords are stored only in hashed (encrypted) form, so no one at Wizz can read them. Documents you upload are kept in private storage in the European Union. Only you and the members of our team who handle your order can open them, and each download link expires after a minute.", "You can delete a file you uploaded at any time from your account, or ask us to delete your account and files by emailing <span class=\"ltr\">info@wizz.com.my</span>, unless the law requires us to keep them."]),
  ("International transfers", ["Because we form companies in other countries, your data is sent to the country of your company and to our partners there."]),
  ("How long we keep it", ["We keep your records for as long as needed to provide the service and to meet legal record-keeping duties, normally up to 7 years after our work ends."]),
  ("Your rights", ["Under Malaysia's Personal Data Protection Act 2010 you can ask to access or correct your personal data, or to limit how we use it. Email <span class=\"ltr\">info@wizz.com.my</span>.", "If you live in the UK or the European Union, you also have rights under the UK GDPR or the EU GDPR, including asking us to delete your data, and you can complain to your local data protection authority."]),
@@ -830,7 +833,7 @@ footer.site .foot{grid-template-columns:1.4fr repeat(4,1fr)}
 css = open(f"{D}/site.css").read()
 # v6 is the last block in site.css: replace it on every build so CSS edits apply
 css = css.split("\n/* ===== v6: packages")[0].rstrip("\n") + "\n"
-open(f"{D}/site.css", "w").write(css + CSS)
+open(f"{D}/site.css", "w").write(css + CSS + US_CSS)
 
 # sitemap
 pages = sorted(os.path.basename(p) for p in glob.glob(f"{D}/*.html") if not p.endswith(("thank-you.html", "checkout.html", "account.html", "admin.html")))
