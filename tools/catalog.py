@@ -2,9 +2,9 @@
 COUNTRIES = [
  dict(c="US", n="United States", g="North America", e="LLC in Wyoming or New Mexico (Delaware on request). Owned 100% by non-residents.",
   tiers=[
-   dict(sku="us-starter", n="Starter", p=349, buy=True, i=["State filing fee included","Articles of organization & operating agreement","EIN application for non-residents","Registered agent, 12 months","Digital document pack"]),
-   dict(sku="us-business", n="Business", p=649, buy=True, pop=True, plus="Everything in Starter, plus", i=["US business mailing address, 12 months","Business account application support (one provider)","Amazon / Shopify readiness call"]),
-   dict(sku="us-complete", n="Complete", p=1190, buy=True, plus="Everything in Business, plus", i=["First-year Form 5472 + pro-forma 1120 filing","State annual report filing","Compliance calendar & reminders"])],
+   dict(sku="us-starter", n="Starter", p=289, buy=True, i=["State filing fee included","Articles of organization & operating agreement","EIN application for non-residents","Registered agent, 12 months","Digital document pack"]),
+   dict(sku="us-business", n="Business", p=1899, buy=True, pop=True, plus="Everything in Starter, plus", i=["US business mailing address, 12 months","Business account application support (one provider)","Amazon / Shopify readiness call"]),
+   dict(sku="us-complete", n="Complete", p=2899, buy=True, plus="Everything in Business, plus", i=["First-year Form 5472 + pro-forma 1120 filing","State annual report filing","Compliance calendar & reminders"])],
   notes=["Delaware: add $100. Delaware charges a $400 yearly tax from 2026.","Yearly renewal from $499 (registered agent + annual report)."]),
  dict(c="UK", n="United Kingdom", g="Europe", e="Private limited company (Ltd) at Companies House. No UK-resident director needed.",
   tiers=[

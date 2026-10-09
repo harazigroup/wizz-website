@@ -1,21 +1,21 @@
 {
  "us-starter": {
   "name": "United States - Starter",
-  "amount": 349,
+  "amount": 289,
   "currency": "USD",
   "desc": "Includes: State filing fee included; Articles of organization & operating agreement; EIN application for non-residents; Registered agent, 12 months; Digital document pack.",
   "image": "https://wizz.com.my/img/pay/us.png"
  },
  "us-business": {
   "name": "United States - Business",
-  "amount": 649,
+  "amount": 1899,
   "currency": "USD",
   "desc": "Everything in Starter, plus: US business mailing address, 12 months; Business account application support (one provider); Amazon / Shopify readiness call.",
   "image": "https://wizz.com.my/img/pay/us.png"
  },
  "us-complete": {
   "name": "United States - Complete",
-  "amount": 1190,
+  "amount": 2899,
   "currency": "USD",
   "desc": "Everything in Business, plus: First-year Form 5472 + pro-forma 1120 filing; State annual report filing; Compliance calendar & reminders.",
   "image": "https://wizz.com.my/img/pay/us.png"
