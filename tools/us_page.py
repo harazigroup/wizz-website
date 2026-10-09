@@ -369,6 +369,7 @@ US_CSS = r'''
 .us-ents{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
 .us-ent h3{font:800 26px var(--mono);margin:0 0 8px}
 .us-ent>p{color:var(--muted);margin:0 0 14px}
+.us-ents-txt .us-ent h3{font:800 21px var(--body)}
 .us-ent ul{list-style:none;padding:0;margin:0;display:grid;gap:9px;font-size:15px}
 .us-ent li{display:flex;gap:9px;align-items:flex-start}.us-ent li svg{margin-top:3px}
 .us-ent-note{margin:16px 0 0!important;font-size:13px;font-weight:600;color:var(--ink)!important}

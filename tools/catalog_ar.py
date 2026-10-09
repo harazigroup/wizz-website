@@ -409,3 +409,4 @@ AR.update({
 "The work permit lets you work only in the role and for the employer named on it. The Thai authorities decide every application.": "يسمح لك تصريح العمل بالعمل فقط في الوظيفة ولدى صاحب العمل المذكورين فيه، والسلطات التايلاندية هي من تقرر في كل طلب.",
 "If you set up your own Thai company instead, each foreign work permit generally needs THB 2M paid-up capital and 4 Thai employees (BOI companies differ).": "إذا أسست شركتك التايلاندية الخاصة بدلاً من ذلك، فيتطلب كل تصريح عمل لأجنبي عادةً رأس مال مدفوعاً قدره 2 مليون بات و4 موظفين تايلانديين (تختلف شركات BOI)."
 })
+AR.update({"Everything about forming a UK company": "كل شيء عن تأسيس شركة بريطانية"})

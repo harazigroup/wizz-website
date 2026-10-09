@@ -103,13 +103,14 @@ def grp_html(c):
         out += f'''<div class="pk-sub"><h3{tk(title)}>{esc(title)}</h3><p{tk(lede)}>{esc(lede)}</p></div>
     <div class="pk-grid pk-grid-sm">{"".join(tier_html(c, t) for t in ts)}</div>'''
     return out
+GUIDES = {"us": ("usa.html", "Everything about forming a US company"), "uk": ("uk.html", "Everything about forming a UK company")}
 tabs, panels = [], []
 for idx, c in enumerate(COUNTRIES):
     k = c["c"].lower()
     sel = "true" if idx == 0 else "false"
     tabs.append(f'<button type="button" role="tab" id="tab-{k}" aria-controls="p-{k}" aria-selected="{sel}" tabindex="{0 if idx==0 else -1}" data-k="{k}"><b class="ltr">{c["c"]}</b><span{tk(c["n"])}>{esc(c["n"])}</span></button>')
     notes = "".join(f'<p class="pk-note"{tk(n, money_text)}>{money_text(n)}</p>' for n in c["notes"])
-    if k == "us": notes += f'<a class="pk-guide" href="usa.html"><span{tk("Everything about forming a US company")}>Everything about forming a US company</span> <span aria-hidden="true">→</span></a>'
+    if k in GUIDES: notes += f'<a class="pk-guide" href="{GUIDES[k][0]}"><span{tk(GUIDES[k][1])}>{GUIDES[k][1]}</span> <span aria-hidden="true">→</span></a>'
     panels.append(f'''<div class="pk-panel" role="tabpanel" id="p-{k}" aria-labelledby="tab-{k}"{'' if idx==0 else ' hidden'}>
     <div class="pk-head"><span class="pk-code ltr">{c["c"]}<i>.</i></span><div><h2{tk(c["n"])}>{esc(c["n"])}</h2><p{tk(c["e"])}>{esc(c["e"])}</p></div></div>
     <div class="pk-grid">{"".join(tier_html(c, t) for t in c["tiers"] if not t.get("grp"))}</div>
@@ -169,7 +170,7 @@ PK_JS = '''<script>
   function apply(c){cur=(FX&&FX.rates[c])?c:'USD';
     document.querySelectorAll('.m[data-usd]').forEach(el=>{el.textContent=fmt(local(+el.dataset.usd,cur,el.dataset.fix?JSON.parse(el.dataset.fix):null),cur)});
     document.querySelectorAll('.pk-price .cur').forEach(el=>{const shown=el.previousElementSibling?el.previousElementSibling.textContent:'';el.textContent=/[A-Z]{3}/.test(shown)?'':cur;});
-    cs.value=cur;document.dispatchEvent(new CustomEvent('wizz:fx',{detail:{fx:FX,cur:cur}}));note.textContent=cur==='USD'?T('Set in US dollars. Change the currency if you prefer.','الأسعار بالدولار الأمريكي، ويمكنك تغيير العملة.'):T('Converted from our US dollar prices at a recent rate. You pay exactly this amount in '+cur+'.','محوّلة من أسعارنا بالدولار الأمريكي حسب سعر صرف حديث، وتدفع هذا المبلغ نفسه بعملة '+cur+'.');}
+    cs.value=cur;document.dispatchEvent(new CustomEvent('wizz:fx',{detail:{fx:FX,cur:cur}}));note.textContent=cur==='USD'?T('Set in US dollars. Change the currency if you prefer.','الأسعار بالدولار الأمريكي، ويمكنك تغيير العملة.'):T('Prices shown in '+cur+'. You pay exactly this amount.','الأسعار معروضة بعملة '+cur+'، وتدفع هذا المبلغ نفسه.');}
   function fill(){const list=FX?Object.keys(FX.rates):['USD'];cs.innerHTML=list.map(c=>'<option value="'+c+'">'+c+' · '+((ar()?NAMES_AR:NAMES)[c]||c)+'</option>').join('');}
   document.addEventListener('wizz:lang',()=>{fill();apply(cur);});
   fetch('/.netlify/functions/prices').then(r=>r.ok?r.json():Promise.reject()).then(d=>{FX=d;
@@ -481,6 +482,7 @@ page("admin.html", "Team admin | Wizz Smart Services", "Team admin.", ad_body,
      scripts=SB_JS + '<script src="admin.js" defer></script>\n', extra_head='<meta name="robots" content="noindex">')
 
 exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "us_page.py")).read())
+exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "uk_page.py")).read())
 
 # ---------------- legal pages
 CO = "WIZZ SMART SERVICES SDN. BHD. (Registration No. 202501029005), B2-2-3, Publika, Solaris Dutamas, 50480 Kuala Lumpur, Malaysia"
@@ -564,12 +566,15 @@ for f in glob.glob(f"{D}/*.html"):
         s = s.replace('<button class="lang" id="langBtn"', '<a class="acct-btn" href="account.html" aria-label="My account" title="My account"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm-7 8a7 7 0 0 1 14 0"/></svg></a>\n      <button class="lang" id="langBtn"', 1)
     if 'src="cart.js"' not in s:
         s = s.replace('<script src="site.js"></script>', '<script src="cart.js"></script>\n<script src="site.js"></script>', 1)
-    # countries page: every card links to its packages tab (and the US card to its guide)
-    if f.endswith("/countries.html") and 'class="clinks"' not in s:
-        s = s.replace('\n        <a class="clink" href="usa.html"><span data-i18n="us_guide">US company formation guide</span> <span aria-hidden="true">→</span></a>', "")
+    # countries page: every card links to its packages tab, and to its guide page when there is one
+    if f.endswith("/countries.html"):
+        s = re.sub(r'\n\s*<a class="clink" href="usa.html">.*?</a>(?=\n)', "", s)
+        s = re.sub(r'\s*<div class="clinks">.*?</div>(?=\n\s*</article>)', "", s)
+        CGUIDE = {"us": ("usa.html", "us_guide", "US company formation guide"), "uk": ("uk.html", "uk_guide", "UK company formation guide")}
         def _links(m):
             k = m.group(1)
-            guide = '<a class="clink" href="usa.html"><span data-i18n="us_guide">US company formation guide</span> <span aria-hidden="true">→</span></a>' if k == "us" else ""
+            g = CGUIDE.get(k)
+            guide = f'<a class="clink" href="{g[0]}"><span data-i18n="{g[1]}">{g[2]}</span> <span aria-hidden="true">→</span></a>' if g else ""
             return m.group(0).replace("</article>", f'  <div class="clinks"><a class="clink" href="packages.html#{k}"><span data-i18n="see_pkgs">Packages & prices</span> <span aria-hidden="true">→</span></a>{guide}</div>\n      </article>', 1)
         s = re.sub(r'<article class="ccard"[^>]*id="c-([a-z]+)">.*?</article>', _links, s, flags=re.S)
     # floating WhatsApp button on every page

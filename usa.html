@@ -203,7 +203,7 @@
   function apply(c){cur=(FX&&FX.rates[c])?c:'USD';
     document.querySelectorAll('.m[data-usd]').forEach(el=>{el.textContent=fmt(local(+el.dataset.usd,cur,el.dataset.fix?JSON.parse(el.dataset.fix):null),cur)});
     document.querySelectorAll('.pk-price .cur').forEach(el=>{const shown=el.previousElementSibling?el.previousElementSibling.textContent:'';el.textContent=/[A-Z]{3}/.test(shown)?'':cur;});
-    cs.value=cur;document.dispatchEvent(new CustomEvent('wizz:fx',{detail:{fx:FX,cur:cur}}));note.textContent=cur==='USD'?T('Set in US dollars. Change the currency if you prefer.','الأسعار بالدولار الأمريكي، ويمكنك تغيير العملة.'):T('Converted from our US dollar prices at a recent rate. You pay exactly this amount in '+cur+'.','محوّلة من أسعارنا بالدولار الأمريكي حسب سعر صرف حديث، وتدفع هذا المبلغ نفسه بعملة '+cur+'.');}
+    cs.value=cur;document.dispatchEvent(new CustomEvent('wizz:fx',{detail:{fx:FX,cur:cur}}));note.textContent=cur==='USD'?T('Set in US dollars. Change the currency if you prefer.','الأسعار بالدولار الأمريكي، ويمكنك تغيير العملة.'):T('Prices shown in '+cur+'. You pay exactly this amount.','الأسعار معروضة بعملة '+cur+'، وتدفع هذا المبلغ نفسه.');}
   function fill(){const list=FX?Object.keys(FX.rates):['USD'];cs.innerHTML=list.map(c=>'<option value="'+c+'">'+c+' · '+((ar()?NAMES_AR:NAMES)[c]||c)+'</option>').join('');}
   document.addEventListener('wizz:lang',()=>{fill();apply(cur);});
   fetch('/.netlify/functions/prices').then(r=>r.ok?r.json():Promise.reject()).then(d=>{FX=d;
