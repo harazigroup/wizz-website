@@ -172,8 +172,16 @@ if (form) {
     const btn = form.querySelector('button[type=submit]'); const lbl = btn.querySelector('[data-i18n]');
     btn.disabled = true; const old = lbl.textContent; lbl.textContent = lang === 'ar' ? 'جارٍ الإرسال…' : 'Sending…';
     try {
-      const r = await fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(data).toString() });
-      if (!r.ok) throw new Error('HTTP ' + r.status);
+      // 1) email the team (and the client) through our function; 2) if that fails, keep the lead in Netlify Forms
+      let sent = false;
+      try {
+        const r = await fetch('/.netlify/functions/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(Object.fromEntries(data)) });
+        sent = r.ok;
+      } catch (_) {}
+      if (!sent) {
+        const r = await fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(data).toString() });
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+      }
       buildMsg();
       form.querySelectorAll(':scope > div:not(.out), :scope > fieldset, :scope > p').forEach(n => n.hidden = true);
       const out = document.getElementById('out'); out.hidden = false;
