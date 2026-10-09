@@ -114,8 +114,11 @@
  },
  "ee-business": {
   "name": "Estonia - Business",
-  "amount": 7500,
+  "amount": 1874,
   "currency": "USD",
+  "fixed": {
+   "MYR": 7500
+  },
   "desc": "Everything in Starter, plus: VAT registration if needed; Business account (EMI) application support; Accounting partner introduction.",
   "image": "https://wizz.com.my/img/pay/ee.png"
  },
@@ -173,8 +176,11 @@
  },
  "sa-assessment": {
   "name": "Saudi Arabia - Market-entry assessment",
-  "amount": 500,
+  "amount": 125,
   "currency": "USD",
+  "fixed": {
+   "MYR": 500
+  },
   "desc": "Includes: Activity & licence route review; Capital and Saudization overview; Written plan and quote; Credited if you go ahead.",
   "image": "https://wizz.com.my/img/pay/sa.png"
  },

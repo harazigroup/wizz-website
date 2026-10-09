@@ -34,7 +34,7 @@ COUNTRIES = [
  dict(c="EE", n="Estonia", g="Europe", e="Private limited company (OÜ), run fully online with e-Residency.",
   tiers=[
    dict(sku="ee-starter", n="Starter", p=749, buy=True, i=["State fee (€265) included","Articles of association","Legal address & contact person, 12 months","Registration guidance for e-Residency holders"]),
-   dict(sku="ee-business", n="Business", p=7500, buy=True, pop=True, plus="Everything in Starter, plus", i=["VAT registration if needed","Business account (EMI) application support","Accounting partner introduction"]),
+   dict(sku="ee-business", n="Business", p=fx("MYR", 7500), fix={"MYR": 7500}, buy=True, pop=True, plus="Everything in Starter, plus", i=["VAT registration if needed","Business account (EMI) application support","Accounting partner introduction"]),
    dict(sku="ee-eresidency", n="e-Residency card", p=fx("EUR", 250), fix={"EUR": 250}, buy=True, i=["We prepare and submit your e-Residency application","Government card fee included","Collect your card at an Estonian embassy or pick-up point you choose"])],
   notes=["e-Residency is a digital ID for running an Estonian company online. It is not a visa or residence permit, and the Estonian Police and Border Guard Board decides each application."]),
  dict(c="PL", n="Poland", g="Europe", e="Limited liability company (sp. z o.o.) via the S24 online system.",
@@ -60,13 +60,13 @@ COUNTRIES = [
   notes=["Pay a deposit of $500 online. It's credited to your package; the final price depends on the free zone and activity.","Licences renew yearly at roughly the first-year cost."]),
  dict(c="SA", n="Saudi Arabia", g="Middle East", e="LLC with an investment licence (MISA) for foreign owners.",
   tiers=[
-   dict(sku="sa-assessment", n="Market-entry assessment", p=500, buy=True, i=["Activity & licence route review","Capital and Saudization overview","Written plan and quote","Credited if you go ahead"]),
-   dict(sku=None, n="Company setup", p=12000, frm=True, pop=True, i=["Investment licence & commercial registration","Chamber & municipality registrations","Bank account support","Government fees and capital not included"])],
+   dict(sku="sa-assessment", n="Market-entry assessment", p=fx("MYR", 500), fix={"MYR": 500}, buy=True, i=["Activity & licence route review","Capital and Saudization overview","Written plan and quote","Credited if you go ahead"]),
+   dict(sku=None, n="Company setup", p=fx("MYR", 12000), fix={"MYR": 12000}, frm=True, pop=True, i=["Investment licence & commercial registration","Chamber & municipality registrations","Bank account support","Government fees and capital not included"])],
   notes=["Setup usually takes 3–6 weeks. Work permits and expat levies are separate."]),
  dict(c="OM", n="Oman", g="Middle East", e="LLC with 100% foreign ownership for most activities.",
   tiers=[
-   dict(sku=None, n="Company setup", p=3500, frm=True, i=["Commercial registration","Activity licences","Company documents","Chamber of commerce registration"]),
-   dict(sku=None, n="Setup + investor visa", p=7500, frm=True, pop=True, plus="Everything in setup, plus", i=["Investor residence visa, valid 2 years","Bank account support"])],
+   dict(sku=None, n="Company setup", p=fx("MYR", 3500), fix={"MYR": 3500}, frm=True, i=["Commercial registration","Activity licences","Company documents","Chamber of commerce registration"]),
+   dict(sku=None, n="Setup + investor visa", p=fx("MYR", 7500), fix={"MYR": 7500}, frm=True, pop=True, plus="Everything in setup, plus", i=["Investor residence visa, valid 2 years","Bank account support"])],
   notes=["Office space, when your activity requires it, is quoted separately."]),
  dict(c="MY", n="Malaysia", g="Asia", e="Private limited company (Sdn. Bhd.) at SSM. Our home base.",
   tiers=[
