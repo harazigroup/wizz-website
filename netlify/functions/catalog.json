@@ -41,6 +41,56 @@
   "desc": "Everything in Business, plus: First-year accounts via our accountant partner; Confirmation statement filing (£50 fee included).",
   "image": "https://wizz.com.my/img/pay/uk.png"
  },
+ "uk-addr-ro-da": {
+  "name": "United Kingdom - Registered office + director's address",
+  "amount": 48,
+  "currency": "USD",
+  "fixed": {
+   "GBP": 34.99
+  },
+  "desc": "Includes: Registered office address in London; Director's service address; 12 months.",
+  "image": "https://wizz.com.my/img/pay/uk.png"
+ },
+ "uk-addr-ba-ro": {
+  "name": "United Kingdom - Business address + registered office",
+  "amount": 128,
+  "currency": "USD",
+  "fixed": {
+   "GBP": 94.49
+  },
+  "desc": "Includes: Virtual business address in London, with mail handling; Registered office address; 12 months.",
+  "image": "https://wizz.com.my/img/pay/uk.png"
+ },
+ "uk-addr-ba-ro-da": {
+  "name": "United Kingdom - Business address + registered office + director's address",
+  "amount": 135,
+  "currency": "USD",
+  "fixed": {
+   "GBP": 100.09
+  },
+  "desc": "Includes: Virtual business address in London, with mail handling; Registered office address; Director's service address; 12 months.",
+  "image": "https://wizz.com.my/img/pay/uk.png"
+ },
+ "uk-addr-ba-call": {
+  "name": "United Kingdom - Business address + call answering",
+  "amount": 298,
+  "currency": "USD",
+  "fixed": {
+   "GBP": 220.5
+  },
+  "desc": "Includes: Virtual business address in London, with mail handling; Call answering service in your company name; 12 months.",
+  "image": "https://wizz.com.my/img/pay/uk.png"
+ },
+ "uk-addr-all": {
+  "name": "United Kingdom - All-in-one London office",
+  "amount": 338,
+  "currency": "USD",
+  "fixed": {
+   "GBP": 250.6
+  },
+  "desc": "Includes: Virtual business address in London, with mail handling; Registered office address; Director's service address; Call answering service in your company name; 12 months.",
+  "image": "https://wizz.com.my/img/pay/uk.png"
+ },
  "ca-starter": {
   "name": "Canada - Starter",
   "amount": 749,
@@ -64,9 +114,19 @@
  },
  "ee-business": {
   "name": "Estonia - Business",
-  "amount": 1290,
+  "amount": 7500,
   "currency": "USD",
   "desc": "Everything in Starter, plus: VAT registration if needed; Business account (EMI) application support; Accounting partner introduction.",
+  "image": "https://wizz.com.my/img/pay/ee.png"
+ },
+ "ee-eresidency": {
+  "name": "Estonia - e-Residency card",
+  "amount": 287,
+  "currency": "USD",
+  "fixed": {
+   "EUR": 250
+  },
+  "desc": "Includes: We prepare and submit your e-Residency application; Government card fee included; Collect your card at an Estonian embassy or pick-up point you choose.",
   "image": "https://wizz.com.my/img/pay/ee.png"
  },
  "fr-starter": {
@@ -113,7 +173,7 @@
  },
  "sa-assessment": {
   "name": "Saudi Arabia - Market-entry assessment",
-  "amount": 299,
+  "amount": 500,
   "currency": "USD",
   "desc": "Includes: Activity & licence route review; Capital and Saudization overview; Written plan and quote; Credited if you go ahead.",
   "image": "https://wizz.com.my/img/pay/sa.png"

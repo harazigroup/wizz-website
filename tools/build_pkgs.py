@@ -70,8 +70,9 @@ def hero(eyebrow, title, lede):
 
 # ---------------- packages
 import re
-def money(usd):
-    return f'<span class="m" data-usd="{usd}">${usd:,}</span>'
+def money(usd, fix=None):
+    fx_attr = f" data-fix='{json.dumps(fix)}'" if fix else ""
+    return f'<span class="m" data-usd="{usd}"{fx_attr}>${usd:,}</span>'
 def money_text(txt):
     return re.sub(r"\$([0-9][0-9,]*)", lambda m: money(int(m.group(1).replace(",", ""))), esc(txt))
 
@@ -79,7 +80,7 @@ def tier_html(c, t):
     if t["p"] is None:
         price = f'<div class="pk-price"{tk("Quote")}>Quote</div>'
     else:
-        price = f'<div class="pk-price">{f'<span class="from"{tk("from")}>from</span>' if t.get("frm") else ""}{money(t["p"])}<small class="cur">USD</small></div>'
+        price = f'<div class="pk-price">{f'<span class="from"{tk("from")}>from</span>' if t.get("frm") else ""}{money(t["p"], t.get("fix"))}<small class="cur">USD</small></div>'
     if t.get("sku") and t.get("deposit"):
         cta = f'<button class="btn solid pk-buy" type="button" data-sku="{t["sku"]}"><span{tk("Add")}>Add</span> {money(t["deposit"])} <span{tk("deposit to cart")}>deposit to cart</span></button>'
     elif t.get("sku"):
@@ -95,6 +96,13 @@ def tier_html(c, t):
         <div class="pk-cta">{cta}</div>
       </article>'''
 
+def grp_html(c):
+    out = ""
+    for g, (title, lede) in c.get("groups", {}).items():
+        ts = [t for t in c["tiers"] if t.get("grp") == g]
+        out += f'''<div class="pk-sub"><h3{tk(title)}>{esc(title)}</h3><p{tk(lede)}>{esc(lede)}</p></div>
+    <div class="pk-grid pk-grid-sm">{"".join(tier_html(c, t) for t in ts)}</div>'''
+    return out
 tabs, panels = [], []
 for idx, c in enumerate(COUNTRIES):
     k = c["c"].lower()
@@ -104,7 +112,8 @@ for idx, c in enumerate(COUNTRIES):
     if k == "us": notes += f'<a class="pk-guide" href="usa.html"><span{tk("Everything about forming a US company")}>Everything about forming a US company</span> <span aria-hidden="true">→</span></a>'
     panels.append(f'''<div class="pk-panel" role="tabpanel" id="p-{k}" aria-labelledby="tab-{k}"{'' if idx==0 else ' hidden'}>
     <div class="pk-head"><span class="pk-code ltr">{c["c"]}<i>.</i></span><div><h2{tk(c["n"])}>{esc(c["n"])}</h2><p{tk(c["e"])}>{esc(c["e"])}</p></div></div>
-    <div class="pk-grid">{"".join(tier_html(c, t) for t in c["tiers"])}</div>
+    <div class="pk-grid">{"".join(tier_html(c, t) for t in c["tiers"] if not t.get("grp"))}</div>
+    {grp_html(c)}
     {notes}
   </div>''')
 def addon_html(a, p):
@@ -155,10 +164,10 @@ PK_JS = '''<script>
   const T=(en,a)=>ar()?a:en;
   const cs=document.getElementById('pkCur'),note=document.getElementById('pkCurNote');
   let FX=null,cur='USD';
-  function local(usd,c){const r=FX&&FX.rates[c];if(!r||c==='USD')return usd;const raw=usd*r.rate*(1+FX.buffer);const up=Math.ceil(raw/r.step)*r.step;return r.nine?up-1:up;}
-  function fmt(n,c){try{return new Intl.NumberFormat('en-US',{style:'currency',currency:c,currencyDisplay:'narrowSymbol',maximumFractionDigits:0,minimumFractionDigits:0}).format(n)}catch(e){return c+' '+n.toLocaleString('en-US')}}
+  function local(usd,c,fix){if(fix&&fix[c]!=null)return fix[c];const r=FX&&FX.rates[c];if(!r||c==='USD')return usd;const raw=usd*r.rate*(1+FX.buffer);const up=Math.ceil(raw/r.step)*r.step;return r.nine?up-1:up;}
+  function fmt(n,c){const d=Number.isInteger(n)?0:2;try{return new Intl.NumberFormat('en-US',{style:'currency',currency:c,currencyDisplay:'narrowSymbol',maximumFractionDigits:d,minimumFractionDigits:d}).format(n)}catch(e){return c+' '+n.toLocaleString('en-US')}}
   function apply(c){cur=(FX&&FX.rates[c])?c:'USD';
-    document.querySelectorAll('.m[data-usd]').forEach(el=>{el.textContent=fmt(local(+el.dataset.usd,cur),cur)});
+    document.querySelectorAll('.m[data-usd]').forEach(el=>{el.textContent=fmt(local(+el.dataset.usd,cur,el.dataset.fix?JSON.parse(el.dataset.fix):null),cur)});
     document.querySelectorAll('.pk-price .cur').forEach(el=>{const shown=el.previousElementSibling?el.previousElementSibling.textContent:'';el.textContent=/[A-Z]{3}/.test(shown)?'':cur;});
     cs.value=cur;document.dispatchEvent(new CustomEvent('wizz:fx',{detail:{fx:FX,cur:cur}}));note.textContent=cur==='USD'?T('Set in US dollars. Change the currency if you prefer.','الأسعار بالدولار الأمريكي، ويمكنك تغيير العملة.'):T('Converted from our US dollar prices at a recent rate. You pay exactly this amount in '+cur+'.','محوّلة من أسعارنا بالدولار الأمريكي حسب سعر صرف حديث، وتدفع هذا المبلغ نفسه بعملة '+cur+'.');}
   function fill(){const list=FX?Object.keys(FX.rates):['USD'];cs.innerHTML=list.map(c=>'<option value="'+c+'">'+c+' · '+((ar()?NAMES_AR:NAMES)[c]||c)+'</option>').join('');}
@@ -190,7 +199,7 @@ for c in COUNTRIES:
     for t in c["tiers"]:
         if not t.get("sku"): continue
         SERVER[t["sku"]] = {"name": f'{c["n"]} - {t["n"]}' + (" (deposit)" if t.get("deposit") else ""),
-                            "amount": t.get("deposit") or t["p"], "currency": "USD",
+                            "amount": t.get("deposit") or t["p"], "currency": "USD", **({"fixed": t["fix"]} if t.get("fix") and not t.get("deposit") else {}),
                             "desc": checkout_desc(t)[:480], "image": f'https://wizz.com.my/img/pay/{c["c"].lower()}.png'}
 for a, (sku, usd) in ADDON_SKUS.items():
     SERVER[sku] = {"name": a, "amount": usd, "currency": "USD", "desc": "Add-on service. Approval of any account is decided by the provider.", "image": ""}
@@ -274,7 +283,7 @@ for c in COUNTRIES:
         if t.get("sku"):
             dep = bool(t.get("deposit"))
             CART_DATA[t["sku"]] = {"c": c["c"], "n": [f'{c["n"]} · {t["n"]}' + (" (deposit)" if dep else ""), f'{AR_SRC[c["n"]]} · {AR_SRC[t["n"]]}' + (" (عربون)" if dep else "")],
-                                   "usd": t.get("deposit") or t["p"], "max": 1}
+                                   "usd": t.get("deposit") or t["p"], "max": 1, **({"fix": t["fix"]} if t.get("fix") else {})}
 for a, (sku, usd) in ADDON_SKUS.items():
     CART_DATA[sku] = {"c": "", "n": [a, AR_SRC[a]], "usd": usd, "max": 10}
 CART_JS = "/* Wizz cart: generated by tools/build_pkgs.py, do not edit by hand */\n(function(){\n  const DATA=" + json.dumps(CART_DATA, ensure_ascii=False) + r""";
@@ -284,8 +293,8 @@ CART_JS = "/* Wizz cart: generated by tools/build_pkgs.py, do not edit by hand *
   let items=read();
   function save(){try{localStorage.setItem(KEY,JSON.stringify(items))}catch(e){}render();}
   let FX=null,cur='USD';try{cur=localStorage.getItem('wizz-cur')||'USD'}catch(e){}
-  function local(usd){const r=FX&&FX.rates[cur];if(!r||cur==='USD')return usd;const raw=usd*r.rate*(1+FX.buffer);const up=Math.ceil(raw/r.step)*r.step;return r.nine?up-1:up;}
-  function fmt(n){const c=(FX&&FX.rates[cur])?cur:'USD';try{return new Intl.NumberFormat('en-US',{style:'currency',currency:c,currencyDisplay:'narrowSymbol',maximumFractionDigits:0}).format(n)}catch(e){return c+' '+n}}
+  function local(usd,fix){if(fix&&fix[cur]!=null)return fix[cur];const r=FX&&FX.rates[cur];if(!r||cur==='USD')return usd;const raw=usd*r.rate*(1+FX.buffer);const up=Math.ceil(raw/r.step)*r.step;return r.nine?up-1:up;}
+  function fmt(n){const c=(FX&&FX.rates[cur])?cur:'USD';try{return new Intl.NumberFormat('en-US',{style:'currency',currency:c,currencyDisplay:'narrowSymbol',maximumFractionDigits:Number.isInteger(n)?0:2,minimumFractionDigits:Number.isInteger(n)?0:2}).format(n)}catch(e){return c+' '+n}}
   function loadFx(){if(FX||loadFx.busy)return;loadFx.busy=1;fetch('/.netlify/functions/prices').then(r=>r.ok?r.json():null).then(d=>{if(!d)return;FX=d;let s=null;try{s=localStorage.getItem('wizz-cur')}catch(e){}cur=(s&&d.rates[s])?s:d.currency;render();}).catch(()=>{});}
   document.addEventListener('wizz:fx',e=>{FX=e.detail.fx;cur=e.detail.cur;render();});
   const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -311,7 +320,7 @@ CART_JS = "/* Wizz cart: generated by tools/build_pkgs.py, do not edit by hand *
     const body=document.getElementById('cartBody'),foot=document.getElementById('cartFoot');
     if(!items.length){body.innerHTML='<p class="cart-empty">'+T('Your cart is empty.','سلتك فارغة.')+'</p>';foot.innerHTML='<a class="btn ghost" href="packages.html">'+T('Browse packages','تصفّح الباقات')+'</a>';return;}
     let total=0;
-    body.innerHTML='<ul class="cart-list">'+items.map(x=>{const d=DATA[x.sku];const line=local(d.usd)*x.qty;total+=line;
+    body.innerHTML='<ul class="cart-list">'+items.map(x=>{const d=DATA[x.sku];const line=Math.round(local(d.usd,d.fix)*x.qty*100)/100;total=Math.round((total+line)*100)/100;
       const code=d.c?'<span class="cart-code ltr">'+d.c+'<i>.</i></span>':'<span class="cart-code plus">+</span>';
       const qty=d.max>1?'<span class="cart-qty"><button type="button" data-q="-1" data-sku="'+x.sku+'" aria-label="'+T('Fewer','أقل')+'">−</button><b>'+x.qty+'</b><button type="button" data-q="1" data-sku="'+x.sku+'" aria-label="'+T('More','أكثر')+'">+</button></span>':'';
       return '<li>'+code+'<div class="cart-info"><b>'+esc(d.n[ar()?1:0])+'</b><span class="cart-row">'+qty+'<button type="button" class="cart-rm" data-rm="'+x.sku+'">'+T('Remove','إزالة')+'</button></span></div><span class="cart-price ltr">'+fmt(line)+'</span></li>';}).join('')+'</ul>';
@@ -379,7 +388,7 @@ CK_JS = """<script>
   const ar=()=>document.documentElement.lang==='ar';const L=a=>a?a[ar()?1:0]:'';const T=(en,a)=>ar()?a:en;
   const $=id=>document.getElementById(id);let res=null;
   const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-  function fmt(n,c){try{return new Intl.NumberFormat('en-US',{style:'currency',currency:c,currencyDisplay:'narrowSymbol',maximumFractionDigits:2,minimumFractionDigits:0}).format(n)}catch(e){return c+' '+n}}
+  function fmt(n,c){try{return new Intl.NumberFormat('en-US',{style:'currency',currency:c,currencyDisplay:'narrowSymbol',maximumFractionDigits:2,minimumFractionDigits:Number.isInteger(n)?0:2}).format(n)}catch(e){return c+' '+n}}
   function render(){
     $('ckLines').innerHTML=list.map(x=>{const d=DATA[x.sku];const line=res&&res.lines?res.lines.find(l=>l.sku===x.sku):null;
       const code=d.c?'<span class="cart-code ltr">'+d.c+'<i>.</i></span>':'<span class="cart-code plus">+</span>';
@@ -829,6 +838,13 @@ footer.site .foot{grid-template-columns:1.4fr repeat(4,1fr)}
 .legal-doc ul{margin:0;padding-inline-start:20px;display:grid;gap:6px}
 .legal-links a{color:inherit}
 .steps h3{font-size:17px}
+.pk-sub{margin:40px 0 16px;padding-top:28px;border-top:1px dashed var(--line)}
+.pk-sub h3{font-size:22px;margin:0 0 6px}
+.pk-sub p{color:var(--muted);margin:0;max-width:44em}
+.pk-grid-sm{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:900px){.pk-grid-sm{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.pk-grid-sm{grid-template-columns:1fr}}
+.pk-grid-sm .pk h3{font-size:16px;line-height:1.3}
 '''
 css = open(f"{D}/site.css").read()
 # v6 is the last block in site.css: replace it on every build so CSS edits apply

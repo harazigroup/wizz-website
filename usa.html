@@ -198,10 +198,10 @@
   const T=(en,a)=>ar()?a:en;
   const cs=document.getElementById('pkCur'),note=document.getElementById('pkCurNote');
   let FX=null,cur='USD';
-  function local(usd,c){const r=FX&&FX.rates[c];if(!r||c==='USD')return usd;const raw=usd*r.rate*(1+FX.buffer);const up=Math.ceil(raw/r.step)*r.step;return r.nine?up-1:up;}
-  function fmt(n,c){try{return new Intl.NumberFormat('en-US',{style:'currency',currency:c,currencyDisplay:'narrowSymbol',maximumFractionDigits:0,minimumFractionDigits:0}).format(n)}catch(e){return c+' '+n.toLocaleString('en-US')}}
+  function local(usd,c,fix){if(fix&&fix[c]!=null)return fix[c];const r=FX&&FX.rates[c];if(!r||c==='USD')return usd;const raw=usd*r.rate*(1+FX.buffer);const up=Math.ceil(raw/r.step)*r.step;return r.nine?up-1:up;}
+  function fmt(n,c){const d=Number.isInteger(n)?0:2;try{return new Intl.NumberFormat('en-US',{style:'currency',currency:c,currencyDisplay:'narrowSymbol',maximumFractionDigits:d,minimumFractionDigits:d}).format(n)}catch(e){return c+' '+n.toLocaleString('en-US')}}
   function apply(c){cur=(FX&&FX.rates[c])?c:'USD';
-    document.querySelectorAll('.m[data-usd]').forEach(el=>{el.textContent=fmt(local(+el.dataset.usd,cur),cur)});
+    document.querySelectorAll('.m[data-usd]').forEach(el=>{el.textContent=fmt(local(+el.dataset.usd,cur,el.dataset.fix?JSON.parse(el.dataset.fix):null),cur)});
     document.querySelectorAll('.pk-price .cur').forEach(el=>{const shown=el.previousElementSibling?el.previousElementSibling.textContent:'';el.textContent=/[A-Z]{3}/.test(shown)?'':cur;});
     cs.value=cur;document.dispatchEvent(new CustomEvent('wizz:fx',{detail:{fx:FX,cur:cur}}));note.textContent=cur==='USD'?T('Set in US dollars. Change the currency if you prefer.','الأسعار بالدولار الأمريكي، ويمكنك تغيير العملة.'):T('Converted from our US dollar prices at a recent rate. You pay exactly this amount in '+cur+'.','محوّلة من أسعارنا بالدولار الأمريكي حسب سعر صرف حديث، وتدفع هذا المبلغ نفسه بعملة '+cur+'.');}
   function fill(){const list=FX?Object.keys(FX.rates):['USD'];cs.innerHTML=list.map(c=>'<option value="'+c+'">'+c+' · '+((ar()?NAMES_AR:NAMES)[c]||c)+'</option>').join('');}

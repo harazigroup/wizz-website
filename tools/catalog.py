@@ -1,4 +1,12 @@
 # Single source of truth for packages. Prices in USD (major units). Edit here, then run build_pkgs.py.
+# A tier can also have a fixed local price, fix={"MYR": 18000}: visitors paying in that currency see and pay exactly that;
+# everyone else sees it converted from p (USD), which fx() works out from the same rates the site uses.
+import re as _re, math as _math, os as _os
+_FX = open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "..", "netlify", "functions", "_fx.mjs")).read()
+RATES = {m[0]: float(m[1]) for m in _re.findall(r"([A-Z]{3}): \{ rate: ([0-9.]+)", _FX)}
+def fx(cur, amount):
+    """USD base price for a price set in another currency (rounded up, with the same 2% buffer)."""
+    return _math.ceil(amount / RATES[cur] * 1.02)
 COUNTRIES = [
  dict(c="US", n="United States", g="North America", e="LLC in Wyoming or New Mexico (Delaware on request). Owned 100% by non-residents.",
   tiers=[
@@ -10,8 +18,14 @@ COUNTRIES = [
   tiers=[
    dict(sku="uk-starter", n="Starter", p=299, buy=True, i=["Companies House fee (£100) included","Director identity verification","Registered office address, 12 months","Share certificates & digital documents"]),
    dict(sku="uk-business", n="Business", p=599, buy=True, pop=True, plus="Everything in Starter, plus", i=["Director service address, 12 months","HMRC Corporation Tax (UTR) registration","Business account application support","VAT registration if needed"]),
-   dict(sku="uk-complete", n="Complete", p=1290, buy=True, plus="Everything in Business, plus", i=["First-year accounts via our accountant partner","Confirmation statement filing (£50 fee included)"])],
-  notes=["Yearly renewal from $449 (registered office + confirmation statement)."]),
+   dict(sku="uk-complete", n="Complete", p=1290, buy=True, plus="Everything in Business, plus", i=["First-year accounts via our accountant partner","Confirmation statement filing (£50 fee included)"]),
+   dict(sku="uk-addr-ro-da", grp="uk-addr", n="Registered office + director's address", p=fx("GBP", 34.99), fix={"GBP": 34.99}, buy=True, i=["Registered office address in London","Director's service address","12 months"]),
+   dict(sku="uk-addr-ba-ro", grp="uk-addr", n="Business address + registered office", p=fx("GBP", 94.49), fix={"GBP": 94.49}, buy=True, i=["Virtual business address in London, with mail handling","Registered office address","12 months"]),
+   dict(sku="uk-addr-ba-ro-da", grp="uk-addr", n="Business address + registered office + director's address", p=fx("GBP", 100.09), fix={"GBP": 100.09}, buy=True, pop=True, i=["Virtual business address in London, with mail handling","Registered office address","Director's service address","12 months"]),
+   dict(sku="uk-addr-ba-call", grp="uk-addr", n="Business address + call answering", p=fx("GBP", 220.50), fix={"GBP": 220.50}, buy=True, i=["Virtual business address in London, with mail handling","Call answering service in your company name","12 months"]),
+   dict(sku="uk-addr-all", grp="uk-addr", n="All-in-one London office", p=fx("GBP", 250.60), fix={"GBP": 250.60}, buy=True, i=["Virtual business address in London, with mail handling","Registered office address","Director's service address","Call answering service in your company name","12 months"])],
+  groups={"uk-addr": ("London address plans", "Registered office, director's address, business address and call answering for your UK company, for 12 months. Prices are set in pounds sterling.")},
+  notes=["Yearly renewal from $449 (registered office + confirmation statement).","Address services need identity checks under UK anti-money-laundering rules before they start."]),
  dict(c="CA", n="Canada", g="North America", e="Ontario or BC corporation. No resident-director rule in either province.",
   tiers=[
    dict(sku="ca-starter", n="Starter", p=749, buy=True, i=["Government fees & NUANS name search included","Articles & bylaws","Business Number (BN) registration","Digital minute book"]),
@@ -20,8 +34,9 @@ COUNTRIES = [
  dict(c="EE", n="Estonia", g="Europe", e="Private limited company (OÜ), run fully online with e-Residency.",
   tiers=[
    dict(sku="ee-starter", n="Starter", p=749, buy=True, i=["State fee (€265) included","Articles of association","Legal address & contact person, 12 months","Registration guidance for e-Residency holders"]),
-   dict(sku="ee-business", n="Business", p=1290, buy=True, pop=True, plus="Everything in Starter, plus", i=["VAT registration if needed","Business account (EMI) application support","Accounting partner introduction"])],
-  notes=["You apply for e-Residency yourself and pay its fee to the Estonian government. e-Residency is not a visa or residence permit."]),
+   dict(sku="ee-business", n="Business", p=7500, buy=True, pop=True, plus="Everything in Starter, plus", i=["VAT registration if needed","Business account (EMI) application support","Accounting partner introduction"]),
+   dict(sku="ee-eresidency", n="e-Residency card", p=fx("EUR", 250), fix={"EUR": 250}, buy=True, i=["We prepare and submit your e-Residency application","Government card fee included","Collect your card at an Estonian embassy or pick-up point you choose"])],
+  notes=["e-Residency is a digital ID for running an Estonian company online. It is not a visa or residence permit, and the Estonian Police and Border Guard Board decides each application."]),
  dict(c="PL", n="Poland", g="Europe", e="Limited liability company (sp. z o.o.) via the S24 online system.",
   tiers=[
    dict(sku=None, n="Standard", p=1690, frm=True, i=["Court & publication fees included","KRS registration via S24","Tax ID & VAT registration","Virtual office, 12 months"]),
@@ -45,13 +60,13 @@ COUNTRIES = [
   notes=["Pay a deposit of $500 online. It's credited to your package; the final price depends on the free zone and activity.","Licences renew yearly at roughly the first-year cost."]),
  dict(c="SA", n="Saudi Arabia", g="Middle East", e="LLC with an investment licence (MISA) for foreign owners.",
   tiers=[
-   dict(sku="sa-assessment", n="Market-entry assessment", p=299, buy=True, i=["Activity & licence route review","Capital and Saudization overview","Written plan and quote","Credited if you go ahead"]),
-   dict(sku=None, n="Company setup", p=6900, frm=True, pop=True, i=["Investment licence & commercial registration","Chamber & municipality registrations","Bank account support","Government fees and capital not included"])],
+   dict(sku="sa-assessment", n="Market-entry assessment", p=500, buy=True, i=["Activity & licence route review","Capital and Saudization overview","Written plan and quote","Credited if you go ahead"]),
+   dict(sku=None, n="Company setup", p=12000, frm=True, pop=True, i=["Investment licence & commercial registration","Chamber & municipality registrations","Bank account support","Government fees and capital not included"])],
   notes=["Setup usually takes 3–6 weeks. Work permits and expat levies are separate."]),
  dict(c="OM", n="Oman", g="Middle East", e="LLC with 100% foreign ownership for most activities.",
   tiers=[
-   dict(sku=None, n="Company setup", p=1490, frm=True, i=["Commercial registration","Activity licences","Company documents","Chamber of commerce registration"]),
-   dict(sku=None, n="Setup + investor visa", p=2690, frm=True, pop=True, plus="Everything in setup, plus", i=["One investor residence visa","Bank account support"])],
+   dict(sku=None, n="Company setup", p=3500, frm=True, i=["Commercial registration","Activity licences","Company documents","Chamber of commerce registration"]),
+   dict(sku=None, n="Setup + investor visa", p=7500, frm=True, pop=True, plus="Everything in setup, plus", i=["Investor residence visa, valid 2 years","Bank account support"])],
   notes=["Office space, when your activity requires it, is quoted separately."]),
  dict(c="MY", n="Malaysia", g="Asia", e="Private limited company (Sdn. Bhd.) at SSM. Our home base.",
   tiers=[
@@ -62,8 +77,8 @@ COUNTRIES = [
   tiers=[
    dict(sku=None, n="Company setup", p=1490, frm=True, i=["Ownership & activity review","Government registration fees included","Company documents & tax ID"]),
    dict(sku=None, n="Setup + compliance", p=2490, frm=True, pop=True, plus="Everything in setup, plus", i=["VAT registration","Accounting partner setup","Bank account support"]),
-   dict(sku=None, n="Work permit", p=990, frm=True, i=["Per person","Eligibility check first","Application & visa coordination"])],
-  notes=["Each foreign work permit generally needs THB 2M paid-up capital and 4 Thai employees (BOI companies differ). The Thai authorities decide.","BOI promotion and Foreign Business Licence are quoted separately."]),
+   dict(sku=None, n="Work permit, 2 years", p=fx("MYR", 18000), fix={"MYR": 18000}, i=["Work permit and visa for 2 years","Sponsored by our Thai company: you're employed under it, so you don't need your own Thai company or capital","Eligibility check first","Application & visa coordination"])],
+  notes=["The work permit lets you work only in the role and for the employer named on it. The Thai authorities decide every application.","If you set up your own Thai company instead, each foreign work permit generally needs THB 2M paid-up capital and 4 Thai employees (BOI companies differ).","BOI promotion and Foreign Business Licence are quoted separately."]),
  dict(c="PK", n="Pakistan", g="Asia", e="Private limited company at SECP.",
   tiers=[
    dict(sku=None, n="Starter", p=790, frm=True, i=["Name reservation & incorporation","Tax number (NTN) registration","Company documents"]),

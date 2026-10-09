@@ -24,7 +24,7 @@ async function handler(req) {
   }
   if (!seen.size) return json(400, { error: "unknown_package" });
   const cur = RATES[(input.currency || "").toUpperCase()] ? input.currency.toUpperCase() : "USD";
-  const lines = [...seen].map(([sku, qty]) => ({ sku, qty, item: products[sku], unit: localPrice(products[sku].amount, cur) }));
+  const lines = [...seen].map(([sku, qty]) => ({ sku, qty, item: products[sku], unit: products[sku].fixed?.[cur] ?? localPrice(products[sku].amount, cur) }));
   lines.forEach(l => { l.amount = Math.round(l.unit * l.qty * 100) / 100; });
   const amount = Math.round(lines.reduce((a, l) => a + l.amount, 0) * 100) / 100;
   const label = lines.map(l => l.item.name + (l.qty > 1 ? ` ×${l.qty}` : "")).join(" + ").slice(0, 480);

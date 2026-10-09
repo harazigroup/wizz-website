@@ -382,3 +382,30 @@ AR.update({
 AR.update({"Change password": "تغيير كلمة المرور"})
 AR.update({"Everything about forming a US company": "كل شيء عن تأسيس شركة أمريكية"})
 AR.update({"You sign in with your email and a password, or with a one-time link sent to your email. Passwords are stored only in hashed (encrypted) form, so no one at Wizz can read them. Documents you upload are kept in private storage in the European Union. Only you and the members of our team who handle your order can open them, and each download link expires after a minute.": "تسجّل الدخول ببريدك الإلكتروني وكلمة مرور، أو برابط يُستخدم مرة واحدة يصل إلى بريدك. تُحفظ كلمات المرور بصيغة مشفّرة فقط، فلا يستطيع أحد في ويز قراءتها. تُحفظ المستندات التي ترفعها في تخزين خاص داخل الاتحاد الأوروبي، ولا يفتحها إلا أنت وأعضاء فريقنا المسؤولون عن طلبك، وتنتهي صلاحية كل رابط تحميل بعد دقيقة."})
+AR.update({
+"Registered office + director's address": "المكتب المسجّل + عنوان المدير",
+"Registered office address in London": "عنوان مكتب مسجّل في لندن",
+"Director's service address": "عنوان خدمة للمدير",
+"12 months": "12 شهراً",
+"Business address + registered office": "عنوان تجاري + مكتب مسجّل",
+"Virtual business address in London, with mail handling": "عنوان تجاري افتراضي في لندن مع إدارة البريد",
+"Registered office address": "عنوان المكتب المسجّل",
+"Business address + registered office + director's address": "عنوان تجاري + مكتب مسجّل + عنوان المدير",
+"Business address + call answering": "عنوان تجاري + خدمة الرد على المكالمات",
+"Call answering service in your company name": "خدمة الرد على المكالمات باسم شركتك",
+"All-in-one London office": "مكتب لندن المتكامل",
+"Address services need identity checks under UK anti-money-laundering rules before they start.": "تتطلب خدمات العناوين التحقق من الهوية وفق قواعد مكافحة غسل الأموال في المملكة المتحدة قبل بدئها.",
+"London address plans": "باقات العناوين في لندن",
+"Registered office, director's address, business address and call answering for your UK company, for 12 months. Prices are set in pounds sterling.": "مكتب مسجّل وعنوان للمدير وعنوان تجاري وخدمة الرد على المكالمات لشركتك البريطانية لمدة 12 شهراً. الأسعار محددة بالجنيه الإسترليني.",
+"e-Residency card": "بطاقة الإقامة الإلكترونية (e-Residency)",
+"We prepare and submit your e-Residency application": "نجهّز طلب الإقامة الإلكترونية ونقدّمه نيابةً عنك",
+"Government card fee included": "رسوم البطاقة الحكومية مشمولة",
+"Collect your card at an Estonian embassy or pick-up point you choose": "تستلم بطاقتك من سفارة إستونية أو نقطة استلام تختارها",
+"e-Residency is a digital ID for running an Estonian company online. It is not a visa or residence permit, and the Estonian Police and Border Guard Board decides each application.": "الإقامة الإلكترونية هوية رقمية لإدارة شركة إستونية عبر الإنترنت، وليست تأشيرة أو تصريح إقامة، وتقرر هيئة الشرطة وحرس الحدود الإستونية في كل طلب.",
+"Investor residence visa, valid 2 years": "تأشيرة إقامة مستثمر صالحة لمدة سنتين",
+"Work permit, 2 years": "تصريح عمل لمدة سنتين",
+"Work permit and visa for 2 years": "تصريح عمل وتأشيرة لمدة سنتين",
+"Sponsored by our Thai company: you're employed under it, so you don't need your own Thai company or capital": "بكفالة شركتنا في تايلاند: تُعيَّن موظفاً لديها، فلا تحتاج إلى شركة تايلاندية خاصة بك أو رأس مال",
+"The work permit lets you work only in the role and for the employer named on it. The Thai authorities decide every application.": "يسمح لك تصريح العمل بالعمل فقط في الوظيفة ولدى صاحب العمل المذكورين فيه، والسلطات التايلاندية هي من تقرر في كل طلب.",
+"If you set up your own Thai company instead, each foreign work permit generally needs THB 2M paid-up capital and 4 Thai employees (BOI companies differ).": "إذا أسست شركتك التايلاندية الخاصة بدلاً من ذلك، فيتطلب كل تصريح عمل لأجنبي عادةً رأس مال مدفوعاً قدره 2 مليون بات و4 موظفين تايلانديين (تختلف شركات BOI)."
+})
