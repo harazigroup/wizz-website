@@ -3,6 +3,9 @@
   "name": "United States - Starter",
   "amount": 289,
   "currency": "USD",
+  "fixed": {
+   "MYR": 1199
+  },
   "desc": "Includes: State filing fee included; Articles of organization & operating agreement; EIN application for non-residents; Registered agent, 12 months; Digital document pack.",
   "image": "https://wizz.com.my/img/pay/us.png"
  },
@@ -10,6 +13,9 @@
   "name": "United States - Business",
   "amount": 1899,
   "currency": "USD",
+  "fixed": {
+   "MYR": 7899
+  },
   "desc": "Everything in Starter, plus: US business mailing address, 12 months; Business account application support (one provider); Amazon / Shopify readiness call.",
   "image": "https://wizz.com.my/img/pay/us.png"
  },
@@ -17,6 +23,9 @@
   "name": "United States - Complete",
   "amount": 2899,
   "currency": "USD",
+  "fixed": {
+   "MYR": 12099
+  },
   "desc": "Everything in Business, plus: First-year Form 5472 + pro-forma 1120 filing; State annual report filing; Compliance calendar & reminders.",
   "image": "https://wizz.com.my/img/pay/us.png"
  },
@@ -24,6 +33,9 @@
   "name": "United Kingdom - Starter",
   "amount": 299,
   "currency": "USD",
+  "fixed": {
+   "MYR": 1299
+  },
   "desc": "Includes: Companies House fee (£100) included; Director identity verification; Registered office address, 12 months; Share certificates & digital documents.",
   "image": "https://wizz.com.my/img/pay/uk.png"
  },
@@ -31,6 +43,9 @@
   "name": "United Kingdom - Business",
   "amount": 599,
   "currency": "USD",
+  "fixed": {
+   "MYR": 2499
+  },
   "desc": "Everything in Starter, plus: Director service address, 12 months; HMRC Corporation Tax (UTR) registration; Business account application support; VAT registration if needed.",
   "image": "https://wizz.com.my/img/pay/uk.png"
  },
@@ -38,6 +53,9 @@
   "name": "United Kingdom - Complete",
   "amount": 1290,
   "currency": "USD",
+  "fixed": {
+   "MYR": 5399
+  },
   "desc": "Everything in Business, plus: First-year accounts via our accountant partner; Confirmation statement filing (£50 fee included).",
   "image": "https://wizz.com.my/img/pay/uk.png"
  },
@@ -95,6 +113,9 @@
   "name": "Canada - Starter",
   "amount": 749,
   "currency": "USD",
+  "fixed": {
+   "MYR": 3099
+  },
   "desc": "Includes: Government fees & NUANS name search included; Articles & bylaws; Business Number (BN) registration; Digital minute book.",
   "image": "https://wizz.com.my/img/pay/ca.png"
  },
@@ -102,6 +123,9 @@
   "name": "Canada - Business",
   "amount": 1190,
   "currency": "USD",
+  "fixed": {
+   "MYR": 4999
+  },
   "desc": "Everything in Starter, plus: Registered office address, 12 months; GST/HST registration; Business account application support; Amazon.ca readiness call.",
   "image": "https://wizz.com.my/img/pay/ca.png"
  },
@@ -109,6 +133,9 @@
   "name": "Estonia - Starter",
   "amount": 749,
   "currency": "USD",
+  "fixed": {
+   "MYR": 3099
+  },
   "desc": "Includes: State fee (€265) included; Articles of association; Legal address & contact person, 12 months; Registration guidance for e-Residency holders.",
   "image": "https://wizz.com.my/img/pay/ee.png"
  },
@@ -136,6 +163,9 @@
   "name": "France - Starter",
   "amount": 849,
   "currency": "USD",
+  "fixed": {
+   "MYR": 3499
+  },
   "desc": "Includes: Articles (statuts) drafted; Legal notice publication included; Guichet unique filing & registration; Registered address (domiciliation), 12 months.",
   "image": "https://wizz.com.my/img/pay/fr.png"
  },
@@ -143,6 +173,9 @@
   "name": "France - Business",
   "amount": 1390,
   "currency": "USD",
+  "fixed": {
+   "MYR": 5799
+  },
   "desc": "Everything in Starter, plus: Capital deposit & bank account support; EU VAT number registration; Cdiscount / Octopia seller readiness.",
   "image": "https://wizz.com.my/img/pay/fr.png"
  },
@@ -150,6 +183,9 @@
   "name": "Netherlands - Starter",
   "amount": 2490,
   "currency": "USD",
+  "fixed": {
+   "MYR": 10399
+  },
   "desc": "Includes: Notary deed & articles of association; Chamber of Commerce (KVK) registration fee included; Shareholder register & UBO registration; Dutch business address, 12 months; Remote signing by power of attorney.",
   "image": "https://wizz.com.my/img/pay/nl.png"
  },
@@ -157,6 +193,9 @@
   "name": "Netherlands - Business",
   "amount": 3490,
   "currency": "USD",
+  "fixed": {
+   "MYR": 14499
+  },
   "desc": "Everything in Starter, plus: VAT number & EORI registration; Business account (EMI) application support; Amazon EU / Bol.com readiness call; Accounting partner introduction.",
   "image": "https://wizz.com.my/img/pay/nl.png"
  },
@@ -188,6 +227,9 @@
   "name": "Malaysia - Starter",
   "amount": 990,
   "currency": "USD",
+  "fixed": {
+   "MYR": 4099
+  },
   "desc": "Includes: SSM incorporation fee included; Company secretary, 12 months; Registered address, 12 months; Constitution & company documents.",
   "image": "https://wizz.com.my/img/pay/my.png"
  },
@@ -195,6 +237,9 @@
   "name": "Malaysia - Business",
   "amount": 1790,
   "currency": "USD",
+  "fixed": {
+   "MYR": 7499
+  },
   "desc": "Everything in Starter, plus: Bank account application support; Shopee / Lazada / TikTok Shop setup call; SST & licence check.",
   "image": "https://wizz.com.my/img/pay/my.png"
  },
