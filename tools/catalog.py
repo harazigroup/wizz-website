@@ -105,7 +105,10 @@ ADDON_SKUS = {
  "Amazon seller account application support": ("addon-amazon", _u("Amazon seller account application support")),
  MKT: ("addon-marketplace", _u(MKT)),
  "Business bank or payment account application (per provider)": ("addon-bank", 199),
+ "Shopify store setup": ("addon-shopify", _u("Shopify store setup")),
 }
+# Add-ons we quote case by case: the button opens WhatsApp instead of the cart.
+ADDON_CONTACT = {"Amazon FBA prep from Malaysia", "Document attestation / apostille"}
 
 # Established companies (1+ year) for acquisition, e.g. to support a Saudi investment licence. Priced in ringgit.
 # Not sold online: clients contact us first so we can match an available company.

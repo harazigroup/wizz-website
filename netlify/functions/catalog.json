@@ -269,5 +269,15 @@
   "currency": "USD",
   "desc": "Add-on service. Approval of any account is decided by the provider.",
   "image": ""
+ },
+ "addon-shopify": {
+  "name": "Shopify store setup",
+  "amount": 225,
+  "currency": "USD",
+  "fixed": {
+   "MYR": 899
+  },
+  "desc": "Add-on service. Approval of any account is decided by the provider.",
+  "image": ""
  }
 }

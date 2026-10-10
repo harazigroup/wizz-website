@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Adds Packages, Thank-you and legal pages to /home/claude/wizz-dist using about.html as the template."""
 import re, html, glob, os, json, urllib.parse
-from catalog import COUNTRIES, ADDONS, ADDON_SKUS, ADDON_FIX, ACQUISITIONS
+from catalog import COUNTRIES, ADDONS, ADDON_SKUS, ADDON_FIX, ACQUISITIONS, ADDON_CONTACT
 
 D = "/home/claude/wizz-dist"
 esc = lambda s: html.escape(s, quote=True)
@@ -131,6 +131,9 @@ def acq_html(a):
       </article>'''
 def addon_html(a, p):
     btn = f'<button class="pk-add pk-buy" type="button" data-sku="{ADDON_SKUS[a][0]}"{tk("Add")}>Add</button>' if a in ADDON_SKUS else ""
+    if a in ADDON_CONTACT:
+        wa = "https://wa.me/601124477685?text=" + urllib.parse.quote(f"Hi Wizz, I'd like a quote for: {a}.")
+        btn = f'<a class="pk-add" href="{wa}" target="_blank" rel="noopener"{tk("Contact us")}>Contact us</a>'
     return f'<div class="pk-addon"><span{tk(a)}>{esc(a)}</span><span class="pk-addon-r"><b{tk(p, lambda x: money_text(x, ADDON_FIX.get(a)))}>{money_text(p, ADDON_FIX.get(a))}</b>{btn}</span></div>'
 addons = "".join(addon_html(a, p) for a, p in ADDONS)
 
@@ -573,6 +576,8 @@ for f in glob.glob(f"{D}/*.html"):
     if 'data-i18n="nav_pkgs"' not in s:
         cur = ' aria-current="page"' if f.endswith("/packages.html") else ""
         s = s.replace('<a href="services.html" data-i18n="nav_services"', f'<a href="packages.html"{cur} data-i18n="nav_pkgs">Packages</a>\n      <a href="services.html" data-i18n="nav_services"', 1)
+    if 'data-i18n="nav_acq"' not in s:
+        s = s.replace('data-i18n="nav_pkgs">Packages</a>\n', 'data-i18n="nav_pkgs">Packages</a>\n      <a href="packages.html#established" data-i18n="nav_acq">Acquisitions</a>\n', 1)
     # footer: Legal column (replaces the old one-line links)
     s = s.replace('      <span class="legal-links"><a href="terms.html">Terms</a> · <a href="refund.html">Refunds</a> · <a href="privacy.html">Privacy</a></span>\n', '')
     if 'data-i18n="nav_legal"' not in s:
@@ -878,6 +883,8 @@ footer.site .foot{grid-template-columns:1.4fr repeat(4,1fr)}
 @media (max-width:560px){.pk-grid-sm{grid-template-columns:1fr}}
 .pk-grid-sm .pk h3{font-size:16px;line-height:1.3}
 .acq-grid{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+#established{scroll-margin-top:80px}
+a.pk-add{text-decoration:none;display:inline-block;white-space:nowrap}
 .acq .pk-price{font-size:clamp(28px,2.6vw,36px)}
 .acq .pk-price .cur{font-size:11px}
 .acq-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
