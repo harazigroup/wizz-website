@@ -599,7 +599,7 @@ for f in glob.glob(f"{D}/*.html"):
             k = m.group(1)
             g = CGUIDE.get(k)
             guide = f'<a class="clink" href="{g[0]}"><span data-i18n="{g[1]}">{g[2]}</span> <span aria-hidden="true">→</span></a>' if g else ""
-            return m.group(0).replace("</article>", f'  <div class="clinks"><a class="clink" href="packages.html#{k}"><span data-i18n="see_pkgs">Packages & prices</span> <span aria-hidden="true">→</span></a>{guide}</div>\n      </article>', 1)
+            return m.group(0).replace("</article>", f'  <div class="clinks"><a class="clink" href="packages.html#{"established" if k == "eg" else k}"><span data-i18n="see_pkgs">Packages & prices</span> <span aria-hidden="true">→</span></a>{guide}</div>\n      </article>', 1)
         s = re.sub(r'<article class="ccard"[^>]*id="c-([a-z]+)">.*?</article>', _links, s, flags=re.S)
     # floating WhatsApp button on every page
     if 'class="wa-float"' not in s:

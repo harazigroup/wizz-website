@@ -93,7 +93,7 @@ for path in pages:
     h1 = soup.find("h1")
     lede = soup.select_one(".lede, .standfirst")
     h1t = h1.get_text(" ", strip=True) if h1 else ""
-    title = "ويز للخدمات الذكية | تأسيس الشركات والمنصات والخدمات اللوجستية في 13 دولة" if name == "index.html" else (f"{h1t} | ويز للخدمات الذكية" if h1t else None)
+    title = "ويز للخدمات الذكية | تأسيس الشركات والمنصات والخدمات اللوجستية في 14 دولة" if name == "index.html" else (f"{h1t} | ويز للخدمات الذكية" if h1t else None)
     if title:
         soup.title.string = title
         for sel in ('meta[property="og:title"]', 'meta[name="twitter:title"]'):
