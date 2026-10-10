@@ -67,7 +67,7 @@ USAR = {
  "1 to 3 business days after checks": "من يوم إلى 3 أيام عمل بعد التحقق",
  "We get your EIN": "نستخرج رقم EIN",
  "We apply to the IRS for your company's tax ID.": "نقدّم طلب الرقم الضريبي لشركتك لدى مصلحة الضرائب الأمريكية.",
- "Usually 2 to 6 weeks for non-residents": "عادةً من أسبوعين إلى 6 أسابيع لغير المقيمين",
+ "Usually 2 to 3 days after incorporation": "عادةً خلال 2 إلى 3 أيام بعد تأسيس الشركة",
  "Address, bank and payments": "العنوان والبنك والمدفوعات",
  "Your US address goes live and we prepare your bank and payment applications.":
    "يتم تفعيل عنوانك الأمريكي ونجهّز طلبات الحسابات البنكية وحسابات الدفع.",
@@ -130,8 +130,8 @@ USAR = {
  "A copy of your passport, your full residential address, your national ID number, a few company name choices and a short description of your business.":
    "نسخة من جواز السفر، وعنوان سكنك الكامل، ورقم الهوية الوطنية، وعدة خيارات لاسم الشركة، ووصف مختصر لنشاطك.",
  "How long does it take?": "كم تستغرق العملية؟",
- "The LLC is usually filed within 1 to 3 business days after our checks. The EIN usually takes 2 to 6 weeks for non-residents. Bank and payment accounts depend on each provider.":
-   "يتم تسجيل الشركة عادةً خلال يوم إلى 3 أيام عمل بعد التحقق. ويستغرق رقم EIN عادةً من أسبوعين إلى 6 أسابيع لغير المقيمين. أما الحسابات البنكية وحسابات الدفع فتعتمد على كل مزوّد.",
+ "The LLC is usually filed within 1 to 3 business days after our checks. The EIN usually follows 2 to 3 days after the company is incorporated. Bank and payment accounts depend on each provider.":
+   "يتم تسجيل الشركة عادةً خلال يوم إلى 3 أيام عمل بعد التحقق. ويصدر رقم EIN عادةً خلال 2 إلى 3 أيام بعد تأسيس الشركة. أما الحسابات البنكية وحسابات الدفع فتعتمد على كل مزوّد.",
  "Will I get a US bank account and Stripe?": "هل سأحصل على حساب بنكي أمريكي وعلى Stripe؟",
  "We prepare and submit complete applications to suitable providers such as Wise, Payoneer and Stripe. Approval is always the provider's decision, based on their own checks, so no one can guarantee it.":
    "نجهّز ونقدّم طلبات كاملة لدى مزوّدين مناسبين مثل Wise وPayoneer وStripe. والموافقة دائماً قرار المزوّد بناءً على فحوصاته الخاصة، لذلك لا يمكن لأحد أن يضمنها.",
@@ -218,7 +218,7 @@ def head(eyebrow, h2, p=None, id_=None):
 
 steps = [("Tell us about your business", "Choose a package and send your passport and details through your client account.", "About 15 minutes"),
          ("We verify and file", "We check your identity, then file your LLC with the state.", "1 to 3 business days after checks"),
-         ("We get your EIN", "We apply to the IRS for your company's tax ID.", "Usually 2 to 6 weeks for non-residents"),
+         ("We get your EIN", "We apply to the IRS for your company's tax ID.", "Usually 2 to 3 days after incorporation"),
          ("Address, bank and payments", "Your US address goes live and we prepare your bank and payment applications.", "Depends on each provider"),
          ("Launch and grow", "Start selling, and we remind you of every yearly filing.", "Ongoing")]
 steps_html = "".join(f'<li>{T("h3", h)}{T("p", p)}<span class="us-time">{T("span", t)}</span></li>' for h, p, t in steps)
@@ -263,7 +263,7 @@ if TESTIMONIALS:
 
 faqs = [("Do I need to be a US citizen or live in the US?", "No. Non-residents can own 100% of a US LLC. You don't need to travel to the US, and you don't need an SSN or ITIN to get an EIN."),
         ("What do you need from me?", "A copy of your passport, your full residential address, your national ID number, a few company name choices and a short description of your business."),
-        ("How long does it take?", "The LLC is usually filed within 1 to 3 business days after our checks. The EIN usually takes 2 to 6 weeks for non-residents. Bank and payment accounts depend on each provider."),
+        ("How long does it take?", "The LLC is usually filed within 1 to 3 business days after our checks. The EIN usually follows 2 to 3 days after the company is incorporated. Bank and payment accounts depend on each provider."),
         ("Will I get a US bank account and Stripe?", "We prepare and submit complete applications to suitable providers such as Wise, Payoneer and Stripe. Approval is always the provider's decision, based on their own checks, so no one can guarantee it."),
         ("Does a US company give me a visa or residency?", "No. Forming a company does not give you a visa, residency or the right to work in the US. Immigration is a separate process."),
         ("What taxes will I pay?", "It depends on your activity, where you live and where your customers are. Every foreign-owned LLC must file Form 5472 each year, which our Complete package covers. For tax advice we refer you to a qualified tax professional."),
