@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Adds Packages, Thank-you and legal pages to /home/claude/wizz-dist using about.html as the template."""
-import re, html, glob, os, json
-from catalog import COUNTRIES, ADDONS, ADDON_SKUS, ADDON_FIX
+import re, html, glob, os, json, urllib.parse
+from catalog import COUNTRIES, ADDONS, ADDON_SKUS, ADDON_FIX, ACQUISITIONS
 
 D = "/home/claude/wizz-dist"
 esc = lambda s: html.escape(s, quote=True)
@@ -117,6 +117,18 @@ for idx, c in enumerate(COUNTRIES):
     {grp_html(c)}
     {notes}
   </div>''')
+def acq_html(a):
+    items = "".join(f"<li{tk(i)}>{esc(i)}</li>" for i in a["i"])
+    req = "".join(f"<li{tk(r)}>{esc(r)}</li>" for r in a["req"])
+    wa = "https://wa.me/601124477685?text=" + urllib.parse.quote(f"Hi Wizz, I'm interested in an established company (1+ year) in {a['n']}.")
+    return f'''<article class="pk acq">
+        <div class="acq-top"><span class="pk-code ltr">{a["c"]}<i>.</i></span><span class="acq-age"{tk("Company of 1+ year")}>Company of 1+ year</span></div>
+        <h3{tk(a["n"])}>{esc(a["n"])}</h3>
+        <div class="pk-price">{money(a["p"], a["fix"])}<small class="cur">USD</small></div>
+        <ul>{items}</ul>
+        <dl class="acq-dl"><dt{tk("Timeline")}>Timeline</dt><dd{tk(a["time"])}>{esc(a["time"])}</dd><dt{tk("You'll need")}>You'll need</dt><dd><ul>{req}</ul></dd></dl>
+        <div class="pk-cta"><a class="btn solid" href="{wa}" target="_blank" rel="noopener"><span class="dot"></span><span{tk("Contact us")}>Contact us</span></a></div>
+      </article>'''
 def addon_html(a, p):
     btn = f'<button class="pk-add pk-buy" type="button" data-sku="{ADDON_SKUS[a][0]}"{tk("Add")}>Add</button>' if a in ADDON_SKUS else ""
     return f'<div class="pk-addon"><span{tk(a)}>{esc(a)}</span><span class="pk-addon-r"><b{tk(p, lambda x: money_text(x, ADDON_FIX.get(a)))}>{money_text(p, ADDON_FIX.get(a))}</b>{btn}</span></div>'
@@ -131,6 +143,13 @@ pk_body = hero_t("Packages", "Clear prices for forming your company abroad",
     <div class="pk-tabs" role="tablist" aria-label="Countries">{"".join(tabs)}</div>
     {"".join(panels)}
     <div class="pk-msg" id="pkMsg" role="status" hidden></div>
+  </div>
+</section>
+<section class="block" id="established">
+  <div class="wrap">
+    <div class="sec-head"><div><p class="eyebrow"{tk('Established companies')}>Established companies</p><h2{tk('Established companies (1+ year)')}>Established companies (1+ year)</h2></div><p{tk('Take over a company with at least one year of history, for example to support a Saudi investment application. We transfer ownership, prepare and attest the documents, and courier the originals to you. Contact us first so we can match you with an available company.')}>Take over a company with at least one year of history, for example to support a Saudi investment application. We transfer ownership, prepare and attest the documents, and courier the originals to you. Contact us first so we can match you with an available company.</p></div>
+    <div class="pk-grid acq-grid">{"".join(acq_html(a) for a in ACQUISITIONS)}</div>
+    <p class="pk-note"{tk('An established company can support your application, but it doesn\'t guarantee approval. The Saudi investment licence (MISA), bank accounts and other approvals are decided by the authorities and providers. We check the company\'s status and documents before any transfer.')}>An established company can support your application, but it doesn't guarantee approval. The Saudi investment licence (MISA), bank accounts and other approvals are decided by the authorities and providers. We check the company's status and documents before any transfer.</p>
   </div>
 </section>
 <section class="block alt">
@@ -858,6 +877,17 @@ footer.site .foot{grid-template-columns:1.4fr repeat(4,1fr)}
 @media (max-width:900px){.pk-grid-sm{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:560px){.pk-grid-sm{grid-template-columns:1fr}}
 .pk-grid-sm .pk h3{font-size:16px;line-height:1.3}
+.acq-grid{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.acq .pk-price{font-size:clamp(28px,2.6vw,36px)}
+.acq .pk-price .cur{font-size:11px}
+.acq-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.acq .pk-code{font:800 26px var(--mono)}
+.acq .pk-code i{color:var(--red);font-style:normal}
+.acq-age{font:600 11px var(--mono);text-transform:uppercase;letter-spacing:.06em;background:var(--bg);border:1px solid var(--line);border-radius:99px;padding:4px 9px}
+.acq-dl{margin:0;padding-top:12px;border-top:1px dashed var(--line);display:grid;gap:4px;font-size:14px}
+.acq-dl dt{font:600 11px var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-top:6px}
+.acq-dl dd{margin:0}
+.acq-dl ul{margin:0;padding-inline-start:18px;display:grid;gap:4px}
 '''
 css = open(f"{D}/site.css").read()
 # v6 is the last block in site.css: replace it on every build so CSS edits apply

@@ -62,7 +62,7 @@ COUNTRIES = [
   tiers=[
    dict(sku="sa-assessment", n="Market-entry assessment", p=fx("MYR", 500), fix={"MYR": 500}, buy=True, i=["Activity & licence route review","Capital and Saudization overview","Written plan and quote","Credited if you go ahead"]),
    dict(sku=None, n="Company setup", p=fx("MYR", 12000), fix={"MYR": 12000}, frm=True, pop=True, i=["Investment licence & commercial registration","Chamber & municipality registrations","Bank account support","Government fees and capital not included"])],
-  notes=["Setup usually takes 3–6 weeks. Work permits and expat levies are separate."]),
+  notes=["Setup usually takes 3–6 weeks. Work permits and expat levies are separate.","Investing through an established foreign company? See Established companies (1+ year) below."]),
  dict(c="OM", n="Oman", g="Middle East", e="LLC with 100% foreign ownership for most activities.",
   tiers=[
    dict(sku=None, n="Company setup", p=fx("MYR", 3500), fix={"MYR": 3500}, frm=True, i=["Commercial registration","Activity licences","Company documents","Chamber of commerce registration"]),
@@ -106,3 +106,21 @@ ADDON_SKUS = {
  MKT: ("addon-marketplace", _u(MKT)),
  "Business bank or payment account application (per provider)": ("addon-bank", 199),
 }
+
+# Established companies (1+ year) for acquisition, e.g. to support a Saudi investment licence. Priced in ringgit.
+# Not sold online: clients contact us first so we can match an available company.
+ACQUISITIONS = [
+ dict(c="PK", n="Pakistan", rm=7999, time="About 6 weeks",
+  i=["Ownership transfer to you","Company name change, if needed","Financial statements for the last year","Full attestation of all documents","Original documents couriered to your country"],
+  req=["Non-Pakistanis: passport and an attested power of attorney","Pakistanis: national ID card (CNIC) and the mobile number registered to it, for OTP verification"]),
+ dict(c="EG", n="Egypt", rm=9999, time="3 to 4 weeks",
+  i=["Ownership transfer to you","Company name change, if needed","Full attestation of all documents","Original documents couriered to your country"],
+  req=["Passport copy only"]),
+ dict(c="MY", n="Malaysia", rm=11999, time="2 to 3 weeks, unless delayed by government processing or public holidays",
+  i=["Ownership transfer to you","Company name change, if needed","Financial statements for the last year","Full attestation of all documents","Original documents couriered to your country"],
+  req=["Passport copy only"]),
+ dict(c="UK", n="United Kingdom", rm=13999, time="2 to 3 weeks, unless delayed by government processing or public holidays",
+  i=["Ownership transfer to you","Company name change, if needed","Financial statements for the last year","Full attestation of all documents","Original documents couriered to your country"],
+  req=["Passport copy only"]),
+]
+for _a in ACQUISITIONS: _a["p"] = fx("MYR", _a["rm"]); _a["fix"] = {"MYR": _a["rm"]}
