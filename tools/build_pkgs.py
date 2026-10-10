@@ -868,3 +868,6 @@ open(f"{D}/site.css", "w").write(css + CSS + US_CSS)
 pages = sorted(os.path.basename(p) for p in glob.glob(f"{D}/*.html") if not p.endswith(("thank-you.html", "checkout.html", "account.html", "admin.html")))
 open(f"{D}/sitemap.xml", "w").write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "".join(f'  <url><loc>https://wizz.com.my/{"" if p=="index.html" else p}</loc></url>\n' for p in pages) + "</urlset>\n")
 print("built", pages)
+
+# Arabic site under /ar/
+import runpy; runpy.run_path(os.path.join(os.path.dirname(os.path.abspath(__file__)), "build_ar.py"))

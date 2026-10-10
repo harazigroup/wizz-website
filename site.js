@@ -195,9 +195,20 @@ function setLang(l){
   renderBlog(); renderArticle();
   const out = document.getElementById('out'); if (out && !out.hidden) buildMsg();
 }
+// Arabic pages live under /ar/ (built by tools/build_ar.py); the button moves between the two versions
+const IS_AR = /^\/ar(\/|$)/.test(location.pathname);
+function otherLangUrl(){
+  const p = location.pathname;
+  const path = IS_AR ? (p.replace(/^\/ar(\/|$)/, '/')) : ('/ar' + (p === '/' ? '/' : p));
+  return path + location.search + location.hash;
+}
 const langBtn = document.getElementById('langBtn');
-if (langBtn) langBtn.addEventListener('click', () => setLang(lang === 'ar' ? 'en' : 'ar'));
-try { if (localStorage.getItem('wizz-lang') === 'ar') setLang('ar'); } catch(e) {}
+if (langBtn) langBtn.addEventListener('click', () => {
+  try { localStorage.setItem('wizz-lang', IS_AR ? 'en' : 'ar'); } catch(e) {}
+  location.href = otherLangUrl();
+});
+if (IS_AR) setLang('ar');
+else { try { if (localStorage.getItem('wizz-lang') === 'ar' && !/bot|crawl|spider/i.test(navigator.userAgent)) location.replace(otherLangUrl()); } catch(e) {} }
 if (lang === 'en') { renderBlog(); renderArticle(); }
 
 // ---- mobile menu

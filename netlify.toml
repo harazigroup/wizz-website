@@ -7,3 +7,9 @@
   [headers.values]
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
+
+# Arabic pages are real files in /ar/; everything else under /ar/ (css, js, images, other files) comes from the site root
+[[redirects]]
+  from = "/ar/*"
+  to = "/:splat"
+  status = 200
