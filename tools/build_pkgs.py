@@ -515,7 +515,8 @@ ad_body = """<section class="block ac">
     <div class="ac-card" id="adGate" hidden></div>
     <div id="adApp" hidden>
       <div class="ac-top"><div><p class="eyebrow">Team</p><h1>Wizz admin</h1><p class="muted">Signed in as <b id="adWho"></b></p></div><div class="ac-actions"><button class="btn ghost small" id="adOut" type="button">Sign out</button></div></div>
-      <div class="ad-tabs" role="tablist"><button type="button" role="tab" data-tab="leads" aria-selected="true">Leads</button><button type="button" role="tab" data-tab="orders" aria-selected="false">Orders</button></div>
+      <div class="ad-tabs" role="tablist"><button type="button" role="tab" data-tab="leads" aria-selected="true">Leads</button><button type="button" role="tab" data-tab="orders" aria-selected="false">Orders</button><button type="button" role="tab" data-tab="settings" aria-selected="false">Settings</button></div>
+      <div id="tabSettings" hidden><section class="ad-box"><h3>Social media posting (Postiz)</h3><p class="ld-hint" style="margin-top:0">The daily content task schedules Instagram and TikTok posts through Postiz. In Postiz, connect the Wizz Instagram and TikTok accounts, then create an API key (Settings → Public API) and paste it here. The key is stored on the server and can't be read back from this page.</p><p id="pzStatus" class="ld-hint"></p><div class="ad-form"><input id="pzKey" type="password" autocomplete="off" placeholder="Postiz API key"><button class="btn solid small" id="pzSave" type="button">Save key</button><button class="btn ghost small" id="pzDel" type="button">Remove key</button></div></section></div>
       <div id="tabLeads">
         <div class="ld-stats" id="ldStats"></div>
         <details class="ad-new" id="ldNewBox"><summary>Add a lead from WhatsApp, TikTok or a call</summary>

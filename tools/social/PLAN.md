@@ -17,14 +17,16 @@ Used by the weekly content task. Every Sunday it prepares the next week's posts 
   - No fake reviews, testimonials, client names or "was" prices.
 - CTA slide: `wizz.com.my/<page>` + `WhatsApp +60 11-2447 7685`, with one line of fine print.
 
-## Weekly mix (3 carousels + 2 talking videos by Arkan)
-- Mon: carousel (education: "how it works")
-- Wed: talking video (Arkan answers one real client question, 30–60 s)
-- Thu: carousel (myth vs fact / mistakes to avoid)
-- Sat: talking video or behind-the-scenes clip
-- Sun: carousel (package or offer explained: what's included, price, timeline)
+## Daily routine (the daily content task)
+Every morning one topic becomes:
+1. A **blog article** in English, Arabic and Malay, added with `python3 tools/new_post.py post.json` (rebuilds the site; push to deploy).
+2. A **carousel** (5–7 slides) built from the same article, ending with a CTA to the article or the matching package page.
+3. **Captions** for Instagram and TikTok.
+4. If a Postiz key is saved (admin page → Settings), the carousel is **scheduled** on Instagram and TikTok for 20:30 Malaysia time.
+   Otherwise the slides and captions are sent to the owner to post by hand.
+On Sundays, also write 2 talking-video scripts for Arkan (30–60 s each).
 
-Best posting times (Malaysia time, GMT+8): 12:00–13:00 and 20:00–22:00. Gulf audience: 21:00–23:00 MYT.
+Posting times (Malaysia time, GMT+8): 20:30 by default; 12:00–13:00 also works. Gulf audience: 21:00–23:00 MYT.
 
 ## Backlog (take the next unused topics, then mark them used with the date)
 1. US LLC vs UK Ltd: which fits your business? (blog: blog-llc-or-ltd.html)
@@ -49,4 +51,5 @@ Best posting times (Malaysia time, GMT+8): 12:00–13:00 and 20:00–22:00. Gulf
 - 2026-10-12 · US LLC from anywhere (posted)
 - 2026-10-13 · Established company for Saudi investment (posted)
 - 2026-10-11 · Digital banking (posted)
-- 2026-10-13 · Topic 1, US LLC vs UK Ltd (prepared, not yet posted)
+- 2026-10-13 · Topic 1, US LLC vs UK Ltd (carousel prepared, not yet posted; blog already existed)
+- 2026-10-13 · Topic 7, UAE free zone or mainland (blog published)
