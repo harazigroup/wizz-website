@@ -152,6 +152,7 @@ pk_body = hero_t("Packages", "Clear prices for forming your company abroad",
   <div class="wrap">
     <div class="sec-head"><div><p class="eyebrow"{tk('Established companies')}>Established companies</p><h2{tk('Established companies (1+ year)')}>Established companies (1+ year)</h2></div><p{tk('Take over a company with at least one year of history, for example to support a Saudi investment application. We transfer ownership, prepare and attest the documents, and courier the originals to you. Contact us first so we can match you with an available company.')}>Take over a company with at least one year of history, for example to support a Saudi investment application. We transfer ownership, prepare and attest the documents, and courier the originals to you. Contact us first so we can match you with an available company.</p></div>
     <div class="pk-grid acq-grid">{"".join(acq_html(a) for a in ACQUISITIONS)}</div>
+    <a class="pk-guide" href="saudi-investment.html"><span{tk("Saudi investment guide")}>Saudi investment guide</span> <span aria-hidden="true">→</span></a>
     <p class="pk-note"{tk('An established company can support your application, but it doesn\'t guarantee approval. The Saudi investment licence (MISA), bank accounts and other approvals are decided by the authorities and providers. We check the company\'s status and documents before any transfer.')}>An established company can support your application, but it doesn't guarantee approval. The Saudi investment licence (MISA), bank accounts and other approvals are decided by the authorities and providers. We check the company's status and documents before any transfer.</p>
   </div>
 </section>
@@ -505,6 +506,7 @@ page("admin.html", "Team admin | Wizz Smart Services", "Team admin.", ad_body,
 
 exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "us_page.py")).read())
 exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "uk_page.py")).read())
+exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "saudi_page.py")).read())
 
 # ---------------- legal pages
 CO = "WIZZ SMART SERVICES SDN. BHD. (Registration No. 202501029005), B2-2-3, Publika, Solaris Dutamas, 50480 Kuala Lumpur, Malaysia"
@@ -578,6 +580,7 @@ for f in glob.glob(f"{D}/*.html"):
         s = s.replace('<a href="services.html" data-i18n="nav_services"', f'<a href="packages.html"{cur} data-i18n="nav_pkgs">Packages</a>\n      <a href="services.html" data-i18n="nav_services"', 1)
     if 'data-i18n="nav_acq"' not in s:
         s = s.replace('data-i18n="nav_pkgs">Packages</a>\n', 'data-i18n="nav_pkgs">Packages</a>\n      <a href="packages.html#established" data-i18n="nav_acq">Acquisitions</a>\n', 1)
+    s = s.replace('href="packages.html#established" data-i18n="nav_acq"', 'href="saudi-investment.html" data-i18n="nav_acq"')
     # footer: Legal column (replaces the old one-line links)
     s = s.replace('      <span class="legal-links"><a href="terms.html">Terms</a> · <a href="refund.html">Refunds</a> · <a href="privacy.html">Privacy</a></span>\n', '')
     if 'data-i18n="nav_legal"' not in s:
@@ -599,7 +602,7 @@ for f in glob.glob(f"{D}/*.html"):
             k = m.group(1)
             g = CGUIDE.get(k)
             guide = f'<a class="clink" href="{g[0]}"><span data-i18n="{g[1]}">{g[2]}</span> <span aria-hidden="true">→</span></a>' if g else ""
-            return m.group(0).replace("</article>", f'  <div class="clinks"><a class="clink" href="packages.html#{"established" if k == "eg" else k}"><span data-i18n="see_pkgs">Packages & prices</span> <span aria-hidden="true">→</span></a>{guide}</div>\n      </article>', 1)
+            return m.group(0).replace("</article>", f'  <div class="clinks"><a class="clink" href="{"saudi-investment.html" if k == "eg" else "packages.html#" + k}"><span data-i18n="see_pkgs">Packages & prices</span> <span aria-hidden="true">→</span></a>{guide}</div>\n      </article>', 1)
         s = re.sub(r'<article class="ccard"[^>]*id="c-([a-z]+)">.*?</article>', _links, s, flags=re.S)
     # floating WhatsApp button on every page
     if 'class="wa-float"' not in s:

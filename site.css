@@ -883,3 +883,7 @@ a.pk-add{text-decoration:none;display:inline-block;white-space:nowrap}
 @media (max-width:1000px){.us-steps{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:34px}.us-whos{grid-template-columns:repeat(2,minmax(0,1fr))}.us-feats,.us-stories{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:860px){.us-hero .wrap{grid-template-columns:1fr}.us-kit{max-width:460px}}
 @media (max-width:640px){.us-kit{padding:18px}.us-kit-top{flex-wrap:wrap}.us-kit-price{flex-basis:100%;text-align:start;margin-inline-start:0;display:flex;gap:8px;align-items:baseline}.us-kit-price .m{display:inline}.us-feats,.us-whos,.us-ents,.us-stories,.us-states,.us-steps{grid-template-columns:1fr}.us-state{border-inline-start:0;border-top:1px solid var(--line)}.us-state:first-child{border-top:0}.us-trust{grid-template-columns:1fr}.us-cmp{min-width:0;font-size:13px}.us-cmp th,.us-cmp td{padding:10px 6px}.us-cmp th[scope=row]{padding-inline-start:12px}.us-cmp thead small{font-size:11px}}
+
+.us-feats-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media (max-width:1000px){.us-feats-4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){.us-feats-4{grid-template-columns:1fr}}
