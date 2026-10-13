@@ -146,10 +146,18 @@
 <p class="err full" data-i18n="f_err" hidden="" id="formErr">يرجى إدخال الاسم وبريد إلكتروني صحيح والجنسية ودولة الإقامة والنشاط التجاري.</p>
 <p class="err full" data-i18n="f_fail" hidden="" id="formFail">عذراً، تعذّر إرسال رسالتك. يرجى المحاولة مرة أخرى أو التواصل معنا عبر واتساب.</p>
 <div class="out" hidden="" id="out" role="status" tabindex="-1">
-<strong data-i18n="out_t">شكراً لك، تم إرسال استفسارك</strong>
-<p data-i18n="out_p">سيراجع فريقنا طلبك ويرد عليك عبر البريد الإلكتروني، عادةً خلال يوم عمل واحد. يرجى التحقق من مجلد الرسائل غير المرغوب فيها إن لم تجد ردنا.</p>
-<div class="row">
-<a class="btn ghost" data-i18n="out_wa" href="https://wa.me/601124477685" id="waLink" rel="noopener" target="_blank">تحتاج رداً أسرع؟ تواصل معنا عبر واتساب</a>
+<span aria-hidden="true" class="out-ic"><svg fill="none" height="26" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.6" viewbox="0 0 24 24" width="26"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>
+<h3 class="out-t" data-i18n="out_t">شكراً لك، تم إرسال استفسارك</h3>
+<p class="out-p" data-i18n="out_p2">سيراجع فريقنا بياناتك ويتواصل معك عبر البريد الإلكتروني أو واتساب، عادةً خلال يوم عمل واحد.</p>
+<p class="out-ref" hidden="" id="outRef"></p>
+<ol class="out-steps">
+<li data-i18n="out_s1">نراجع نشاطك التجاري والدولة المستهدفة.</li>
+<li data-i18n="out_s2">نقترح الهيكل المناسب ونرسل لك عرض سعر مكتوباً.</li>
+<li data-i18n="out_s3">القرار لك، دون أي التزام.</li>
+</ol>
+<div class="out-act">
+<a class="btn wa" href="https://wa.me/601124477685" id="waLink" rel="noopener" target="_blank"><span data-i18n="out_wa2">تواصل معنا على واتساب الآن</span></a>
+<small data-i18n="out_spam">إذا لم تجد رسالتنا، يرجى التحقق من مجلد الرسائل غير المرغوب فيها.</small>
 </div>
 </div>
 </form>
