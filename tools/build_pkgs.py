@@ -466,10 +466,29 @@ CK_JS = """<script>
 page("checkout.html", "Checkout | Wizz Smart Services", "Secure checkout for Wizz Smart Services packages.", ck_body, scripts=ar_script() + CK_JS,
      extra_head='<meta name="robots" content="noindex">')
 
+# ---------------- price list for the team quote builder (admin only reads it; prices are public anyway)
+import math as _m
+from catalog import RATES as _RATES, fx
+def _myr(usd, fix):
+    if fix and fix.get("MYR"): return fix["MYR"]
+    if fix and fix.get("GBP"): usd = fix["GBP"] / _RATES["GBP"]
+    if not usd: return 0
+    return int(_m.ceil(usd * _RATES["MYR"] / 10) * 10 - 1)
+QCAT = []
+for c in COUNTRIES:
+    for t in c["tiers"]:
+        QCAT.append({"g": c["n"], "name": f'{c["n"]} · {t["n"]}', "detail": ((t["plus"] + ": ") if t.get("plus") else "") + "; ".join(t["i"]), "usd": t["p"] or 0, "myr": _myr(t["p"], t.get("fix")), "from": bool(t.get("frm"))})
+for a_, label in ADDONS:
+    usd = ADDON_SKUS[a_][1] if a_ in ADDON_SKUS else (fx("MYR", ADDON_FIX[a_]["MYR"]) if a_ in ADDON_FIX else 0)
+    QCAT.append({"g": "Add-ons", "name": a_, "detail": "", "usd": usd, "myr": (ADDON_FIX.get(a_) or {}).get("MYR") or (_myr(usd, None) if usd else 0), "from": a_ in ADDON_CONTACT})
+for a_ in ACQUISITIONS:
+    QCAT.append({"g": "Established companies (1+ year)", "name": f'Established company · {a_["n"]}', "detail": "; ".join(a_["i"]) + ". Timeline: " + a_["time"], "usd": a_["p"], "myr": a_["rm"], "from": False})
+open(f"{D}/quote-catalog.json", "w").write(json.dumps(QCAT, ensure_ascii=False))
+
 # ---------------- client account + team admin (Supabase)
 import shutil
 SB_JS = '<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script>\n'
-for n in ("account.js", "admin.js"):
+for n in ("account.js", "admin.js", "leads.js", "quote.html"):
     shutil.copy(f"{D}/tools/portal/{n}", f"{D}/{n}")
 ac_body = f"""<section class="block ac">
   <div class="wrap ac-wrap">
@@ -495,18 +514,35 @@ ad_body = """<section class="block ac">
     <div class="ac-msg" id="adMsg" hidden></div>
     <div class="ac-card" id="adGate" hidden></div>
     <div id="adApp" hidden>
-      <div class="ac-top"><div><p class="eyebrow">Team</p><h1>Orders</h1><p class="muted">Signed in as <b id="adWho"></b></p></div><div class="ac-actions"><button class="btn ghost small" id="adOut" type="button">Sign out</button></div></div>
+      <div class="ac-top"><div><p class="eyebrow">Team</p><h1>Wizz admin</h1><p class="muted">Signed in as <b id="adWho"></b></p></div><div class="ac-actions"><button class="btn ghost small" id="adOut" type="button">Sign out</button></div></div>
+      <div class="ad-tabs" role="tablist"><button type="button" role="tab" data-tab="leads" aria-selected="true">Leads</button><button type="button" role="tab" data-tab="orders" aria-selected="false">Orders</button></div>
+      <div id="tabLeads">
+        <div class="ld-stats" id="ldStats"></div>
+        <details class="ad-new" id="ldNewBox"><summary>Add a lead from WhatsApp, TikTok or a call</summary>
+          <form id="ldNew" class="ad-form"><input name="name" required placeholder="Name"><input name="phone" placeholder="WhatsApp, e.g. +966..."><input name="email" type="email" placeholder="Email (optional)">
+            <select name="source"><option value="whatsapp">WhatsApp</option><option value="tiktok">TikTok</option><option value="instagram">Instagram</option><option value="facebook">Facebook</option><option value="referral">Referral</option><option value="partner">Partner office</option><option value="other">Other</option></select>
+            <select name="market" id="ldNewMkt"></select><input name="activity" placeholder="What they want, e.g. US LLC for Amazon">
+            <select name="lang"><option value="en">English</option><option value="ar">Arabic</option><option value="ms">Malay</option></select>
+            <select name="priority"><option value="warm">Warm</option><option value="hot">Hot</option><option value="cold">Cold</option></select>
+            <button class="btn solid small" type="submit">Add lead</button></form></details>
+        <div class="ad-grid">
+          <div class="ad-side"><div class="ad-filter"><input id="ldQ" placeholder="Search name, phone, country"><select id="ldF"><option value="open">All open leads</option><option value="due">Follow-ups due</option><option value="hot">Hot</option><option value="new">New</option><option value="contacted">Contacted</option><option value="qualified">Qualified</option><option value="quoted">Quote sent</option><option value="won">Won</option><option value="lost">Lost</option><option value="">Everything</option></select><select id="ldS"><option value="">All sources</option><option value="website">Website</option><option value="whatsapp">WhatsApp</option><option value="tiktok">TikTok</option><option value="instagram">Instagram</option><option value="facebook">Facebook</option><option value="referral">Referral</option><option value="partner">Partner office</option><option value="other">Other</option></select></div><p class="ad-count" id="ldCount"></p><div id="ldList" class="ad-list"></div></div>
+          <div class="ad-detail" id="ldDetail"><p class="ac-none">Select a lead.</p></div>
+        </div>
+      </div>
+      <div id="tabOrders" hidden>
       <details class="ad-new" id="adNewBox"><summary>Add an order paid outside the website</summary>
         <form id="adNew" class="ad-form"><input name="email" type="email" required placeholder="Client email"><input name="name" placeholder="Client name"><input name="package" required placeholder="Package, e.g. United Kingdom - Business"><input name="amount" type="number" step="0.01" min="0" required placeholder="Amount"><select name="currency"><option>USD</option><option>GBP</option><option>EUR</option><option>MYR</option><option>AED</option><option>SAR</option><option>OMR</option><option>THB</option></select><button class="btn solid small" type="submit">Add order</button></form></details>
       <div class="ad-grid">
         <div class="ad-side"><div class="ad-filter"><input id="adQ" placeholder="Search ref, email, name"><select id="adF"><option value="">All statuses</option><option value="paid">Paid</option><option value="docs_needed">Documents needed</option><option value="review">Under review</option><option value="filed">Filed</option><option value="registered">Company registered</option><option value="delivered">Delivered</option><option value="on_hold">On hold</option><option value="cancelled">Cancelled</option></select></div><p class="ad-count" id="adCount"></p><div id="adList" class="ad-list"></div></div>
         <div class="ad-detail" id="adDetail"><p class="ac-none">Select an order.</p></div>
       </div>
+      </div>
     </div>
   </div>
 </section>"""
 page("admin.html", "Team admin | Wizz Smart Services", "Team admin.", ad_body,
-     scripts=SB_JS + '<script src="admin.js" defer></script>\n', extra_head='<meta name="robots" content="noindex">')
+     scripts=SB_JS + '<script src="admin.js" defer></script>\n<script src="leads.js" defer></script>\n', extra_head='<meta name="robots" content="noindex">')
 
 exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "us_page.py")).read())
 exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "uk_page.py")).read())
@@ -578,6 +614,7 @@ WA_PATH = "M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.6
 WA_FLOAT = f"""<a class="wa-float" href="https://wa.me/601124477685?text=Hi%20Wizz%2C%20I%27d%20like%20to%20ask%20about%20your%20services." target="_blank" rel="noopener" aria-label="Chat with us on WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="{WA_PATH}"/></svg><span class="wa-tip" data-i18n="wa_chat">Chat with us</span></a>
 """
 for f in glob.glob(f"{D}/*.html"):
+    if f.endswith("/quote.html"): continue  # standalone document page
     s = open(f).read()
     if 'data-i18n="nav_pkgs"' not in s:
         cur = ' aria-current="page"' if f.endswith("/packages.html") else ""
@@ -758,6 +795,32 @@ footer.site{padding-bottom:96px}
 .ac-docs li .ac-link{flex:none}
 body[data-page="admin"] .wa-float{display:none}
 @media (max-width:860px){.ad-grid{grid-template-columns:1fr}.ad-dl{grid-template-columns:1fr}}
+.ad-tabs{display:flex;gap:6px;margin:0 0 16px;border-bottom:1px solid var(--line)}
+.ad-tabs button{all:unset;cursor:pointer;padding:10px 16px;font-weight:600;font-size:15px;border-bottom:2px solid transparent;margin-bottom:-1px;color:var(--muted)}
+.ad-tabs button[aria-selected="true"]{color:var(--ink);border-color:var(--red)}
+.ld-stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-bottom:14px}
+.ld-stat{all:unset;box-sizing:border-box;cursor:pointer;background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:grid;gap:2px}
+.ld-stat b{font:850 26px var(--display)}.ld-stat span{font-size:13px;color:var(--muted)}
+.ld-stat:hover{border-color:var(--ink)}
+.ld-line{display:flex;align-items:center;gap:8px}.ld-line .ac-badge{margin-inline-start:auto}
+.ld-dot{width:9px;height:9px;border-radius:50%;flex:none;background:#b8bcc2}.ld-dot.p-hot{background:var(--red)}.ld-dot.p-warm{background:#e8a33d}
+.ld-pri{font:700 13px var(--mono);letter-spacing:.08em;padding:4px 10px;border-radius:99px;background:#eef0f2}.ld-pri.p-hot{background:var(--red);color:#fff}.ld-pri.p-warm{background:#fbe7c6}
+.ld-due{color:var(--red);font-weight:600}
+.ld-tpl{display:flex;flex-wrap:wrap;gap:8px}
+.ld-hint{font-size:13px;color:var(--muted);margin:10px 0 0}
+.ld-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.ld-grid label{display:grid;gap:4px;font-size:13px;color:var(--muted)}
+.ld-grid input,.ld-grid select{padding:8px 10px;font-size:14px}
+.ld-actions{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.ld-chk{display:flex;align-items:center;gap:6px;font-size:14px}.ld-chk input{width:auto}
+.ld-qs{list-style:none;margin:0 0 12px;padding:0;display:grid;gap:8px;font-size:14px}.ld-qs li{border:1px solid var(--line);border-radius:8px;padding:8px 10px}.ld-qs small{color:var(--muted)}
+.ld-qa{display:flex;gap:12px;flex-wrap:wrap;margin-top:4px}
+.ld-qf{border-top:1px solid var(--line);margin-top:12px;padding-top:12px;display:grid;gap:10px}
+.ld-qt{width:100%;border-collapse:collapse;font-size:14px}.ld-qt th{text-align:start;font-size:12px;color:var(--muted);padding:6px 4px;border-bottom:1px solid var(--line)}
+.ld-qt td{padding:6px 4px;vertical-align:top;border-bottom:1px solid var(--line)}.ld-qt td:first-child{width:60%}.ld-qt input,.ld-qt textarea{padding:7px 9px;font-size:14px}.ld-qt textarea{margin-top:4px}
+.ld-qtot{text-align:end;font-size:16px;margin:4px 0}
+.ac-badge.ls-new{background:#fde2e3;color:#a1141a}.ac-badge.ls-contacted{background:#e6eefc;color:#1d4fa8}.ac-badge.ls-qualified{background:#efe7fb;color:#5b2ea6}.ac-badge.ls-quoted{background:#fbefd9;color:#8a5a00}.ac-badge.ls-won{background:#dcf3e4;color:#17663a}.ac-badge.ls-lost{background:#eceef0;color:#5d636b}
+@media (max-width:860px){.ld-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.ld-grid{grid-template-columns:1fr 1fr}}
 .cart-btn{position:relative;display:inline-grid;place-items:center;width:40px;height:40px;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--ink);cursor:pointer}
 .cart-btn svg{width:21px;height:21px}
 .cart-btn:hover{background:var(--surface)}
@@ -911,7 +974,7 @@ LANG_CSS = "\n/* language menu */\nselect.lang{width:auto;min-width:0;padding:7p
 open(f"{D}/site.css", "w").write(css + CSS + US_CSS + LANG_CSS)
 
 # sitemap
-pages = sorted(os.path.basename(p) for p in glob.glob(f"{D}/*.html") if not p.endswith(("thank-you.html", "checkout.html", "account.html", "admin.html")))
+pages = sorted(os.path.basename(p) for p in glob.glob(f"{D}/*.html") if not p.endswith(("thank-you.html", "checkout.html", "account.html", "admin.html", "quote.html")))
 open(f"{D}/sitemap.xml", "w").write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "".join(f'  <url><loc>https://wizz.com.my/{"" if p=="index.html" else p}</loc></url>\n' for p in pages) + "</urlset>\n")
 print("built", pages)
 

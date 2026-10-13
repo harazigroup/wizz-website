@@ -1,0 +1,52 @@
+# Wizz social content playbook
+
+Used by the weekly content task. Every Sunday it prepares the next week's posts for TikTok and Instagram (@wizz.com.my).
+
+## Rules (always)
+- **English only** on TikTok and Instagram.
+- Carousels are rendered with `tools/social/carousel.py`: 1080×1920, 5–7 slides, cover + 3–5 content slides + CTA slide.
+  The renderer enforces TikTok's safe area. If it fails, shorten the copy. Never shrink the type.
+- Alternate light and dark covers across the week so the profile grid stays checkerboard (light, dark, light…).
+- One idea per carousel. Short lines. Facts must match the website (prices, timelines, what is included).
+- Prices come from the website catalogue (`tools/catalog.py`). Show ringgit first for packages that are set in ringgit.
+- **Compliance, every post:**
+  - Never promise or imply guaranteed bank accounts, Stripe, Wise, Payoneer, marketplace accounts, licences, visas, residency, tax savings or business success.
+  - Say clearly that approvals are decided by banks, providers, platforms or authorities.
+  - Forming a company does not give a visa or residency. Say so when the topic touches immigration.
+  - No legal or tax advice. Refer to a qualified professional for personal tax questions.
+  - No fake reviews, testimonials, client names or "was" prices.
+- CTA slide: `wizz.com.my/<page>` + `WhatsApp +60 11-2447 7685`, with one line of fine print.
+
+## Weekly mix (3 carousels + 2 talking videos by Arkan)
+- Mon: carousel (education: "how it works")
+- Wed: talking video (Arkan answers one real client question, 30–60 s)
+- Thu: carousel (myth vs fact / mistakes to avoid)
+- Sat: talking video or behind-the-scenes clip
+- Sun: carousel (package or offer explained: what's included, price, timeline)
+
+Best posting times (Malaysia time, GMT+8): 12:00–13:00 and 20:00–22:00. Gulf audience: 21:00–23:00 MYT.
+
+## Backlog (take the next unused topics, then mark them used with the date)
+1. US LLC vs UK Ltd: which fits your business? (blog: blog-llc-or-ltd.html)
+2. 3 reasons Stripe or a bank rejects a new company, and how to prepare (blog-payment-approval.html)
+3. Own brand or reseller? What to sort out before selling on Amazon (blog-own-brand-or-reseller.html)
+4. What RM 1,199 gets you: the US Starter package explained (usa.html)
+5. Estonia e-Residency: what it is and what it isn't (not a visa)
+6. Saudi company setup in 2 stages: foreign company first, then MISA licence (saudi-investment.html)
+7. UAE free zone or mainland: how to choose
+8. Selling on Noon, Shopee, Lazada and TikTok Shop with the right company
+9. Amazon FBA prep from Malaysia: how it works, step by step
+10. Myths: "A US company gives me a US visa" and 4 more
+11. What documents you need to open a company abroad (passport, full residential address, national ID number…)
+12. Marketplace onboarding from RM 300 per platform: what we prepare
+13. Thailand work permit through our Thai company: how it works and what the authorities decide
+14. Oman: company setup or setup with a 2-year investor visa
+15. UK London address plans: registered office, director's address, business address, call answering
+16. Yearly duties after you form a company (US, UK): what you must file
+
+## Used topics
+- 2026-10-12 · UK company without living in the UK (posted)
+- 2026-10-12 · US LLC from anywhere (posted)
+- 2026-10-13 · Established company for Saudi investment (posted)
+- 2026-10-11 · Digital banking (posted)
+- 2026-10-13 · Topic 1, US LLC vs UK Ltd (prepared, not yet posted)

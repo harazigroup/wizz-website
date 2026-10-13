@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Quotation | Wizz Smart Services</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<style>
+:root{--ink:#1F2328;--muted:#5d636b;--line:#e3e5e8;--red:#E01B22;--bg:#F3F5F7}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 -apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.bar{max-width:860px;margin:20px auto 0;padding:0 16px;display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+.btn{border:1px solid var(--ink);background:#fff;color:var(--ink);border-radius:8px;padding:9px 14px;font:600 14px inherit;cursor:pointer;text-decoration:none}
+.btn.solid{background:var(--ink);color:#fff}.btn.red{background:var(--red);border-color:var(--red);color:#fff}
+.doc{max-width:860px;margin:14px auto 40px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:44px 48px}
+.hd{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;border-bottom:2px solid var(--ink);padding-bottom:18px}
+.hd img{height:44px}
+.co{text-align:end;font-size:12.5px;color:var(--muted);line-height:1.5}.co b{color:var(--ink);font-size:13px;letter-spacing:.04em}
+h1{font-size:30px;margin:26px 0 4px;letter-spacing:-.01em}
+.meta{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:18px 0 26px}
+.meta div{background:var(--bg);border-radius:8px;padding:10px 12px}.meta small{display:block;color:var(--muted);font-size:12px}.meta b{font-size:14px}
+table{width:100%;border-collapse:collapse;margin:6px 0}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);text-align:start;border-bottom:1px solid var(--line);padding:8px 6px}
+td{padding:12px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+td small{display:block;color:var(--muted);font-size:13px;margin-top:3px}
+.num{text-align:end;white-space:nowrap}
+.tot td{border:0;font-size:18px;font-weight:700;padding-top:16px}
+h2{font-size:16px;margin:28px 0 8px}
+ul,ol{margin:0;padding-inline-start:20px}li{margin:4px 0}
+.note{background:#fff7e6;border:1px solid #f3dcae;border-radius:8px;padding:12px 14px;margin-top:14px;white-space:pre-wrap}
+.terms{font-size:13.5px;color:#33383f}
+.accept{margin-top:28px;border:2px solid var(--ink);border-radius:10px;padding:18px 20px}
+.accept input[type=text]{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font:inherit;margin:8px 0}
+.accept label{display:flex;gap:8px;align-items:flex-start;font-size:14px}
+.ok{background:#e4f5ea;border:1px solid #b9e2c7;border-radius:10px;padding:16px 18px;margin-top:28px}
+.ft{margin-top:34px;padding-top:14px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);text-align:center}
+.msg{max-width:860px;margin:60px auto;padding:0 16px;text-align:center}
+[dir=rtl] .co{text-align:start}
+@media (max-width:640px){.doc{padding:24px 18px;border-radius:0}.meta{grid-template-columns:1fr 1fr}.hd{flex-direction:column}.co{text-align:start}}
+@media print{body{background:#fff}.bar,.accept,.noprint{display:none!important}.doc{border:0;margin:0;padding:0;max-width:none}@page{size:A4;margin:16mm}}
+</style>
+</head>
+<body>
+<div id="app"><p class="msg">…</p></div>
+<script>
+(function(){
+const SB='https://mzkkhotipmgqczavrfqy.supabase.co',KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im16a2tob3RpcG1ncWN6YXZyZnF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEzNjA5OTEsImV4cCI6MjEwNjkzNjk5MX0.-RX74vfMP8qedH2F7XvBN4OGj_dL8yEX96VlXO8ONA0';
+const t=new URLSearchParams(location.search).get('t')||'';
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const L={
+ en:{q:'Quotation',for:'Prepared for',date:'Date',valid:'Valid until',ref:'Reference',desc:'Service',qty:'Qty',amt:'Amount',total:'Total',from:'from',
+  next:'What happens next',steps:['Accept this quotation below, or reply with any questions.','We send you a secure payment link or invoice.','You send the required documents, and we check eligibility before filing.','We complete the work and send you your documents and next steps.'],
+  docs:'Documents we will need',docl:['A clear copy of your passport','Your full residential address','Your national ID number','2–3 company name choices and a short description of your business','Any extra documents listed for your country or service'],
+  terms:'Terms',tl:['Prices are our service fees. Government, third-party and capital costs are not included unless listed above.','Banks, payment providers, marketplaces and government authorities make their own decisions. We prepare complete applications but cannot guarantee any approval, licence, visa or account.','Timelines are estimates and start once payment and complete documents are received.','We are a business services company, not a law firm or tax adviser. Where you need legal or tax advice, we refer you to a qualified professional.','Our <a href="/terms.html">Terms of Service</a> and <a href="/refund.html">Refund Policy</a> apply.'],
+  acc:'Accept this quotation',accp:'Type your full name to accept. This confirms you agree to the services and terms above.',name:'Full name',agree:'I agree to this quotation and the Terms of Service.',accb:'Accept quotation',
+  done:'Accepted',doneby:'Accepted by',thanks:'Thank you. We will contact you shortly with the payment link and next steps.',expired:'This quotation has expired. Message us and we will send an updated one.',
+  print:'Download PDF',wa:'Questions? WhatsApp us',notes:'Notes',bad:'This quotation link is not valid. Please contact us at info@wizz.com.my.',err:'Something went wrong. Please try again or message us on WhatsApp.'},
+ ar:{q:'عرض سعر',for:'مقدَّم إلى',date:'التاريخ',valid:'صالح حتى',ref:'المرجع',desc:'الخدمة',qty:'الكمية',amt:'المبلغ',total:'الإجمالي',from:'من',
+  next:'الخطوات التالية',steps:['وافق على عرض السعر أدناه، أو راسلنا بأي سؤال.','نرسل لك رابط دفع آمناً أو فاتورة.','ترسل المستندات المطلوبة، ونتحقق من الأهلية قبل التقديم.','ننجز العمل ونرسل لك مستنداتك والخطوات التالية.'],
+  docs:'المستندات المطلوبة',docl:['صورة واضحة من جواز السفر','عنوان السكن الكامل','رقم الهوية الوطنية','2 إلى 3 أسماء مقترحة للشركة ووصف قصير لنشاطك','أي مستندات إضافية خاصة بدولتك أو الخدمة'],
+  terms:'الشروط',tl:['الأسعار هي أتعاب خدماتنا. الرسوم الحكومية ورسوم الأطراف الأخرى ورأس المال غير مشمولة ما لم تُذكر أعلاه.','البنوك ومزودو الدفع والمنصات والجهات الحكومية يتخذون قراراتهم بأنفسهم. نحن نجهّز طلبات كاملة لكن لا نضمن أي موافقة أو ترخيص أو تأشيرة أو حساب.','المدد تقديرية وتبدأ بعد استلام الدفع والمستندات كاملة.','نحن شركة خدمات أعمال ولسنا مكتب محاماة أو مستشاراً ضريبياً، ونحيلك إلى مختص مؤهل عند الحاجة.','تنطبق <a href="/ar/terms.html">شروط الخدمة</a> و<a href="/ar/refund.html">سياسة الاسترداد</a>.'],
+  acc:'الموافقة على عرض السعر',accp:'اكتب اسمك الكامل للموافقة. هذا يؤكد موافقتك على الخدمات والشروط أعلاه.',name:'الاسم الكامل',agree:'أوافق على عرض السعر هذا وعلى شروط الخدمة.',accb:'الموافقة على العرض',
+  done:'تمت الموافقة',doneby:'وافق عليه',thanks:'شكراً لك. سنتواصل معك قريباً برابط الدفع والخطوات التالية.',expired:'انتهت صلاحية عرض السعر. راسلنا وسنرسل لك عرضاً محدّثاً.',
+  print:'تنزيل PDF',wa:'لديك سؤال؟ راسلنا على واتساب',notes:'ملاحظات',bad:'رابط عرض السعر غير صالح. تواصل معنا على info@wizz.com.my.',err:'حدث خطأ. حاول مرة أخرى أو راسلنا على واتساب.'},
+ ms:{q:'Sebut Harga',for:'Disediakan untuk',date:'Tarikh',valid:'Sah sehingga',ref:'Rujukan',desc:'Perkhidmatan',qty:'Kuantiti',amt:'Jumlah',total:'Jumlah keseluruhan',from:'dari',
+  next:'Langkah seterusnya',steps:['Terima sebut harga ini di bawah, atau balas dengan sebarang soalan.','Kami menghantar pautan pembayaran selamat atau invois.','Anda menghantar dokumen yang diperlukan, dan kami menyemak kelayakan sebelum memfailkan.','Kami melengkapkan kerja dan menghantar dokumen serta langkah seterusnya kepada anda.'],
+  docs:'Dokumen yang kami perlukan',docl:['Salinan pasport yang jelas','Alamat kediaman penuh anda','Nombor kad pengenalan anda','2–3 pilihan nama syarikat dan penerangan ringkas tentang perniagaan anda','Sebarang dokumen tambahan untuk negara atau perkhidmatan anda'],
+  terms:'Terma',tl:['Harga ialah yuran perkhidmatan kami. Kos kerajaan, pihak ketiga dan modal tidak termasuk melainkan disenaraikan di atas.','Bank, penyedia pembayaran, pasaran dalam talian dan pihak berkuasa kerajaan membuat keputusan sendiri. Kami menyediakan permohonan lengkap tetapi tidak dapat menjamin sebarang kelulusan, lesen, visa atau akaun.','Tempoh masa ialah anggaran dan bermula selepas pembayaran dan dokumen lengkap diterima.','Kami syarikat perkhidmatan perniagaan, bukan firma guaman atau penasihat cukai. Jika anda memerlukan nasihat undang-undang atau cukai, kami merujuk anda kepada profesional bertauliah.','<a href="/ms/terms.html">Terma Perkhidmatan</a> dan <a href="/ms/refund.html">Polisi Bayaran Balik</a> kami terpakai.'],
+  acc:'Terima sebut harga ini',accp:'Taip nama penuh anda untuk menerima. Ini mengesahkan anda bersetuju dengan perkhidmatan dan terma di atas.',name:'Nama penuh',agree:'Saya bersetuju dengan sebut harga ini dan Terma Perkhidmatan.',accb:'Terima sebut harga',
+  done:'Diterima',doneby:'Diterima oleh',thanks:'Terima kasih. Kami akan menghubungi anda tidak lama lagi dengan pautan pembayaran dan langkah seterusnya.',expired:'Sebut harga ini telah tamat tempoh. Hubungi kami dan kami akan menghantar yang baharu.',
+  print:'Muat turun PDF',wa:'Ada soalan? WhatsApp kami',notes:'Nota',bad:'Pautan sebut harga ini tidak sah. Sila hubungi kami di info@wizz.com.my.',err:'Ada masalah. Sila cuba lagi atau hantar mesej WhatsApp kepada kami.'}};
+const rpc=(fn,args)=>fetch(SB+'/rest/v1/rpc/'+fn,{method:'POST',headers:{apikey:KEY,authorization:'Bearer '+KEY,'content-type':'application/json'},body:JSON.stringify(args)}).then(r=>r.ok?r.json():Promise.reject(r));
+const app=document.getElementById('app');
+function money(n,c){const d=Number.isInteger(+n)?0:2;try{return new Intl.NumberFormat('en-US',{style:'currency',currency:c,currencyDisplay:'code',minimumFractionDigits:d,maximumFractionDigits:2}).format(n)}catch(e){return c+' '+n}}
+function fmt(d,lang){return new Date(d).toLocaleDateString(lang==='ar'?'ar':lang==='ms'?'ms-MY':'en-GB',{day:'numeric',month:'long',year:'numeric'})}
+function render(q){
+  const lang=L[q.lang]?q.lang:'en',T=L[lang];
+  document.documentElement.lang=lang;document.documentElement.dir=lang==='ar'?'rtl':'ltr';document.title=T.q+' '+q.ref+' | Wizz Smart Services';
+  const rows=(q.items||[]).map(i=>'<tr><td><b>'+esc(i.name)+'</b>'+(i.detail?'<small>'+esc(i.detail)+'</small>':'')+'</td><td class="num">'+esc(i.qty||1)+'</td><td class="num">'+(i.from?T.from+' ':'')+money((i.unit||0)*(i.qty||1),q.currency)+'</td></tr>').join('');
+  const wa='https://wa.me/601124477685?text='+encodeURIComponent('Hi Wizz, about quotation '+q.ref+': ');
+  let tail='';
+  if(q.status==='accepted')tail='<div class="ok"><b>'+T.done+'</b> · '+T.doneby+' '+esc(q.accepted_name)+' · '+fmt(q.accepted_at,lang)+'<br>'+T.thanks+'</div>';
+  else if(q.expired)tail='<div class="note">'+T.expired+'</div>';
+  else tail='<form class="accept" id="acc"><h2 style="margin-top:0">'+T.acc+'</h2><p>'+T.accp+'</p><input type="text" id="accName" required minlength="3" placeholder="'+T.name+'" autocomplete="name"><label><input type="checkbox" id="accOk" required> '+T.agree+'</label><p id="accErr" style="color:#a1141a" hidden></p><button class="btn red" type="submit" style="margin-top:10px">'+T.accb+'</button></form>';
+  app.innerHTML='<div class="bar"><a class="btn" href="'+wa+'" target="_blank" rel="noopener">'+T.wa+'</a><button class="btn solid" type="button" onclick="print()">'+T.print+'</button></div>'+
+  '<div class="doc"><div class="hd"><img src="/img/email-logo.png" alt="Wizz"><div class="co"><b>WIZZ SMART SERVICES SDN. BHD.</b><br>Company No. 202501029005<br>B2-2-3, Publika, Solaris Dutamas, 50480 Kuala Lumpur, Malaysia<br>info@wizz.com.my · +60 11-2447 7685 · wizz.com.my</div></div>'+
+  '<h1>'+T.q+(q.title?' · '+esc(q.title):'')+'</h1>'+
+  '<div class="meta"><div><small>'+T.for+'</small><b>'+esc(q.client_name)+'</b>'+(q.client_country?'<br><small>'+esc(q.client_country)+'</small>':'')+'</div><div><small>'+T.ref+'</small><b dir="ltr">'+esc(q.ref)+'</b></div><div><small>'+T.date+'</small><b>'+fmt(q.created_at,lang)+'</b></div><div><small>'+T.valid+'</small><b>'+fmt(q.valid_until,lang)+'</b></div></div>'+
+  '<table><thead><tr><th>'+T.desc+'</th><th class="num">'+T.qty+'</th><th class="num">'+T.amt+'</th></tr></thead><tbody>'+rows+'</tbody><tfoot><tr class="tot"><td>'+T.total+'</td><td></td><td class="num">'+money(q.total,q.currency)+'</td></tr></tfoot></table>'+
+  (q.notes?'<div class="note"><b>'+T.notes+':</b> '+esc(q.notes)+'</div>':'')+
+  '<h2>'+T.next+'</h2><ol>'+T.steps.map(s=>'<li>'+s+'</li>').join('')+'</ol>'+
+  '<h2>'+T.docs+'</h2><ul>'+T.docl.map(s=>'<li>'+s+'</li>').join('')+'</ul>'+
+  '<h2>'+T.terms+'</h2><ol class="terms">'+T.tl.map(s=>'<li>'+s+'</li>').join('')+'</ol>'+tail+
+  '<div class="ft">WIZZ SMART SERVICES SDN. BHD. · Company No. 202501029005 · B2-2-3, Publika, Solaris Dutamas, 50480 Kuala Lumpur, Malaysia · info@wizz.com.my</div></div>';
+  const f=document.getElementById('acc');
+  if(f)f.addEventListener('submit',async e=>{e.preventDefault();const b=f.querySelector('button');b.disabled=true;
+    try{const r=await rpc('public_accept_quote',{p_token:t,p_name:document.getElementById('accName').value});if(!r.ok)throw 0;load();}
+    catch(_){const x=document.getElementById('accErr');x.hidden=false;x.textContent=T.err;b.disabled=false;}});
+}
+function load(){
+  if(!/^[0-9a-f]{32}$/.test(t)){app.innerHTML='<p class="msg">'+L.en.bad+'</p>';return;}
+  rpc('public_get_quote',{p_token:t}).then(q=>{if(!q){app.innerHTML='<p class="msg">'+L.en.bad+'</p>';return;}render(q);}).catch(()=>{app.innerHTML='<p class="msg">'+L.en.err+'</p>';});
+}
+load();
+})();
+</script>
+</body>
+</html>

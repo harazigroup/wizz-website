@@ -2,6 +2,7 @@
 // Emails the enquiry to the Wizz team and sends the client a short confirmation, through Resend.
 // Needs RESEND_API_KEY (a Resend key with sending access for wizz.com.my).
 import { json } from "./_airwallex.mjs";
+import { dbOn, rpc } from "./_db.mjs";
 
 const TEAM = process.env.CONTACT_TO || "info@wizz.com.my";
 const FROM = process.env.CONTACT_FROM || "Wizz Smart Services <info@wizz.com.my>";
@@ -36,7 +37,6 @@ function shell(inner, rtl) {
 
 export default async (req) => {
   if (req.method !== "POST") return json(405, { error: "Use POST" });
-  if (!process.env.RESEND_API_KEY) return json(503, { error: "not_configured" });
   let d = {};
   try { d = await req.json(); } catch {}
   if (d.company_website) return json(200, { ok: true }); // spam trap
@@ -44,11 +44,20 @@ export default async (req) => {
   for (const [k] of FIELDS) v[k] = typeof d[k] === "string" ? d[k].trim().slice(0, k === "msg" ? 4000 : 300) : "";
   if (!v.name || !emailOk(v.email) || !v.act) return json(400, { error: "missing_fields" });
 
+  // 1) save the lead (scored in the database) so nothing is lost, even if email is down
+  let lead = null;
+  if (dbOn()) {
+    try { const [ref, priority, score] = String(await rpc("server_add_lead", { p_lead: v })).split("|"); lead = { ref, priority, score }; }
+    catch (e) { console.error("lead save failed", e); }
+  }
+  if (!process.env.RESEND_API_KEY) return lead ? json(200, { ok: true, ref: lead.ref }) : json(503, { error: "not_configured" });
+  const tag = lead ? { hot: "🔥 HOT", warm: "WARM", cold: "COLD" }[lead.priority] || "" : "";
+
   const rows = FIELDS.filter(([k]) => v[k]).map(([k, label]) =>
     `<tr><td style="padding:6px 12px 6px 0;color:#666;vertical-align:top;white-space:nowrap">${label}</td><td style="padding:6px 0;white-space:pre-wrap">${esc(v[k])}</td></tr>`).join("");
   const wa = v.phone ? `https://wa.me/${v.phone.replace(/[^0-9]/g, "")}` : "";
   const teamHtml = shell(`<h2 style="margin:0 0 6px;font-size:19px">New website enquiry</h2>
-<p style="margin:0 0 16px;color:#555">Reply to this email to answer ${esc(v.name)} directly.</p>
+<p style="margin:0 0 16px;color:#555">${lead ? `Lead <b>${esc(lead.ref)}</b> · ${esc(tag)} (score ${esc(lead.score)}) · saved in <a href="https://wizz.com.my/admin.html#leads">Leads</a>.<br>` : ""}Reply to this email to answer ${esc(v.name)} directly.</p>
 <table role="presentation" cellpadding="0" cellspacing="0" style="font-size:14px;border-collapse:collapse">${rows}</table>
 ${wa ? `<p style="margin:18px 0 0"><a href="${esc(wa)}" style="background:#25d366;color:#fff;text-decoration:none;padding:10px 16px;border-radius:6px;display:inline-block;font-weight:bold">Open WhatsApp chat</a></p>` : ""}`);
   const text = FIELDS.filter(([k]) => v[k]).map(([k, label]) => `${label}: ${v[k]}`).join("\n");
@@ -65,7 +74,7 @@ ${wa ? `<p style="margin:18px 0 0"><a href="${esc(wa)}" style="background:#25d36
   try {
     await send({
       from: FROM, to: [TEAM], reply_to: v.email,
-      subject: `Website enquiry: ${v.name}${v.mkt ? ` (${v.mkt})` : ""}`,
+      subject: `${tag ? tag + " · " : ""}Website enquiry: ${v.name}${v.mkt ? ` (${v.mkt})` : ""}`,
       html: teamHtml, text,
     });
   } catch (e) {

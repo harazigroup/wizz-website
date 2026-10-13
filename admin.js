@@ -18,6 +18,7 @@
     const {data}=await sb.from('admins').select('email').limit(1);
     if(!data||!data.length){$('adGate').hidden=false;$('adGate').innerHTML='<p><b>'+esc(me.email)+'</b> is not on the team list. Ask an admin to add it.</p>';return;}
     $('adApp').hidden=false;$('adWho').textContent=me.email;loadOrders();
+    window.wizzAdmin={sb,me};document.dispatchEvent(new CustomEvent('wizz:admin-ready',{detail:{sb,me}}));
   }
   async function loadOrders(){
     const {data,error}=await sb.from('orders').select('*').order('created_at',{ascending:false}).limit(500);
@@ -73,6 +74,10 @@
     const {data,error}=await sb.from('orders').insert(row).select().single();if(error)return flash(error.message,true);
     await sb.from('order_events').insert({order_id:data.id,status:'paid',note:'Order added by team',created_by:me.email});
     e.target.reset();$('adNewBox').open=false;flash('Order '+ref+' added. The client sees it when they sign in with '+row.email+'.');await loadOrders();openOrder(data.id);});
+  // tabs: Leads / Orders (remembered in the address, e.g. admin.html#orders)
+  function tab(t){document.querySelectorAll('.ad-tabs [data-tab]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.tab===t)));$('tabLeads').hidden=t!=='leads';$('tabOrders').hidden=t!=='orders';try{history.replaceState(null,'','#'+t)}catch(e){}}
+  document.querySelector('.ad-tabs').addEventListener('click',e=>{const b=e.target.closest('[data-tab]');if(b)tab(b.dataset.tab);});
+  tab(location.hash==='#orders'?'orders':'leads');
   $('adOut').addEventListener('click',async()=>{await sb.auth.signOut();location.replace('account.html');});
   gate();
 })();
