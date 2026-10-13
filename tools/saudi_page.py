@@ -101,6 +101,55 @@ SAAR = {
  "Chat on WhatsApp": "تواصل عبر واتساب",
  "Saudi company setup": "تأسيس شركة في السعودية",
  "Saudi investment guide": "دليل الاستثمار في السعودية",
+ "Saudi company setup, step by step": "تأسيس شركتك في السعودية خطوة بخطوة",
+ "Two stages, one team": "مرحلتان وفريق واحد",
+ "A foreign investor sets up in Saudi Arabia through a foreign company. First we prepare that company, then we take it through the Saudi investment licence and commercial registration.":
+   "يدخل المستثمر الأجنبي إلى السعودية من خلال شركة أجنبية. نجهّز هذه الشركة أولاً، ثم نتابع معها ترخيص الاستثمار في السعودية والسجل التجاري.",
+ "Stage 1": "المرحلة 1",
+ "Stage 2": "المرحلة 2",
+ "Your foreign company": "شركتك الأجنبية",
+ "An established company from the list above, transferred to you with attested documents and last-year financial statements.":
+   "شركة قائمة من القائمة أعلاه، تُنقل ملكيتها إليك مع مستندات مصدّقة وقوائم مالية لآخر سنة.",
+ "2 to 6 weeks, by country": "من 2 إلى 6 أسابيع حسب الدولة",
+ "Your Saudi company": "شركتك في السعودية",
+ "Investment licence from the Ministry of Investment (MISA), commercial registration and activation on the government platforms.":
+   "ترخيص الاستثمار من وزارة الاستثمار، والسجل التجاري، وتفعيل الحسابات على المنصات الحكومية.",
+ "Usually 15 to 30 days after your file is complete": "عادةً من 15 إلى 30 يوماً بعد اكتمال ملفك",
+ "Stage 2 starts once Stage 1 is complete. Each stage is invoiced separately, with a written agreement.":
+   "تبدأ المرحلة 2 بعد اكتمال المرحلة 1. لكل مرحلة فاتورة مستقلة، مع اتفاقية مكتوبة.",
+ "File review": "مراجعة الملف",
+ "We check your foreign company's documents and your passport before anything is submitted.": "نراجع مستندات شركتك الأجنبية وجواز سفرك قبل تقديم أي طلب.",
+ "Attestation and power of attorney": "التصديقات والوكالة",
+ "Your company documents are attested by the Saudi embassy, and a legal power of attorney is issued for the application.":
+   "تُصدَّق مستندات شركتك من السفارة السعودية، وتُصدر وكالة شرعية لتقديم الطلب.",
+ "Investment licence (MISA)": "ترخيص الاستثمار (MISA)",
+ "We prepare your application to the Ministry of Investment and follow it until a decision is made.": "نجهّز طلبك لدى وزارة الاستثمار ونتابعه حتى صدور القرار.",
+ "Commercial registration": "السجل التجاري",
+ "Your commercial registration is issued through the Saudi Business Center, with the articles of association.": "يصدر سجلك التجاري عبر المركز السعودي للأعمال، مع عقد التأسيس.",
+ "Government platforms": "المنصات الحكومية",
+ "Your company's accounts are activated on Qiwa, Mudad, Muqeem and GOSI, so you can hire and operate.": "نفعّل حسابات شركتك على قوى ومُدد ومقيم والتأمينات الاجتماعية، لتتمكن من التوظيف والتشغيل.",
+ "What you need to provide": "المطلوب منك",
+ "Everything here is needed before the Saudi timeline starts.": "كل ما يلي مطلوب قبل أن تبدأ مدة الإجراءات في السعودية.",
+ "A foreign company that will own the Saudi company (Stage 1)": "شركة أجنبية تملك الشركة السعودية (المرحلة 1)",
+ "Audited financial statements of the foreign company": "قوائم مالية مدققة للشركة الأجنبية",
+ "Company documents attested by the Saudi embassy": "مستندات الشركة مصدّقة من السفارة السعودية",
+ "A legal power of attorney for the application": "وكالة شرعية لتقديم الطلب",
+ "The investor's passport copy": "صورة جواز سفر المستثمر",
+ "Payment of the government fees when they are issued": "سداد الرسوم الحكومية عند صدورها",
+ "Not included in the price": "غير مشمول في السعر",
+ "Paid at actual cost through SADAD, with the official receipts.": "تُدفع بالتكلفة الفعلية عبر نظام سداد، مع الإيصالات الرسمية.",
+ "Government, licence and registration fees": "الرسوم الحكومية ورسوم الترخيص والتسجيل",
+ "Medical insurance, passport and platform fees": "التأمين الطبي ورسوم الجوازات والمنصات",
+ "Saudi embassy attestation fees": "رسوم تصديق السفارة السعودية",
+ "Capital and VAT": "رأس المال وضريبة القيمة المضافة",
+ "The timeline pauses while documents or payments are pending from the client. The Saudi authorities decide every licence, and we can't guarantee approval.":
+   "تتوقف المدة أثناء انتظار مستندات أو مدفوعات من العميل. والجهات السعودية هي من تقرر في كل ترخيص، ولا يمكننا ضمان الموافقة.",
+ "Yes. It's Stage 2 of the process above: the investment licence, commercial registration and government platforms, from RM 12,999. It starts once your foreign company is ready. Government fees, insurance, attestation fees, capital and VAT are paid separately at cost.":
+   "نعم. هي المرحلة 2 في الخطوات أعلاه: ترخيص الاستثمار والسجل التجاري والمنصات الحكومية، ابتداءً من 12,999 رينغيت. تبدأ بعد أن تصبح شركتك الأجنبية جاهزة. والرسوم الحكومية والتأمين ورسوم التصديق ورأس المال والضريبة تُدفع منفصلة بالتكلفة الفعلية.",
+ "How long does the Saudi stage take?": "كم تستغرق مرحلة السعودية؟",
+ "Usually 15 to 30 days, counted from the day your attested documents, power of attorney and financial statements are complete and the government fees are paid.":
+   "عادةً من 15 إلى 30 يوماً، تُحسب من يوم اكتمال المستندات المصدّقة والوكالة والقوائم المالية وسداد الرسوم الحكومية.",
+ "See the setup steps": "خطوات التأسيس",
 }
 AR_SRC.update({k: v for k, v in SAAR.items() if k not in AR_SRC})
 
@@ -161,13 +210,30 @@ sa_who = [("cart", "Investment licence applicants", "Investors who want an estab
           ("code", "Partner offices", "Business service offices with Saudi clients, on partner pricing.")]
 sa_who_html = "".join(f'<article class="us-who">{icon(k)}{T("h3", h)}{T("p", p)}</article>' for k, h, p in sa_who)
 
+sa_setup = next(t for c in COUNTRIES if c["c"] == "SA" for t in c["tiers"] if t["n"] == "Company setup")
+sa_stages = [("Stage 1", "Your foreign company", sa_from, "An established company from the list above, transferred to you with attested documents and last-year financial statements.", "2 to 6 weeks, by country"),
+             ("Stage 2", "Your Saudi company", sa_setup, "Investment licence from the Ministry of Investment (MISA), commercial registration and activation on the government platforms.", "Usually 15 to 30 days after your file is complete")]
+sa_stage_html = "".join(f'<article class="sa-stage">{T("span", n, "sa-stage-n")}{T("h3", h)}<p class="sa-stage-p">{T("span", "from")} {money(x["p"], x["fix"])}</p>{T("p", d)}<span class="us-time">{T("span", t)}</span></article>' for n, h, x, d, t in sa_stages)
+sa_setup_steps = [("File review", "We check your foreign company's documents and your passport before anything is submitted."),
+                  ("Attestation and power of attorney", "Your company documents are attested by the Saudi embassy, and a legal power of attorney is issued for the application."),
+                  ("Investment licence (MISA)", "We prepare your application to the Ministry of Investment and follow it until a decision is made."),
+                  ("Commercial registration", "Your commercial registration is issued through the Saudi Business Center, with the articles of association."),
+                  ("Government platforms", "Your company's accounts are activated on Qiwa, Mudad, Muqeem and GOSI, so you can hire and operate.")]
+sa_setup_steps_html = "".join(f'<li>{T("h3", h)}{T("p", p)}</li>' for h, p in sa_setup_steps)
+sa_req = ent("What you need to provide", "Everything here is needed before the Saudi timeline starts.",
+             ["A foreign company that will own the Saudi company (Stage 1)", "Audited financial statements of the foreign company", "Company documents attested by the Saudi embassy",
+              "A legal power of attorney for the application", "The investor's passport copy", "Payment of the government fees when they are issued"]) + \
+         ent("Not included in the price", "Paid at actual cost through SADAD, with the official receipts.",
+             ["Government, licence and registration fees", "Medical insurance, passport and platform fees", "Saudi embassy attestation fees", "Capital and VAT"]).replace(CHECK, XMARK)
+
 sa_faqs = [("Does an established company guarantee my Saudi investment licence?", "No. It can support your application, but the Saudi authorities decide every licence, and their requirements can change. We check your plan with you before you choose a company."),
            ("Which country should I choose?", "It depends on your nationality, your plan and the documents your Saudi application needs. Tell us your plan on WhatsApp and we'll recommend one."),
            ("What do you check before the transfer?", "The company's legal status, its filings and its documents. If anything isn't right, we propose another company."),
            ("What do I need to provide?", "For Malaysia, the UK and Egypt, a passport copy only. For Pakistan, non-Pakistanis need a passport and an attested power of attorney; Pakistanis need their national ID card and the mobile number registered to it, for OTP verification."),
            ("How long does it take?", "Malaysia and the UK take 2 to 3 weeks, Egypt 3 to 4 weeks and Pakistan about 6 weeks. Government processing and public holidays can add time."),
            ("Can I buy online?", "No. Each company is different, so we talk first, match you with an available company, then send an invoice."),
-           ("Do you help with the Saudi company itself?", "Yes. Our Saudi company setup, with the investment licence application, starts from RM 12,999, quoted after a short call. Government fees and capital are not included.")]
+           ("Do you help with the Saudi company itself?", "Yes. It's Stage 2 of the process above: the investment licence, commercial registration and government platforms, from RM 12,999. It starts once your foreign company is ready. Government fees, insurance, attestation fees, capital and VAT are paid separately at cost."),
+           ("How long does the Saudi stage take?", "Usually 15 to 30 days, counted from the day your attested documents, power of attorney and financial statements are complete and the government fees are paid.")]
 sa_faq_html = "".join(f"<details><summary{tk(q)}>{esc(q)}</summary>{T('p', a)}</details>" for q, a in sa_faqs)
 sa_faq_ld = json.dumps({"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
     {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in sa_faqs]}, ensure_ascii=False)
@@ -198,13 +264,23 @@ sa_body = sa_hero + f'''
     <div class="pk-msg" id="pkMsg" role="status" hidden></div>
   </div>
 </section>
-<section class="block">
+<section class="block" id="saudi-setup">
+  <div class="wrap">
+    {head("Saudi company setup, step by step", "Two stages, one team", "A foreign investor sets up in Saudi Arabia through a foreign company. First we prepare that company, then we take it through the Saudi investment licence and commercial registration.")}
+    <div class="sa-stages">{sa_stage_html}</div>
+    {T("p", "Stage 2 starts once Stage 1 is complete. Each stage is invoiced separately, with a written agreement.", "sa-note")}
+    <ol class="steps us-steps">{sa_setup_steps_html}</ol>
+    <div class="us-ents us-ents-txt sa-req">{sa_req}</div>
+    {T("p", "The timeline pauses while documents or payments are pending from the client. The Saudi authorities decide every licence, and we can't guarantee approval.", "sa-note")}
+  </div>
+</section>
+<section class="block alt">
   <div class="wrap">
     {head("Who we help", "Built for investors entering Saudi Arabia")}
     <div class="us-whos">{sa_who_html}</div>
   </div>
 </section>
-<section class="block alt" id="faq">
+<section class="block" id="faq">
   <div class="wrap faq-layout">
     <div>{T("p", "Questions", "eyebrow")}{T("h2", "Saudi investment questions")}</div>
     <div class="faq">{sa_faq_html}</div>
@@ -216,7 +292,7 @@ sa_body = sa_hero + f'''
     {T("p", "Tell us your plan and we'll match you with an established company. Our team answers WhatsApp 24 hours a day.")}
     <div class="us-cta">
       <a class="btn solid us-red" href="{SA_WA}" target="_blank" rel="noopener"><span class="dot"></span>{T("span", "Chat on WhatsApp")}</a>
-      <a class="btn ghost us-ghost" href="packages.html#sa">{T("span", "Saudi company setup")}</a>
+      <a class="btn ghost us-ghost" href="#saudi-setup">{T("span", "See the setup steps")}</a>
     </div>
   </div>
 </section>'''
@@ -226,3 +302,14 @@ page("saudi-investment.html", "Established Companies for Saudi Investment | Wizz
      sa_body, extra_head=f'<script type="application/ld+json">{sa_faq_ld}</script>', scripts=ar_script() + PK_JS)
 
 US_CSS += "\n.us-feats-4{grid-template-columns:repeat(4,minmax(0,1fr))}\n@media (max-width:1000px){.us-feats-4{grid-template-columns:repeat(2,minmax(0,1fr))}}\n@media (max-width:640px){.us-feats-4{grid-template-columns:1fr}}\n"
+US_CSS += """
+.sa-stages{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:8px}
+.sa-stage{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:26px 24px;display:flex;flex-direction:column;gap:8px}
+.sa-stage-n{font:700 12px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--red)}
+.sa-stage h3{margin:0;font:800 22px var(--body)}
+.sa-stage-p{margin:0;font:800 26px var(--mono)}.sa-stage-p>span{font:600 14px var(--body);color:var(--muted)}
+.sa-stage p{margin:0}.sa-stage .us-time{margin-top:auto}
+.sa-note{font-size:14px;color:var(--muted);margin:16px 0 28px}
+.sa-req{margin-top:28px}
+@media (max-width:640px){.sa-stages{grid-template-columns:1fr}}
+"""

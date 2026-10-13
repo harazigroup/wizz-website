@@ -61,8 +61,8 @@ COUNTRIES = [
  dict(c="SA", n="Saudi Arabia", g="Middle East", e="LLC with an investment licence (MISA) for foreign owners.",
   tiers=[
    dict(sku="sa-assessment", n="Market-entry assessment", p=fx("MYR", 500), fix={"MYR": 500}, buy=True, i=["Activity & licence route review","Capital and Saudization overview","Written plan and quote","Credited if you go ahead"]),
-   dict(sku=None, n="Company setup", p=fx("MYR", 12999), fix={"MYR": 12999}, frm=True, pop=True, i=["Investment licence & commercial registration","Chamber & municipality registrations","Bank account support","Government fees and capital not included"])],
-  notes=["Setup usually takes 3–6 weeks. Work permits and expat levies are separate.","Investing through an established foreign company? See Established companies (1+ year) below."]),
+   dict(sku=None, n="Company setup", p=fx("MYR", 12999), fix={"MYR": 12999}, frm=True, pop=True, i=["Investment licence (MISA) & commercial registration","Qiwa, Mudad, Muqeem & GOSI activation","Needs a foreign company: established from RM 7,999","Government fees, insurance and capital not included"])],
+  notes=["Usually 15–30 days after the attested documents are complete and government fees are paid. Work permits and expat levies are separate.","Investing through an established foreign company? See Established companies (1+ year) below."]),
  dict(c="OM", n="Oman", g="Middle East", e="LLC with 100% foreign ownership for most activities.",
   tiers=[
    dict(sku=None, n="Company setup", p=fx("MYR", 3500), fix={"MYR": 3500}, frm=True, i=["Commercial registration","Activity licences","Company documents","Chamber of commerce registration"]),
