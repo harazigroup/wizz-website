@@ -93,8 +93,8 @@ SAAR = {
  "No. Each company is different, so we talk first, match you with an available company, then send an invoice.":
    "لا. كل شركة مختلفة، لذلك نتحدث أولاً ونرشّح لك شركة متاحة، ثم نرسل لك الفاتورة.",
  "Do you help with the Saudi company itself?": "هل تساعدون في تأسيس الشركة في السعودية نفسها؟",
- "Yes. Our Saudi company setup, with the investment licence application, starts from RM 12,000, quoted after a short call. Government fees and capital are not included.":
-   "نعم. يبدأ تأسيس الشركة في السعودية مع طلب ترخيص الاستثمار من 12,000 رينغيت، بعرض سعر بعد مكالمة قصيرة. ولا يشمل ذلك الرسوم الحكومية ورأس المال.",
+ "Yes. Our Saudi company setup, with the investment licence application, starts from RM 12,999, quoted after a short call. Government fees and capital are not included.":
+   "نعم. يبدأ تأسيس الشركة في السعودية مع طلب ترخيص الاستثمار من 12,999 رينغيت، بعرض سعر بعد مكالمة قصيرة. ولا يشمل ذلك الرسوم الحكومية ورأس المال.",
  "Ready to talk about your Saudi investment?": "جاهز للحديث عن استثمارك في السعودية؟",
  "Tell us your plan and we'll match you with an established company. Our team answers WhatsApp 24 hours a day.":
    "أخبرنا بخطتك وسنرشّح لك شركة قائمة. فريقنا يرد على واتساب على مدار الساعة.",
@@ -167,7 +167,7 @@ sa_faqs = [("Does an established company guarantee my Saudi investment licence?"
            ("What do I need to provide?", "For Malaysia, the UK and Egypt, a passport copy only. For Pakistan, non-Pakistanis need a passport and an attested power of attorney; Pakistanis need their national ID card and the mobile number registered to it, for OTP verification."),
            ("How long does it take?", "Malaysia and the UK take 2 to 3 weeks, Egypt 3 to 4 weeks and Pakistan about 6 weeks. Government processing and public holidays can add time."),
            ("Can I buy online?", "No. Each company is different, so we talk first, match you with an available company, then send an invoice."),
-           ("Do you help with the Saudi company itself?", "Yes. Our Saudi company setup, with the investment licence application, starts from RM 12,000, quoted after a short call. Government fees and capital are not included.")]
+           ("Do you help with the Saudi company itself?", "Yes. Our Saudi company setup, with the investment licence application, starts from RM 12,999, quoted after a short call. Government fees and capital are not included.")]
 sa_faq_html = "".join(f"<details><summary{tk(q)}>{esc(q)}</summary>{T('p', a)}</details>" for q, a in sa_faqs)
 sa_faq_ld = json.dumps({"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
     {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in sa_faqs]}, ensure_ascii=False)
