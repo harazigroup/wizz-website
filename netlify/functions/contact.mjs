@@ -17,7 +17,7 @@ const emailOk = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
 async function send(body) {
   const r = await fetch("https://api.resend.com/emails", {
     method: "POST",
-    headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, "Content-Type": "application/json" },
+    headers: { Authorization: `Bearer ${(process.env.RESEND_API_KEY || process.env.resend)}`, "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
   if (!r.ok) throw new Error(`Resend ${r.status}: ${await r.text()}`);
@@ -50,7 +50,7 @@ export default async (req) => {
     try { const [ref, priority, score] = String(await rpc("server_add_lead", { p_lead: v })).split("|"); lead = { ref, priority, score }; }
     catch (e) { console.error("lead save failed", e); }
   }
-  if (!process.env.RESEND_API_KEY) return lead ? json(200, { ok: true, ref: lead.ref }) : json(503, { error: "not_configured" });
+  if (!(process.env.RESEND_API_KEY || process.env.resend)) return lead ? json(200, { ok: true, ref: lead.ref }) : json(503, { error: "not_configured" });
   const tag = lead ? { hot: "🔥 HOT", warm: "WARM", cold: "COLD" }[lead.priority] || "" : "";
 
   const rows = FIELDS.filter(([k]) => v[k]).map(([k, label]) =>

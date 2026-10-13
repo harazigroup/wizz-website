@@ -15,7 +15,7 @@ const T = {
 
 export default async (req) => {
   if (req.method !== "POST") return json(405, { error: "Use POST" });
-  if (!process.env.RESEND_API_KEY) return json(503, { error: "Email is not set up (RESEND_API_KEY)" });
+  if (!(process.env.RESEND_API_KEY || process.env.resend)) return json(503, { error: "Email is not set up (RESEND_API_KEY)" });
   const auth = req.headers.get("authorization") || "";
   let id = "";
   try { ({ id } = await req.json()); } catch {}
@@ -42,7 +42,7 @@ export default async (req) => {
 </td></tr></table></body></html>`;
   const s = await fetch("https://api.resend.com/emails", {
     method: "POST",
-    headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, "Content-Type": "application/json" },
+    headers: { Authorization: `Bearer ${(process.env.RESEND_API_KEY || process.env.resend)}`, "Content-Type": "application/json" },
     body: JSON.stringify({ from: FROM, to: [q.client_email], reply_to: TEAM, bcc: [TEAM], subject: t.s(q.ref), html }),
   });
   if (!s.ok) { console.error(await s.text()); return json(502, { error: "email failed" }); }

@@ -16,7 +16,7 @@ export const unsubToken = (ref) => createHmac("sha256", process.env.WIZZ_DB_SECR
 async function send(body) {
   const r = await fetch("https://api.resend.com/emails", {
     method: "POST",
-    headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, "Content-Type": "application/json" },
+    headers: { Authorization: `Bearer ${(process.env.RESEND_API_KEY || process.env.resend)}`, "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
   if (!r.ok) throw new Error(`Resend ${r.status}: ${await r.text()}`);
@@ -65,7 +65,7 @@ const CHASE = {
 const UNSUB = { en: "Don't want these emails?", ar: "لا تريد هذه الرسائل؟", ms: "Tidak mahu e-mel ini?" };
 
 export default async () => {
-  if (!dbOn() || !process.env.RESEND_API_KEY) { console.log("followup: not configured"); return new Response("not configured", { status: 503 }); }
+  if (!dbOn() || !(process.env.RESEND_API_KEY || process.env.resend)) { console.log("followup: not configured"); return new Response("not configured", { status: 503 }); }
   const q = await rpc("server_followup_queue", {});
   let sent = 0;
   for (const l of q.quote_chasers || []) {
