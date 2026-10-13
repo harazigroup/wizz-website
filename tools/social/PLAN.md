@@ -17,14 +17,14 @@ Used by the weekly content task. Every Sunday it prepares the next week's posts 
   - No fake reviews, testimonials, client names or "was" prices.
 - CTA slide: `wizz.com.my/<page>` + `WhatsApp +60 11-2447 7685`, with one line of fine print.
 
-## Daily routine (the daily content task)
-Every morning one topic becomes:
+## Posting routine (Monday, Wednesday, Friday at 08:47 MYT)
+On each posting day one topic becomes:
 1. A **blog article** in English, Arabic and Malay, added with `python3 tools/new_post.py post.json` (rebuilds the site; push to deploy).
 2. A **carousel** (5–7 slides) built from the same article, ending with a CTA to the article or the matching package page.
 3. **Captions** for Instagram and TikTok.
 4. If a Postiz key is saved (admin page → Settings), the carousel is **scheduled** on Instagram and TikTok for 20:30 Malaysia time.
    Otherwise the slides and captions are sent to the owner to post by hand.
-On Sundays, also write 2 talking-video scripts for Arkan (30–60 s each).
+On Fridays, also write 2 talking-video scripts for Arkan for the coming week (30–60 s each).
 
 Posting times (Malaysia time, GMT+8): 20:30 by default; 12:00–13:00 also works. Gulf audience: 21:00–23:00 MYT.
 
