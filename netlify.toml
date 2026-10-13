@@ -13,3 +13,9 @@
   from = "/ar/*"
   to = "/:splat"
   status = 200
+
+# Malay pages work the same way under /ms/
+[[redirects]]
+  from = "/ms/*"
+  to = "/:splat"
+  status = 200

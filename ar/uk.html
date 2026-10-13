@@ -23,6 +23,7 @@
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Do I need to live in the UK or have a UK director?", "acceptedAnswer": {"@type": "Answer", "text": "No. Directors and shareholders can be any nationality and live anywhere. You need a UK registered office address, which we provide."}}, {"@type": "Question", "name": "What is director identity verification?", "acceptedAnswer": {"@type": "Answer", "text": "Since November 2025, every new director and person with significant control must verify their identity with Companies House before the company is filed. It's done online with a passport, and we guide you through it."}}, {"@type": "Question", "name": "What do you need from me?", "acceptedAnswer": {"@type": "Answer", "text": "A copy of your passport, your full residential address, your national ID number, a few company name choices, the share split between owners and a short description of your business."}}, {"@type": "Question", "name": "How long does it take?", "acceptedAnswer": {"@type": "Answer", "text": "Once identity checks are done, Companies House usually registers the company within 24 hours. Your Corporation Tax UTR usually arrives in 2 to 4 weeks. Bank and payment accounts depend on each provider."}}, {"@type": "Question", "name": "Will I get a UK bank account?", "acceptedAnswer": {"@type": "Answer", "text": "We prepare and submit complete applications to suitable providers such as Wise, Payoneer and Airwallex. Approval is always the provider's decision, based on their own checks, so no one can guarantee it."}}, {"@type": "Question", "name": "Does a UK company give me a visa or the right to live in the UK?", "acceptedAnswer": {"@type": "Answer", "text": "No. Owning a UK company does not give you a visa, residence or the right to work in the UK. Immigration is a separate process."}}, {"@type": "Question", "name": "What taxes will I pay?", "acceptedAnswer": {"@type": "Answer", "text": "UK companies pay Corporation Tax on their profits, currently between 19% and 25%, and may need to register for VAT. What you owe also depends on where you live and where the work is done, so we refer you to a qualified tax professional for advice."}}, {"@type": "Question", "name": "Can I use my own address as the registered office?", "acceptedAnswer": {"@type": "Answer", "text": "Only if it's in the UK. The registered office must be a UK address where official letters can be delivered, and it is shown publicly. Our London address plans cover this and keep your home address private."}}, {"@type": "Question", "name": "What happens after the first year?", "acceptedAnswer": {"@type": "Answer", "text": "You file a confirmation statement and annual accounts each year, plus a Company Tax Return. We send reminders, and the Complete package covers the first year with our accountant partner."}}]}</script>
 <link href="https://wizz.com.my/uk.html" hreflang="en" rel="alternate"/>
 <link href="https://wizz.com.my/ar/uk.html" hreflang="ar" rel="alternate"/>
+<link href="https://wizz.com.my/ms/uk.html" hreflang="ms" rel="alternate"/>
 <link href="https://wizz.com.my/uk.html" hreflang="x-default" rel="alternate"/>
 </head>
 <body data-page="uk">
@@ -52,7 +53,7 @@
 </nav>
 <div class="tools">
 <a aria-label="My account" class="acct-btn" href="account.html" title="My account"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm-7 8a7 7 0 0 1 14 0" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.8"></path></svg></a>
-<button aria-label="Switch language" class="lang" id="langBtn" type="button">English</button>
+<select aria-label="Language" class="lang" id="langSel"><option value="en">EN</option><option value="ms">BM</option><option selected="" value="ar">عربي</option></select>
 <a class="btn solid small hide-sm" href="contact.html"><span class="dot"></span><span data-i18n="cta_short">استشارة مجانية</span></a>
 <button aria-controls="mainNav" aria-expanded="false" class="menu-btn" id="menuBtn" type="button"><span></span><span></span><span class="sr" data-i18n="menu">القائمة</span></button>
 </div>
@@ -219,8 +220,9 @@
   const h=location.hash.slice(1);const start=tabs.find(t=>t.dataset.k===h);if(start)sel(start);
   const NAMES={USD:'US dollar',GBP:'British pound',EUR:'Euro',CAD:'Canadian dollar',AUD:'Australian dollar',SGD:'Singapore dollar',AED:'UAE dirham',SAR:'Saudi riyal',QAR:'Qatari riyal',MYR:'Malaysian ringgit',THB:'Thai baht'};
   const NAMES_AR={USD:'دولار أمريكي',GBP:'جنيه إسترليني',EUR:'يورو',CAD:'دولار كندي',AUD:'دولار أسترالي',SGD:'دولار سنغافوري',AED:'درهم إماراتي',SAR:'ريال سعودي',QAR:'ريال قطري',MYR:'رينغيت ماليزي',THB:'بات تايلاندي'};
+  const NAMES_MS={USD:'Dolar AS',GBP:'Paun British',EUR:'Euro',CAD:'Dolar Kanada',AUD:'Dolar Australia',SGD:'Dolar Singapura',AED:'Dirham UAE',SAR:'Riyal Saudi',QAR:'Riyal Qatar',MYR:'Ringgit Malaysia',THB:'Baht Thailand'};
   const ar=()=>document.documentElement.lang==='ar';
-  const T=(en,a)=>ar()?a:en;
+  const T=(en,a,m)=>{const l=document.documentElement.lang;return l==='ar'?a:l==='ms'?(m!=null?m:((window.WIZZ_MS||{})[en]||en)):en};
   const cs=document.getElementById('pkCur'),note=document.getElementById('pkCurNote');
   let FX=null,cur='USD';
   function local(usd,c,fix){if(fix&&fix[c]!=null)return fix[c];const r=FX&&FX.rates[c];if(!r||c==='USD')return usd;const raw=usd*r.rate*(1+FX.buffer);const up=Math.ceil(raw/r.step)*r.step;return r.nine?up-1:up;}
@@ -228,8 +230,8 @@
   function apply(c){cur=(FX&&FX.rates[c])?c:'USD';
     document.querySelectorAll('.m[data-usd]').forEach(el=>{el.textContent=fmt(local(+el.dataset.usd,cur,el.dataset.fix?JSON.parse(el.dataset.fix):null),cur)});
     document.querySelectorAll('.pk-price .cur').forEach(el=>{const shown=el.previousElementSibling?el.previousElementSibling.textContent:'';el.textContent=/[A-Z]{3}/.test(shown)?'':cur;});
-    cs.value=cur;document.dispatchEvent(new CustomEvent('wizz:fx',{detail:{fx:FX,cur:cur}}));note.textContent=cur==='USD'?T('Set in US dollars. Change the currency if you prefer.','الأسعار بالدولار الأمريكي، ويمكنك تغيير العملة.'):T('Prices shown in '+cur+'. You pay exactly this amount.','الأسعار معروضة بعملة '+cur+'، وتدفع هذا المبلغ نفسه.');}
-  function fill(){const list=FX?Object.keys(FX.rates):['USD'];cs.innerHTML=list.map(c=>'<option value="'+c+'">'+c+' · '+((ar()?NAMES_AR:NAMES)[c]||c)+'</option>').join('');}
+    cs.value=cur;document.dispatchEvent(new CustomEvent('wizz:fx',{detail:{fx:FX,cur:cur}}));note.textContent=cur==='USD'?T('Set in US dollars. Change the currency if you prefer.','الأسعار بالدولار الأمريكي، ويمكنك تغيير العملة.'):T('Prices shown in '+cur+'. You pay exactly this amount.','الأسعار معروضة بعملة '+cur+'، وتدفع هذا المبلغ نفسه.','Harga dipaparkan dalam '+cur+'. Anda membayar jumlah ini dengan tepat.');}
+  function fill(){const list=FX?Object.keys(FX.rates):['USD'];cs.innerHTML=list.map(c=>'<option value="'+c+'">'+c+' · '+((ar()?NAMES_AR:document.documentElement.lang==='ms'?NAMES_MS:NAMES)[c]||c)+'</option>').join('');}
   document.addEventListener('wizz:lang',()=>{fill();apply(cur);});
   fetch('/.netlify/functions/prices').then(r=>r.ok?r.json():Promise.reject()).then(d=>{FX=d;
     fill();

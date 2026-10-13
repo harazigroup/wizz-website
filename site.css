@@ -897,3 +897,7 @@ a.pk-add{text-decoration:none;display:inline-block;white-space:nowrap}
 .sa-note{font-size:14px;color:var(--muted);margin:16px 0 28px}
 .sa-req{margin-top:28px}
 @media (max-width:640px){.sa-stages{grid-template-columns:1fr}}
+
+/* language menu */
+select.lang{width:auto;min-width:0;padding:7px 8px;font:600 13px var(--body);background-color:transparent;cursor:pointer}
+header.site nav.main a,header.site .btn.small{white-space:nowrap}

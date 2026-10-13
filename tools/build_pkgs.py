@@ -27,6 +27,9 @@ def page(fname, title, desc, body, current=None, extra_head="", scripts=""):
     open(f"{D}/{fname}", "w").write(h + '<main id="top">\n' + body + "\n</main>" + foot)
 
 from catalog_ar import AR as AR_SRC
+MS_SRC = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'ms_strings.json')))
+MS = lambda en: MS_SRC.get(en, en)
+LANG_SEL = '<select class="lang" id="langSel" aria-label="Language"><option value="en">EN</option><option value="ms">BM</option><option value="ar">عربي</option></select>'
 import hashlib
 AR_OUT = {}
 RAW = lambda x: x
@@ -184,8 +187,9 @@ PK_JS = '''<script>
   const h=location.hash.slice(1);const start=tabs.find(t=>t.dataset.k===h);if(start)sel(start);
   const NAMES={USD:'US dollar',GBP:'British pound',EUR:'Euro',CAD:'Canadian dollar',AUD:'Australian dollar',SGD:'Singapore dollar',AED:'UAE dirham',SAR:'Saudi riyal',QAR:'Qatari riyal',MYR:'Malaysian ringgit',THB:'Thai baht'};
   const NAMES_AR={USD:'دولار أمريكي',GBP:'جنيه إسترليني',EUR:'يورو',CAD:'دولار كندي',AUD:'دولار أسترالي',SGD:'دولار سنغافوري',AED:'درهم إماراتي',SAR:'ريال سعودي',QAR:'ريال قطري',MYR:'رينغيت ماليزي',THB:'بات تايلاندي'};
+  const NAMES_MS={USD:'Dolar AS',GBP:'Paun British',EUR:'Euro',CAD:'Dolar Kanada',AUD:'Dolar Australia',SGD:'Dolar Singapura',AED:'Dirham UAE',SAR:'Riyal Saudi',QAR:'Riyal Qatar',MYR:'Ringgit Malaysia',THB:'Baht Thailand'};
   const ar=()=>document.documentElement.lang==='ar';
-  const T=(en,a)=>ar()?a:en;
+  const T=(en,a,m)=>{const l=document.documentElement.lang;return l==='ar'?a:l==='ms'?(m!=null?m:((window.WIZZ_MS||{})[en]||en)):en};
   const cs=document.getElementById('pkCur'),note=document.getElementById('pkCurNote');
   let FX=null,cur='USD';
   function local(usd,c,fix){if(fix&&fix[c]!=null)return fix[c];const r=FX&&FX.rates[c];if(!r||c==='USD')return usd;const raw=usd*r.rate*(1+FX.buffer);const up=Math.ceil(raw/r.step)*r.step;return r.nine?up-1:up;}
@@ -193,8 +197,8 @@ PK_JS = '''<script>
   function apply(c){cur=(FX&&FX.rates[c])?c:'USD';
     document.querySelectorAll('.m[data-usd]').forEach(el=>{el.textContent=fmt(local(+el.dataset.usd,cur,el.dataset.fix?JSON.parse(el.dataset.fix):null),cur)});
     document.querySelectorAll('.pk-price .cur').forEach(el=>{const shown=el.previousElementSibling?el.previousElementSibling.textContent:'';el.textContent=/[A-Z]{3}/.test(shown)?'':cur;});
-    cs.value=cur;document.dispatchEvent(new CustomEvent('wizz:fx',{detail:{fx:FX,cur:cur}}));note.textContent=cur==='USD'?T('Set in US dollars. Change the currency if you prefer.','الأسعار بالدولار الأمريكي، ويمكنك تغيير العملة.'):T('Prices shown in '+cur+'. You pay exactly this amount.','الأسعار معروضة بعملة '+cur+'، وتدفع هذا المبلغ نفسه.');}
-  function fill(){const list=FX?Object.keys(FX.rates):['USD'];cs.innerHTML=list.map(c=>'<option value="'+c+'">'+c+' · '+((ar()?NAMES_AR:NAMES)[c]||c)+'</option>').join('');}
+    cs.value=cur;document.dispatchEvent(new CustomEvent('wizz:fx',{detail:{fx:FX,cur:cur}}));note.textContent=cur==='USD'?T('Set in US dollars. Change the currency if you prefer.','الأسعار بالدولار الأمريكي، ويمكنك تغيير العملة.'):T('Prices shown in '+cur+'. You pay exactly this amount.','الأسعار معروضة بعملة '+cur+'، وتدفع هذا المبلغ نفسه.','Harga dipaparkan dalam '+cur+'. Anda membayar jumlah ini dengan tepat.');}
+  function fill(){const list=FX?Object.keys(FX.rates):['USD'];cs.innerHTML=list.map(c=>'<option value="'+c+'">'+c+' · '+((ar()?NAMES_AR:document.documentElement.lang==='ms'?NAMES_MS:NAMES)[c]||c)+'</option>').join('');}
   document.addEventListener('wizz:lang',()=>{fill();apply(cur);});
   fetch('/.netlify/functions/prices').then(r=>r.ok?r.json():Promise.reject()).then(d=>{FX=d;
     fill();
@@ -278,14 +282,14 @@ ty_body = auto_i18n(ty_body)
 TY_JS = '''<script>
 (function(){
   const st=document.getElementById('tyStatus'),f=document.getElementById('onboard');
-  const T=(en,a)=>document.documentElement.lang==='ar'?a:en;
+  const T=(en,a,m)=>{const l=document.documentElement.lang;return l==='ar'?a:l==='ms'?(m!=null?m:((window.WIZZ_MS||{})[en]||en)):en};
   const qs=new URLSearchParams(location.search);const sid=qs.get('session_id')||'';const intent=qs.get('intent')||sid;
   let saved={};try{saved=JSON.parse(sessionStorage.getItem('wizz-order')||'{}')}catch(e){}
   function showForm(d){f.hidden=false;document.getElementById('ob_order').value=d.order_id||saved.order||'';document.getElementById('ob_intent').value=intent;document.getElementById('ob_pkg').value=d.package||saved.pkg||'';}
   if(!intent){st.innerHTML=T('We couldn\\'t find a payment reference. If you paid, message us on WhatsApp at <span class="ltr">+60 11-2447 7685</span> with your receipt.','لم نجد مرجعاً للدفع. إذا كنت قد دفعت، راسلنا على واتساب على الرقم <span class="ltr">+60 11-2447 7685</span> مع إيصال الدفع.');return;}
   fetch('/.netlify/functions/verify?'+(sid?'session_id=':'intent=')+encodeURIComponent(intent)).then(r=>r.json()).then(d=>{
     if(d.paid){if(sid){const a=document.getElementById('tyAcct');a.hidden=false;if(d.email)document.getElementById('tyAcctBtn').href='account.html?email='+encodeURIComponent(d.email);}try{if(window.WizzCart)window.WizzCart.clear();else localStorage.removeItem('wizz-cart')}catch(e){}st.className='ty-status ok';st.textContent=T('Payment received: ','تم استلام الدفع: ')+(d.package||T('your package','باقتك'))+' · '+d.currency+' '+Number(d.amount).toLocaleString('en-US')+' · '+T('Order ','رقم الطلب ')+d.order_id;showForm(d);}
-    else{st.innerHTML=T('Your payment isn\\'t confirmed yet (status: '+(d.status||'unknown')+'). If you completed it, refresh in a minute or message us on WhatsApp at <span class="ltr">+60 11-2447 7685</span>.','لم يتم تأكيد الدفع بعد (الحالة: '+(d.status||'غير معروفة')+'). إذا أكملت الدفع، حدّث الصفحة بعد دقيقة أو راسلنا على واتساب على الرقم <span class="ltr">+60 11-2447 7685</span>.');}
+    else{st.innerHTML=T('Your payment isn\\'t confirmed yet (status: '+(d.status||'unknown')+'). If you completed it, refresh in a minute or message us on WhatsApp at <span class="ltr">+60 11-2447 7685</span>.','لم يتم تأكيد الدفع بعد (الحالة: '+(d.status||'غير معروفة')+'). إذا أكملت الدفع، حدّث الصفحة بعد دقيقة أو راسلنا على واتساب على الرقم <span class="ltr">+60 11-2447 7685</span>.','Pembayaran anda belum disahkan (status: '+(d.status||'tidak diketahui')+'). Jika anda telah melengkapkannya, muat semula selepas seminit atau hantar mesej WhatsApp kepada kami di <span class="ltr">+60 11-2447 7685</span>.');}
   }).catch(()=>{st.innerHTML=T('We couldn\\'t check the payment right now. Fill in the form below and we\\'ll match it to your payment.','تعذّر التحقق من الدفع الآن. املأ النموذج أدناه وسنطابقه مع دفعتك.');showForm({});});
   f.addEventListener('submit',async e=>{e.preventDefault();if(!f.reportValidity())return;
     const b=f.querySelector('button[type=submit]');b.disabled=true;
@@ -306,13 +310,13 @@ for c in COUNTRIES:
     for t in c["tiers"]:
         if t.get("sku"):
             dep = bool(t.get("deposit"))
-            CART_DATA[t["sku"]] = {"c": c["c"], "n": [f'{c["n"]} · {t["n"]}' + (" (deposit)" if dep else ""), f'{AR_SRC[c["n"]]} · {AR_SRC[t["n"]]}' + (" (عربون)" if dep else "")],
+            CART_DATA[t["sku"]] = {"c": c["c"], "n": [f'{c["n"]} · {t["n"]}' + (" (deposit)" if dep else ""), f'{AR_SRC[c["n"]]} · {AR_SRC[t["n"]]}' + (" (عربون)" if dep else ""), f'{MS(c["n"])} · {MS(t["n"])}' + (" (deposit)" if dep else "")],
                                    "usd": t.get("deposit") or t["p"], "max": 1, **({"fix": t["fix"]} if t.get("fix") and not t.get("deposit") else {})}
 for a, (sku, usd) in ADDON_SKUS.items():
-    CART_DATA[sku] = {"c": "", "n": [a, AR_SRC[a]], "usd": usd, "max": 10, **({"fix": ADDON_FIX[a]} if a in ADDON_FIX else {})}
+    CART_DATA[sku] = {"c": "", "n": [a, AR_SRC[a], MS(a)], "usd": usd, "max": 10, **({"fix": ADDON_FIX[a]} if a in ADDON_FIX else {})}
 CART_JS = "/* Wizz cart: generated by tools/build_pkgs.py, do not edit by hand */\n(function(){\n  const DATA=" + json.dumps(CART_DATA, ensure_ascii=False) + r""";
   const KEY='wizz-cart';
-  const ar=()=>document.documentElement.lang==='ar';const T=(en,a)=>ar()?a:en;
+  const ar=()=>document.documentElement.lang==='ar';const T=(en,a,m)=>{const l=document.documentElement.lang;return l==='ar'?a:l==='ms'?(m!=null?m:((window.WIZZ_MS||{})[en]||en)):en};
   function read(){try{const v=JSON.parse(localStorage.getItem(KEY)||'[]');return Array.isArray(v)?v.filter(x=>x&&DATA[x.sku]).map(x=>({sku:x.sku,qty:Math.max(1,Math.min(DATA[x.sku].max,x.qty|0||1))})):[]}catch(e){return []}}
   let items=read();
   function save(){try{localStorage.setItem(KEY,JSON.stringify(items))}catch(e){}render();}
@@ -347,7 +351,7 @@ CART_JS = "/* Wizz cart: generated by tools/build_pkgs.py, do not edit by hand *
     body.innerHTML='<ul class="cart-list">'+items.map(x=>{const d=DATA[x.sku];const line=Math.round(local(d.usd,d.fix)*x.qty*100)/100;total=Math.round((total+line)*100)/100;
       const code=d.c?'<span class="cart-code ltr">'+d.c+'<i>.</i></span>':'<span class="cart-code plus">+</span>';
       const qty=d.max>1?'<span class="cart-qty"><button type="button" data-q="-1" data-sku="'+x.sku+'" aria-label="'+T('Fewer','أقل')+'">−</button><b>'+x.qty+'</b><button type="button" data-q="1" data-sku="'+x.sku+'" aria-label="'+T('More','أكثر')+'">+</button></span>':'';
-      return '<li>'+code+'<div class="cart-info"><b>'+esc(d.n[ar()?1:0])+'</b><span class="cart-row">'+qty+'<button type="button" class="cart-rm" data-rm="'+x.sku+'">'+T('Remove','إزالة')+'</button></span></div><span class="cart-price ltr">'+fmt(line)+'</span></li>';}).join('')+'</ul>';
+      return '<li>'+code+'<div class="cart-info"><b>'+esc(d.n[{ar:1,ms:2}[document.documentElement.lang]]||d.n[0])+'</b><span class="cart-row">'+qty+'<button type="button" class="cart-rm" data-rm="'+x.sku+'">'+T('Remove','إزالة')+'</button></span></div><span class="cart-price ltr">'+fmt(line)+'</span></li>';}).join('')+'</ul>';
     foot.innerHTML='<div class="cart-total"><span>'+T('Total','الإجمالي')+'</span><b class="ltr">'+fmt(total)+'</b></div><a class="btn solid cart-go" href="checkout.html?cart=1&cur='+encodeURIComponent((FX&&FX.rates[cur])?cur:'USD')+'"><span class="dot"></span>'+T('Checkout','إتمام الطلب')+'</a><p class="cart-fine">'+T('Prices include government filing fees unless a note says otherwise.','تشمل الأسعار الرسوم الحكومية ما لم تذكر الملاحظة غير ذلك.')+'</p>';
   }
   document.addEventListener('wizz:lang',render);
@@ -366,11 +370,11 @@ CK_DATA = {}
 for c in COUNTRIES:
     for t in c["tiers"]:
         if not t.get("sku"): continue
-        CK_DATA[t["sku"]] = {"c": c["c"], "n": [c["n"], AR_SRC[c["n"]]], "t": [t["n"], AR_SRC[t["n"]]],
-            "plus": [t["plus"], AR_SRC[t["plus"]]] if t.get("plus") else None,
-            "i": [t["i"], [AR_SRC[x] for x in t["i"]]], "dep": bool(t.get("deposit"))}
+        CK_DATA[t["sku"]] = {"c": c["c"], "n": [c["n"], AR_SRC[c["n"]], MS(c["n"])], "t": [t["n"], AR_SRC[t["n"]], MS(t["n"])],
+            "plus": [t["plus"], AR_SRC[t["plus"]], MS(t["plus"])] if t.get("plus") else None,
+            "i": [t["i"], [AR_SRC[x] for x in t["i"]], [MS(x) for x in t["i"]]], "dep": bool(t.get("deposit"))}
 for a_, (sku, usd) in ADDON_SKUS.items():
-    CK_DATA[sku] = {"c": "", "n": [a_, AR_SRC[a_]], "t": None, "plus": None, "i": None, "dep": False, "addon": True}
+    CK_DATA[sku] = {"c": "", "n": [a_, AR_SRC[a_], MS(a_)], "t": None, "plus": None, "i": None, "dep": False, "addon": True}
 LOCK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 1a5 5 0 0 0-5 5v4H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5zm-3 9V6a3 3 0 1 1 6 0v4z"/></svg>'
 ck_body = f"""<section class="block ck">
   <div class="wrap ck-grid">
@@ -409,7 +413,7 @@ CK_JS = """<script>
   else{try{const v=JSON.parse(localStorage.getItem('wizz-cart')||'[]');if(Array.isArray(v))list=v.map(x=>({sku:x.sku,qty:Math.max(1,Math.min(10,x.qty|0||1))}));}catch(e){}}
   list=list.filter(x=>DATA[x.sku]);
   if(!list.length){location.replace('packages.html');return;}
-  const ar=()=>document.documentElement.lang==='ar';const L=a=>a?a[ar()?1:0]:'';const T=(en,a)=>ar()?a:en;
+  const ar=()=>document.documentElement.lang==='ar';const L=a=>a?(a[{ar:1,ms:2}[document.documentElement.lang]]||a[0]):'';const T=(en,a,m)=>{const l=document.documentElement.lang;return l==='ar'?a:l==='ms'?(m!=null?m:((window.WIZZ_MS||{})[en]||en)):en};
   const $=id=>document.getElementById(id);let res=null;
   const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   function fmt(n,c){try{return new Intl.NumberFormat('en-US',{style:'currency',currency:c,currencyDisplay:'narrowSymbol',maximumFractionDigits:2,minimumFractionDigits:Number.isInteger(n)?0:2}).format(n)}catch(e){return c+' '+n}}
@@ -437,11 +441,11 @@ CK_JS = """<script>
   (async()=>{
     let j;
     try{j=await start(true);}catch(e){
-      return fail(e.code==='not_configured'?T('Online payment is being set up. Message us on WhatsApp at '+WA+' and we will send you a payment link.','الدفع الإلكتروني قيد الإعداد. راسلنا على واتساب على الرقم '+WA+' وسنرسل لك رابط الدفع.'):T('We couldn\'t open the checkout. Please try again, or message us on WhatsApp at '+WA+'.','تعذّر فتح صفحة الدفع. حاول مرة أخرى، أو راسلنا على واتساب على الرقم '+WA+'.'));
+      return fail(e.code==='not_configured'?T('Online payment is being set up. Message us on WhatsApp at '+WA+' and we will send you a payment link.','الدفع الإلكتروني قيد الإعداد. راسلنا على واتساب على الرقم '+WA+' وسنرسل لك رابط الدفع.','Pembayaran dalam talian sedang disediakan. Hantar mesej WhatsApp kepada kami di '+WA+' dan kami akan menghantar pautan pembayaran.'):T('We couldn\'t open the checkout. Please try again, or message us on WhatsApp at '+WA+'.','تعذّر فتح صفحة الدفع. حاول مرة أخرى، أو راسلنا على واتساب على الرقم '+WA+'.','Kami tidak dapat membuka halaman pembayaran. Sila cuba lagi, atau hantar mesej WhatsApp kepada kami di '+WA+'.'));
     }
     res=j;render();remember(j);
     if(j.url){location.replace(j.url);return;}
-    if(!j.embedded){return fail(T('Please message us on WhatsApp at '+WA+' to complete your payment.','راسلنا على واتساب على الرقم '+WA+' لإكمال الدفع.'));}
+    if(!j.embedded){return fail(T('Please message us on WhatsApp at '+WA+' to complete your payment.','راسلنا على واتساب على الرقم '+WA+' لإكمال الدفع.','Sila hantar mesej WhatsApp kepada kami di '+WA+' untuk melengkapkan pembayaran anda.'));}
     try{
       await loadStripe();
       const stripe=window.Stripe(j.publishable_key);
@@ -453,7 +457,7 @@ CK_JS = """<script>
       console.error('Embedded checkout failed:',e);
       $('ckLoading').hidden=true;const m=$('ckMsg');m.textContent=T('Opening Stripe\'s secure payment page…','جارٍ فتح صفحة الدفع الآمنة من Stripe…')+' ('+String(e&&e.message||e).slice(0,140)+')';m.hidden=false;
       setTimeout(async()=>{try{const h=await start(false);remember(h);if(h.url){location.replace(h.url);return;}}catch(_){}
-        fail(T('We couldn\'t load the payment form. Please refresh, or message us on WhatsApp at '+WA+'.','تعذّر تحميل نموذج الدفع. حدّث الصفحة، أو راسلنا على واتساب على الرقم '+WA+'.'));},2500);
+        fail(T('We couldn\'t load the payment form. Please refresh, or message us on WhatsApp at '+WA+'.','تعذّر تحميل نموذج الدفع. حدّث الصفحة، أو راسلنا على واتساب على الرقم '+WA+'.','Kami tidak dapat memuatkan borang pembayaran. Sila muat semula, atau hantar mesej WhatsApp kepada kami di '+WA+'.'));},2500);
     }
   })();
 })();
@@ -591,6 +595,7 @@ for f in glob.glob(f"{D}/*.html"):
         s = s.replace('    <div class="legal">\n', '    <div class="legal">\n' + PAY_ROW, 1)
     if 'class="acct-btn"' not in s:
         s = s.replace('<button class="lang" id="langBtn"', '<a class="acct-btn" href="account.html" aria-label="My account" title="My account"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm-7 8a7 7 0 0 1 14 0"/></svg></a>\n      <button class="lang" id="langBtn"', 1)
+    s = re.sub(r'<button class="lang" id="langBtn"[^>]*>[^<]*</button>', LANG_SEL, s)
     if 'src="cart.js"' not in s:
         s = s.replace('<script src="site.js"></script>', '<script src="cart.js"></script>\n<script src="site.js"></script>', 1)
     # countries page: every card links to its packages tab, and to its guide page when there is one
@@ -902,7 +907,8 @@ a.pk-add{text-decoration:none;display:inline-block;white-space:nowrap}
 css = open(f"{D}/site.css").read()
 # v6 is the last block in site.css: replace it on every build so CSS edits apply
 css = css.split("\n/* ===== v6: packages")[0].rstrip("\n") + "\n"
-open(f"{D}/site.css", "w").write(css + CSS + US_CSS)
+LANG_CSS = "\n/* language menu */\nselect.lang{width:auto;min-width:0;padding:7px 8px;font:600 13px var(--body);background-color:transparent;cursor:pointer}\nheader.site nav.main a,header.site .btn.small{white-space:nowrap}\n"
+open(f"{D}/site.css", "w").write(css + CSS + US_CSS + LANG_CSS)
 
 # sitemap
 pages = sorted(os.path.basename(p) for p in glob.glob(f"{D}/*.html") if not p.endswith(("thank-you.html", "checkout.html", "account.html", "admin.html")))
@@ -910,4 +916,5 @@ open(f"{D}/sitemap.xml", "w").write('<?xml version="1.0" encoding="UTF-8"?>\n<ur
 print("built", pages)
 
 # Arabic site under /ar/
+if os.environ.get('WIZZ_DUMP'): json.dump(sorted(AR_SRC), open(os.environ['WIZZ_DUMP'],'w'), ensure_ascii=False)
 import runpy; runpy.run_path(os.path.join(os.path.dirname(os.path.abspath(__file__)), "build_ar.py"))

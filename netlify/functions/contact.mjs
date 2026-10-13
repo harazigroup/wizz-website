@@ -55,7 +55,10 @@ ${wa ? `<p style="margin:18px 0 0"><a href="${esc(wa)}" style="background:#25d36
 
   const ar = v.lang === "ar";
   const first = esc(v.name.split(/\s+/)[0]);
-  const clientHtml = ar
+  const ms = v.lang === "ms";
+  const clientHtml = ms
+    ? shell(`<p>Hai ${first},</p><p>Terima kasih kerana menghubungi Wizz Smart Services. Kami telah menerima pertanyaan anda tentang <b>${esc(v.mkt || "perniagaan anda")}</b>. Pasukan kami akan menyemaknya dan membalas dengan cadangan serta langkah seterusnya, biasanya dalam satu hari bekerja.</p><p>Jika anda ingin menambah apa-apa, balas sahaja e-mel ini.</p><p>Salam hormat,<br>Pasukan Wizz</p>`)
+    : ar
     ? shell(`<p>مرحباً ${first}،</p><p>شكراً لتواصلك مع ويز للخدمات الذكية. استلمنا استفسارك بخصوص <b>${esc(v.mkt || "مشروعك")}</b>، وسيراجعه فريقنا ويرد عليك بتوصية والخطوات التالية، عادةً خلال يوم عمل واحد.</p><p>إن أردت إضافة أي تفاصيل، يمكنك الرد على هذه الرسالة مباشرة.</p><p>مع التحية،<br>فريق ويز</p>`, true)
     : shell(`<p>Hi ${first},</p><p>Thank you for contacting Wizz Smart Services. We've received your enquiry about <b>${esc(v.mkt || "your business")}</b>. Our team will review it and reply with a recommendation and next steps, usually within one business day.</p><p>If you'd like to add anything, just reply to this email.</p><p>Kind regards,<br>The Wizz team</p>`);
 
@@ -72,7 +75,7 @@ ${wa ? `<p style="margin:18px 0 0"><a href="${esc(wa)}" style="background:#25d36
   try {
     await send({
       from: FROM, to: [v.email], reply_to: TEAM,
-      subject: ar ? "استلمنا استفسارك – ويز للخدمات الذكية" : "We've received your enquiry – Wizz Smart Services",
+      subject: ar ? "استلمنا استفسارك – ويز للخدمات الذكية" : ms ? "Kami telah menerima pertanyaan anda – Wizz Smart Services" : "We've received your enquiry – Wizz Smart Services",
       html: clientHtml,
     });
   } catch (e) { console.error("auto-reply failed", e); }

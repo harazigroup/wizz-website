@@ -22,6 +22,7 @@
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Do I need to be a US citizen or live in the US?", "acceptedAnswer": {"@type": "Answer", "text": "No. Non-residents can own 100% of a US LLC. You don't need to travel to the US, and you don't need an SSN or ITIN to get an EIN."}}, {"@type": "Question", "name": "What do you need from me?", "acceptedAnswer": {"@type": "Answer", "text": "A copy of your passport, your full residential address, your national ID number, a few company name choices and a short description of your business."}}, {"@type": "Question", "name": "How long does it take?", "acceptedAnswer": {"@type": "Answer", "text": "The LLC is usually filed within 1 to 3 business days after our checks. The EIN usually follows 2 to 3 days after the company is incorporated. Bank and payment accounts depend on each provider."}}, {"@type": "Question", "name": "Will I get a US bank account and Stripe?", "acceptedAnswer": {"@type": "Answer", "text": "We prepare and submit complete applications to suitable providers such as Wise, Payoneer and Stripe. Approval is always the provider's decision, based on their own checks, so no one can guarantee it."}}, {"@type": "Question", "name": "Does a US company give me a visa or residency?", "acceptedAnswer": {"@type": "Answer", "text": "No. Forming a company does not give you a visa, residency or the right to work in the US. Immigration is a separate process."}}, {"@type": "Question", "name": "What taxes will I pay?", "acceptedAnswer": {"@type": "Answer", "text": "It depends on your activity, where you live and where your customers are. Every foreign-owned LLC must file Form 5472 each year, which our Complete package covers. For tax advice we refer you to a qualified tax professional."}}, {"@type": "Question", "name": "What happens after the first year?", "acceptedAnswer": {"@type": "Answer", "text": "You renew the registered agent and file the state's annual report, and the federal filings continue each year. We send reminders and can handle the renewal for you."}}]}</script>
 <link rel="alternate" hreflang="en" href="https://wizz.com.my/usa.html">
 <link rel="alternate" hreflang="ar" href="https://wizz.com.my/ar/usa.html">
+<link rel="alternate" hreflang="ms" href="https://wizz.com.my/ms/usa.html">
 <link rel="alternate" hreflang="x-default" href="https://wizz.com.my/usa.html">
 </head>
 <body data-page="usa">
@@ -51,7 +52,7 @@
     </nav>
     <div class="tools">
       <a class="acct-btn" href="account.html" aria-label="My account" title="My account"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm-7 8a7 7 0 0 1 14 0"/></svg></a>
-      <button class="lang" id="langBtn" type="button" aria-label="Switch language">العربية</button>
+      <select class="lang" id="langSel" aria-label="Language"><option value="en">EN</option><option value="ms">BM</option><option value="ar">عربي</option></select>
       <a class="btn solid small hide-sm" href="contact.html"><span class="dot"></span><span data-i18n="cta_short">Free consultation</span></a>
       <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="mainNav"><span></span><span></span><span class="sr" data-i18n="menu">Menu</span></button>
     </div>
@@ -198,8 +199,9 @@
   const h=location.hash.slice(1);const start=tabs.find(t=>t.dataset.k===h);if(start)sel(start);
   const NAMES={USD:'US dollar',GBP:'British pound',EUR:'Euro',CAD:'Canadian dollar',AUD:'Australian dollar',SGD:'Singapore dollar',AED:'UAE dirham',SAR:'Saudi riyal',QAR:'Qatari riyal',MYR:'Malaysian ringgit',THB:'Thai baht'};
   const NAMES_AR={USD:'دولار أمريكي',GBP:'جنيه إسترليني',EUR:'يورو',CAD:'دولار كندي',AUD:'دولار أسترالي',SGD:'دولار سنغافوري',AED:'درهم إماراتي',SAR:'ريال سعودي',QAR:'ريال قطري',MYR:'رينغيت ماليزي',THB:'بات تايلاندي'};
+  const NAMES_MS={USD:'Dolar AS',GBP:'Paun British',EUR:'Euro',CAD:'Dolar Kanada',AUD:'Dolar Australia',SGD:'Dolar Singapura',AED:'Dirham UAE',SAR:'Riyal Saudi',QAR:'Riyal Qatar',MYR:'Ringgit Malaysia',THB:'Baht Thailand'};
   const ar=()=>document.documentElement.lang==='ar';
-  const T=(en,a)=>ar()?a:en;
+  const T=(en,a,m)=>{const l=document.documentElement.lang;return l==='ar'?a:l==='ms'?(m!=null?m:((window.WIZZ_MS||{})[en]||en)):en};
   const cs=document.getElementById('pkCur'),note=document.getElementById('pkCurNote');
   let FX=null,cur='USD';
   function local(usd,c,fix){if(fix&&fix[c]!=null)return fix[c];const r=FX&&FX.rates[c];if(!r||c==='USD')return usd;const raw=usd*r.rate*(1+FX.buffer);const up=Math.ceil(raw/r.step)*r.step;return r.nine?up-1:up;}
@@ -207,8 +209,8 @@
   function apply(c){cur=(FX&&FX.rates[c])?c:'USD';
     document.querySelectorAll('.m[data-usd]').forEach(el=>{el.textContent=fmt(local(+el.dataset.usd,cur,el.dataset.fix?JSON.parse(el.dataset.fix):null),cur)});
     document.querySelectorAll('.pk-price .cur').forEach(el=>{const shown=el.previousElementSibling?el.previousElementSibling.textContent:'';el.textContent=/[A-Z]{3}/.test(shown)?'':cur;});
-    cs.value=cur;document.dispatchEvent(new CustomEvent('wizz:fx',{detail:{fx:FX,cur:cur}}));note.textContent=cur==='USD'?T('Set in US dollars. Change the currency if you prefer.','الأسعار بالدولار الأمريكي، ويمكنك تغيير العملة.'):T('Prices shown in '+cur+'. You pay exactly this amount.','الأسعار معروضة بعملة '+cur+'، وتدفع هذا المبلغ نفسه.');}
-  function fill(){const list=FX?Object.keys(FX.rates):['USD'];cs.innerHTML=list.map(c=>'<option value="'+c+'">'+c+' · '+((ar()?NAMES_AR:NAMES)[c]||c)+'</option>').join('');}
+    cs.value=cur;document.dispatchEvent(new CustomEvent('wizz:fx',{detail:{fx:FX,cur:cur}}));note.textContent=cur==='USD'?T('Set in US dollars. Change the currency if you prefer.','الأسعار بالدولار الأمريكي، ويمكنك تغيير العملة.'):T('Prices shown in '+cur+'. You pay exactly this amount.','الأسعار معروضة بعملة '+cur+'، وتدفع هذا المبلغ نفسه.','Harga dipaparkan dalam '+cur+'. Anda membayar jumlah ini dengan tepat.');}
+  function fill(){const list=FX?Object.keys(FX.rates):['USD'];cs.innerHTML=list.map(c=>'<option value="'+c+'">'+c+' · '+((ar()?NAMES_AR:document.documentElement.lang==='ms'?NAMES_MS:NAMES)[c]||c)+'</option>').join('');}
   document.addEventListener('wizz:lang',()=>{fill();apply(cur);});
   fetch('/.netlify/functions/prices').then(r=>r.ok?r.json():Promise.reject()).then(d=>{FX=d;
     fill();

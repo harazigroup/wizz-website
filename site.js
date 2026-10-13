@@ -191,20 +191,20 @@ document.querySelectorAll('svg use[href="#wz"]').forEach(u => {
 });
 
 let lang = 'en';
-const MONTHS = {en:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],ar:["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"]};
+const MONTHS = {en:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],ms:["Jan","Feb","Mac","Apr","Mei","Jun","Jul","Ogo","Sep","Okt","Nov","Dis"],ar:["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"]};
 function fmtDate(iso,l){const [y,m,d]=iso.split('-').map(Number);return d+' '+MONTHS[l][m-1]+' '+y;}
 function readMins(p){const words=(p.lede+' '+p.body.replace(/<[^>]+>/g,' ')).split(/\s+/).filter(Boolean).length;return Math.max(2,Math.round(words/200));}
-function metaLine(post,l){const n=readMins(post[l]);return fmtDate(post.date,l)+' · '+(l==='ar'?'وقت القراءة: '+n+' د':n+' min read');}
+function metaLine(post,l){const n=readMins(post[l]);return fmtDate(post.date,l)+' · '+(l==='ar'?'وقت القراءة: '+n+' د':l==='ms'?n+' min bacaan':n+' min read');}
 function esc(s){return s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
 
 function renderBlog(){
-  const grid = document.getElementById('blogGrid'); if (!grid) return;
+  const grid = document.getElementById('blogGrid'); if (!grid || lang === 'ms') return; // Malay pages are pre-rendered
   grid.innerHTML = POSTS.slice(0, +grid.dataset.limit || POSTS.length).map(post => { const p = post[lang];
-    return `<a class="post" href="${POST_SLUGS[post.id]}"><span class="ptag">${esc(p.tag)}</span><h3>${esc(p.title)}</h3><p>${esc(p.lede)}</p><span class="pfoot"><span>${esc(metaLine(post,lang))}</span><b>${lang==='ar'?'اقرأ المقال':'Read article'}</b></span></a>`;
+    return `<a class="post" href="${POST_SLUGS[post.id]}"><span class="ptag">${esc(p.tag)}</span><h3>${esc(p.title)}</h3><p>${esc(p.lede)}</p><span class="pfoot"><span>${esc(metaLine(post,lang))}</span><b>${lang==='ar'?'اقرأ المقال':lang==='ms'?'Baca artikel':'Read article'}</b></span></a>`;
   }).join('');
 }
 function renderArticle(){
-  const art = document.querySelector('[data-post]'); if (!art) return;
+  const art = document.querySelector('[data-post]'); if (!art || lang === 'ms') return;
   const post = POSTS.find(p => p.id === art.dataset.post); if (!post) return;
   const p = post[lang];
   document.getElementById('rTag').textContent = p.tag;
@@ -223,28 +223,27 @@ document.querySelectorAll('[data-i18n-ph]').forEach(n => { EN[n.dataset.i18nPh] 
 function setLang(l){
   lang = l; const d = l === 'ar' ? AR : EN;
   document.documentElement.lang = l; document.documentElement.dir = l === 'ar' ? 'rtl' : 'ltr';
-  nodes.forEach(n => { const v = d[n.dataset.i18n] ?? EN[n.dataset.i18n]; if (v == null) return; if (n.hasAttribute('data-html')) n.innerHTML = v; else n.textContent = v; });
-  document.querySelectorAll('[data-i18n-ph]').forEach(n => { n.placeholder = d[n.dataset.i18nPh] ?? EN[n.dataset.i18nPh]; });
-  const lb = document.getElementById('langBtn'); if (lb) lb.textContent = l === 'ar' ? 'English' : 'العربية';
+  if (l !== 'ms') nodes.forEach(n => { const v = d[n.dataset.i18n] ?? EN[n.dataset.i18n]; if (v == null) return; if (n.hasAttribute('data-html')) n.innerHTML = v; else n.textContent = v; });
+  if (l !== 'ms') document.querySelectorAll('[data-i18n-ph]').forEach(n => { n.placeholder = d[n.dataset.i18nPh] ?? EN[n.dataset.i18nPh]; });
+  const ls = document.getElementById('langSel'); if (ls) ls.value = l;
   try { localStorage.setItem('wizz-lang', l); } catch(e) {}
   document.dispatchEvent(new CustomEvent('wizz:lang', { detail: l }));
   renderBlog(); renderArticle();
   const out = document.getElementById('out'); if (out && !out.hidden) buildMsg();
 }
-// Arabic pages live under /ar/ (built by tools/build_ar.py); the button moves between the two versions
-const IS_AR = /^\/ar(\/|$)/.test(location.pathname);
-function otherLangUrl(){
-  const p = location.pathname;
-  const path = IS_AR ? (p.replace(/^\/ar(\/|$)/, '/')) : ('/ar' + (p === '/' ? '/' : p));
-  return path + location.search + location.hash;
+// Arabic pages live under /ar/ and Malay pages under /ms/ (built by tools/build_ar.py); the menu moves between versions
+const PAGE_LANG = (location.pathname.match(/^\/(ar|ms)(\/|$)/) || [, 'en'])[1];
+function langUrl(l){
+  const p = location.pathname.replace(/^\/(ar|ms)(\/|$)/, '/');
+  return (l === 'en' ? p : '/' + l + (p === '/' ? '/' : p)) + location.search + location.hash;
 }
-const langBtn = document.getElementById('langBtn');
-if (langBtn) langBtn.addEventListener('click', () => {
-  try { localStorage.setItem('wizz-lang', IS_AR ? 'en' : 'ar'); } catch(e) {}
-  location.href = otherLangUrl();
-});
-if (IS_AR) setLang('ar');
-else { try { if (localStorage.getItem('wizz-lang') === 'ar' && !/bot|crawl|spider/i.test(navigator.userAgent)) location.replace(otherLangUrl()); } catch(e) {} }
+const langSel = document.getElementById('langSel');
+if (langSel) { langSel.value = PAGE_LANG; langSel.addEventListener('change', () => {
+  try { localStorage.setItem('wizz-lang', langSel.value); } catch(e) {}
+  location.href = langUrl(langSel.value);
+}); }
+if (PAGE_LANG !== 'en') setLang(PAGE_LANG);
+else { try { const saved = localStorage.getItem('wizz-lang'); if ((saved === 'ar' || saved === 'ms') && !/bot|crawl|spider/i.test(navigator.userAgent)) location.replace(langUrl(saved)); } catch(e) {} }
 if (lang === 'en') { renderBlog(); renderArticle(); }
 
 // ---- mobile menu
@@ -256,7 +255,7 @@ if (menuBtn) menuBtn.addEventListener('click', () => {
 
 // ---- copy buttons
 function copyText(text, btn){
-  const done = () => { const o = btn.textContent; btn.textContent = lang==='ar' ? 'تم النسخ' : 'Copied'; setTimeout(()=>btn.textContent=o,1500); };
+  const done = () => { const o = btn.textContent; btn.textContent = lang==='ar' ? 'تم النسخ' : lang==='ms' ? 'Disalin' : 'Copied'; setTimeout(()=>btn.textContent=o,1500); };
   if (navigator.clipboard) navigator.clipboard.writeText(text).then(done).catch(()=>{});
 }
 document.querySelectorAll('[data-copy]').forEach(b => b.addEventListener('click', () => copyText(b.dataset.copy, b)));
@@ -268,11 +267,15 @@ function buildMsg(){
   const f = new FormData(form);
   const checked = [...form.querySelectorAll('input[name=need]:checked')];
   const sel = id => { const s = document.getElementById(id); return s.options[s.selectedIndex].text; };
-  const needs = lang === 'ar' ? checked.map(i => i.nextElementSibling.textContent).join('، ') : checked.map(i => i.value).join(', ');
+  const needs = lang !== 'en' ? checked.map(i => i.nextElementSibling.textContent).join('، ') : checked.map(i => i.value).join(', ');
   const lines = lang === 'ar' ? [
     'مرحباً ويز للخدمات الذكية، أرسلت استفساراً عبر الموقع.',
     'الاسم: ' + f.get('name'), 'البريد: ' + f.get('email'), 'النشاط: ' + f.get('act'), 'الدولة المستهدفة: ' + sel('f_mkt'),
     'الخدمات: ' + (needs || 'لم أحدد')
+  ] : lang === 'ms' ? [
+    'Hai Wizz Smart Services, saya telah menghantar pertanyaan melalui laman web.',
+    'Nama: ' + f.get('name'), 'E-mel: ' + f.get('email'), 'Aktiviti: ' + f.get('act'), 'Negara sasaran: ' + sel('f_mkt'),
+    'Perkhidmatan: ' + (needs || 'Belum pasti')
   ] : [
     'Hello Wizz Smart Services, I sent an enquiry through the website.',
     'Name: ' + f.get('name'), 'Email: ' + f.get('email'), 'Activity: ' + f.get('act'), 'Target country: ' + sel('f_mkt'),
@@ -297,7 +300,7 @@ if (form) {
     form.elements.subject.value = 'Website enquiry: ' + form.elements.name.value.trim() + ' (' + form.elements.mkt.value + ')';
     const data = new FormData(form); data.delete('need');
     const btn = form.querySelector('button[type=submit]'); const lbl = btn.querySelector('[data-i18n]');
-    btn.disabled = true; const old = lbl.textContent; lbl.textContent = lang === 'ar' ? 'جارٍ الإرسال…' : 'Sending…';
+    btn.disabled = true; const old = lbl.textContent; lbl.textContent = lang === 'ar' ? 'جارٍ الإرسال…' : lang === 'ms' ? 'Menghantar…' : 'Sending…';
     try {
       // 1) email the team (and the client) through our function; 2) if that fails, keep the lead in Netlify Forms
       let sent = false;
