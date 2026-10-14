@@ -937,6 +937,11 @@ a.pk-add{text-decoration:none;display:inline-block;white-space:nowrap}
 .sa-req{margin-top:28px}
 @media (max-width:640px){.sa-stages{grid-template-columns:1fr}}
 
+.mm-tbl{min-width:560px}.mm-tbl td{text-align:center;font-weight:600}
+.az-steps{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media (max-width:1000px){.az-steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){.az-steps{grid-template-columns:1fr}}
+
 /* client companies */
 .cl-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:18px}
 .cl-card{background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--red);border-radius:var(--r);padding:26px;display:flex;flex-direction:column;gap:10px}

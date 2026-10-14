@@ -548,6 +548,7 @@ page("admin.html", "Team admin | Wizz Smart Services", "Team admin.", ad_body,
 exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "us_page.py")).read())
 exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "uk_page.py")).read())
 exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "saudi_page.py")).read())
+exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "extra_pages.py")).read())
 
 # ---------------- legal pages
 CO = "WIZZ SMART SERVICES SDN. BHD. (Registration No. 202501029005), B2-2-3, Publika, Solaris Dutamas, 50480 Kuala Lumpur, Malaysia"
@@ -1029,4 +1030,11 @@ print("built", pages)
 
 # Arabic site under /ar/
 if os.environ.get('WIZZ_DUMP'): json.dump(sorted(AR_SRC), open(os.environ['WIZZ_DUMP'],'w'), ensure_ascii=False)
+# footer: Amazon brand and MM2H links on every page (idempotent)
+_FT_OLD = '<li><a href="services.html#fba" data-i18n="s8_t">Amazon FBA preparation from Malaysia</a></li>'
+_FT_NEW = _FT_OLD + '\n          <li><a href="amazon-brand.html" data-i18n="ft_amz">Amazon Brand Registry</a></li>\n          <li><a href="mm2h.html" data-i18n="ft_mm2h">MM2H Malaysia</a></li>'
+for _f in glob.glob(f"{D}/*.html"):
+    _h = open(_f).read()
+    if _FT_OLD in _h and 'data-i18n="ft_mm2h"' not in _h:
+        open(_f, "w").write(_h.replace(_FT_OLD, _FT_NEW, 1))
 import runpy; runpy.run_path(os.path.join(os.path.dirname(os.path.abspath(__file__)), "build_ar.py"))
