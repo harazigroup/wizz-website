@@ -14,6 +14,7 @@ spec.json:
     {"kind":"cover","theme":"light","eyebrow":"US LLC · 2026","title":"Start a US company <r>from anywhere.</r>","lede":"...","offer":"US company formation service"},
     {"kind":"list","title":"No US visit. <r>No SSN.</r>","items":["...","..."],"note":"optional"},
     {"kind":"cards","title":"Pick your state.","cards":[{"tag":"WY","title":"Wyoming","text":"..."}],"note":"optional","tight":false},
+    {"kind":"image","title":"Certificate issued.","src":"cert.png","note":"File number blurred."},
     {"kind":"cta","title":"Start your US LLC <r>with Wizz.</r>","lede":"...","buttons":["wizz.com.my/usa","WhatsApp +60 11-2447 7685"],"fine":"..."}
   ] }
 Covers need "offer" (the service sold, e.g. "US company formation service"); the renderer adds "by Wizz Smart Services
@@ -68,6 +69,7 @@ p.lede{{font-size:36px;line-height:1.38;margin-top:34px;opacity:.85}}
 .cta{{margin-top:36px;display:flex;flex-direction:column;gap:16px}}
 .btn{{background:#E01B22;color:#fff;border-radius:22px;padding:28px 34px;font-size:36px;font-weight:600;display:flex;justify-content:space-between}}
 .btn.o{{background:transparent;border:3px solid currentColor}}
+.shot{{display:block;max-width:740px;max-height:700px;width:auto;height:auto;border-radius:14px;box-shadow:0 18px 50px -20px rgba(0,0,0,.45);align-self:flex-start}}
 .fine{{margin-top:24px;font-size:25px;line-height:1.45;opacity:.6}}
 """
 CHK = '<svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3L15 6.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'
@@ -92,6 +94,9 @@ def slide_html(s, i, n, k):
         return top + f'<div class="eb">{rich(s.get("eyebrow", "Wizz Smart Services"))}</div><h1>{rich(s["title"])}</h1>' + \
                (f'<p class="lede">{rich(s["lede"])}</p>' if s.get("lede") else "") + f'<div class="cta">{btns}</div>' + \
                (f'<p class="fine">{rich(s["fine"])}</p>' if s.get("fine") else "")
+    if kind == "image":  # a real document or screenshot (blur private numbers first); src = local file path
+        return top + f'<h2>{rich(s["title"])}</h2><img class="shot" src="file://{os.path.abspath(s["src"])}" alt="">' + \
+               (f'<p class="note">{rich(s["note"])}</p>' if s.get("note") else "")
     body = f'<div class="bign">{k:02d}</div><h2>{rich(s["title"])}</h2>'
     if kind == "list":
         body += "".join(f'<div class="li"><span class="ck">{CHK}</span><div>{rich(x)}</div></div>' for x in s["items"])
