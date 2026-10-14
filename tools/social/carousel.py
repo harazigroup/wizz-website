@@ -11,11 +11,13 @@ into the bottom zone, so shorten the copy rather than shrinking the type.
 spec.json:
 { "name": "wizz-us-llc",
   "slides": [
-    {"kind":"cover","theme":"light","eyebrow":"US LLC · 2026","title":"Start a US company <r>from anywhere.</r>","lede":"..."},
+    {"kind":"cover","theme":"light","eyebrow":"US LLC · 2026","title":"Start a US company <r>from anywhere.</r>","lede":"...","offer":"US company formation service"},
     {"kind":"list","title":"No US visit. <r>No SSN.</r>","items":["...","..."],"note":"optional"},
     {"kind":"cards","title":"Pick your state.","cards":[{"tag":"WY","title":"Wyoming","text":"..."}],"note":"optional","tight":false},
     {"kind":"cta","title":"Start your US LLC <r>with Wizz.</r>","lede":"...","buttons":["wizz.com.my/usa","WhatsApp +60 11-2447 7685"],"fine":"..."}
   ] }
+Covers need "offer" (the service sold, e.g. "US company formation service"); the renderer adds "by Wizz Smart Services
+Sdn. Bhd." under it and the company name next to the logo, which TikTok ad review requires.
 <r>…</r> marks red words. Content slides are numbered 01, 02… automatically. CTA slides are dark by default.
 """
 import asyncio, html, json, os, re, sys
@@ -35,6 +37,11 @@ body{{width:1080px;height:1920px;overflow:hidden;font-family:Plex,sans-serif}}
 .dark{{background:#1F2328;color:#fff}} .light{{background:#F3F5F7;color:#1F2328}}
 .top{{display:flex;justify-content:space-between;align-items:center;margin-bottom:56px}}
 .logo{{height:64px}} .dark .logo{{color:#fff}} .light .logo{{color:#1F2328}}
+.brand{{display:flex;align-items:center;gap:20px}}
+.bname{{font:600 26px Plex;line-height:1.15;letter-spacing:.01em;padding-left:20px;border-left:2px solid currentColor;opacity:.85}}
+.offer{{margin-top:40px;align-self:flex-start;display:flex;flex-direction:column;gap:4px;border-radius:20px;padding:22px 28px;border:2px solid #E01B22}}
+.offer b{{font-size:32px;font-weight:600;line-height:1.25}}
+.offer span{{font-size:26px;line-height:1.35;opacity:.75}}
 .n{{font:600 30px PlexMono;letter-spacing:.08em;opacity:.6}}
 .eb{{font:600 32px PlexMono;letter-spacing:.14em;text-transform:uppercase;color:#E01B22;margin-bottom:34px;display:flex;align-items:center;gap:18px}}
 .eb:before{{content:"";width:18px;height:18px;border-radius:50%;background:#E01B22}}
@@ -70,11 +77,16 @@ def rich(t):  # escape, then allow <r>…</r> for red words
     return re.sub(r"&lt;r&gt;(.*?)&lt;/r&gt;", r'<span class="red">\1</span>', html.escape(t))
 
 def slide_html(s, i, n, k):
-    top = f'<div class="top"><svg class="logo" viewBox="330 428 420 204">{LOGO}</svg><span class="n">{i:02d} / {n:02d}</span></div>'
+    top = (f'<div class="top"><div class="brand"><svg class="logo" viewBox="330 428 420 204">{LOGO}</svg>'
+           f'<span class="bname">Wizz Smart<br>Services</span></div><span class="n">{i:02d} / {n:02d}</span></div>')
     kind = s["kind"]
     if kind == "cover":
+        # TikTok ads reject covers that don't name the advertiser and the service being sold
+        if not s.get("offer"): raise SystemExit('cover needs "offer": the service in plain words, e.g. "US company formation service"')
         return top + (f'<div class="eb">{rich(s["eyebrow"])}</div>' if s.get("eyebrow") else "") + f'<h1>{rich(s["title"])}</h1>' + \
-               (f'<p class="lede">{rich(s["lede"])}</p>' if s.get("lede") else "") + '<div class="swipe"><i>Swipe</i> →</div>'
+               (f'<p class="lede">{rich(s["lede"])}</p>' if s.get("lede") else "") + \
+               f'<div class="offer"><b>{rich(s["offer"])}</b><span>by Wizz Smart Services Sdn. Bhd., Malaysia</span></div>' + \
+               '<div class="swipe"><i>Swipe</i> →</div>'
     if kind == "cta":
         btns = "".join(f'<div class="btn{" o" if j else ""}">{rich(b)} <span>→</span></div>' for j, b in enumerate(s.get("buttons", [])))
         return top + f'<div class="eb">{rich(s.get("eyebrow", "Wizz Smart Services"))}</div><h1>{rich(s["title"])}</h1>' + \
@@ -93,7 +105,7 @@ def slide_html(s, i, n, k):
     return top + body
 
 async def main(spec_path, out):
-    spec = json.load(open(spec_path))
+    spec = json.load(open(spec_path)); out = os.path.abspath(out)
     os.makedirs(out, exist_ok=True)
     slides, n, k, bad = spec["slides"], len(spec["slides"]), 0, []
     async with async_playwright() as p:
