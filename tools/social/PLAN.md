@@ -18,6 +18,7 @@ Used by the weekly content task. Every Sunday it prepares the next week's posts 
 - **Advertiser identity (TikTok ad review):** every cover names the service sold in plain words (`"offer"`, e.g. "US LLC formation service · from RM 1,199").
   The renderer prints "Wizz Smart Services" next to the logo and "by Wizz Smart Services Sdn. Bhd., Malaysia" under the offer.
   Covers that are only a question ("US LLC or UK Ltd?") were rejected in Malaysia for "Financial Misrepresentation" (Oct 2026).
+- **Captions:** short, under 500 characters (Instagram can't share longer captions to Threads). Hook line, link, WhatsApp, 5–8 hashtags. Don't repeat what the slides already say.
 - CTA slide: `wizz.com.my/<page>` + `WhatsApp +60 11-2447 7685`, with one line of fine print.
 
 ## Posting routine (Monday, Wednesday, Friday at 08:47 MYT)
