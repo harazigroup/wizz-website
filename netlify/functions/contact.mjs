@@ -79,6 +79,8 @@ ${wa ? `<p style="margin:18px 0 0"><a href="${esc(wa)}" style="background:#25d36
     });
   } catch (e) {
     console.error(e);
+    // the lead is already saved; don't make the client resend
+    if (lead) return json(200, { ok: true, ref: lead.ref });
     return json(502, { error: "send_failed" });
   }
   try {
@@ -88,5 +90,5 @@ ${wa ? `<p style="margin:18px 0 0"><a href="${esc(wa)}" style="background:#25d36
       html: clientHtml,
     });
   } catch (e) { console.error("auto-reply failed", e); }
-  return json(200, { ok: true });
+  return json(200, lead ? { ok: true, ref: lead.ref } : { ok: true });
 };
