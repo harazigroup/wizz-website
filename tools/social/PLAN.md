@@ -56,3 +56,4 @@ Posting times (Malaysia time, GMT+8): 20:30 by default; 12:00–13:00 also works
 - 2026-10-11 · Digital banking (posted)
 - 2026-10-13 · Topic 1, US LLC vs UK Ltd (carousel prepared, not yet posted; blog already existed)
 - 2026-10-13 · Topic 7, UAE free zone or mainland (blog published)
+- 2026-10-14 · Topic 4, What RM 1,199 gets you: the US Starter package explained (blog + carousel, dark cover, sent for manual posting)
