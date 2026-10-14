@@ -971,7 +971,55 @@ a.pk-add{text-decoration:none;display:inline-block;white-space:nowrap}
 css = open(f"{D}/site.css").read()
 # v6 is the last block in site.css: replace it on every build so CSS edits apply
 css = css.split("\n/* ===== v6: packages")[0].rstrip("\n") + "\n"
-LANG_CSS = "\n/* language menu */\nselect.lang{width:auto;min-width:0;padding:7px 8px;font:600 13px var(--body);background-color:transparent;cursor:pointer}\nheader.site nav.main a,header.site .btn.small{white-space:nowrap}\n"
+# ---- client companies (tools/clients.json) -> home page and US page, with Arabic (site.js AR) and Malay (ms_strings.json)
+import hashlib as _hl
+_CL = json.load(open(f"{D}/tools/clients.json"))["clients"]
+_ck = lambda en: "cl_" + _hl.md5(en.encode()).hexdigest()[:8]
+_cl_ar, _cl_ms = {}, {}
+def _cl_t(tag, tri, cls=""):
+    k = _ck(tri["en"]); _cl_ar[k] = tri["ar"]; _cl_ms[tri["en"]] = tri["ms"]
+    return f'<{tag}{f" class={chr(34)}{cls}{chr(34)}" if cls else ""} data-i18n="{k}">{html.escape(tri["en"])}</{tag}>'
+_CL_HEAD = {"eb": {"en": "Client companies", "ar": "شركات عملائنا", "ms": "Syarikat pelanggan"},
+            "t": {"en": "Real companies we've formed", "ar": "شركات حقيقية أسسناها", "ms": "Syarikat sebenar yang kami tubuhkan"},
+            "p": {"en": "Shared with each client's permission. Every business is different: banks and payment providers make their own approval decisions.",
+                  "ar": "ننشرها بإذن أصحابها. كل نشاط تجاري مختلف، والبنوك ومزودو الدفع يتخذون قرارات الموافقة بأنفسهم.",
+                  "ms": "Dikongsi dengan kebenaran setiap pelanggan. Setiap perniagaan berbeza: bank dan penyedia pembayaran membuat keputusan kelulusan sendiri."},
+            "visit": {"en": "Visit website", "ar": "زيارة الموقع", "ms": "Lawati laman web"}}
+def clients_section(cls):
+    cards = ""
+    for c in _CL:
+        did = "".join(_cl_t("li", d) for d in c["did"])
+        link = (f'<a class="cl-link" href="{html.escape(c["url"])}" target="_blank" rel="noopener">' + _cl_t("span", _CL_HEAD["visit"]) + ' ↗</a>') if c.get("url") else ""
+        cards += (f'<article class="cl-card">{_cl_t("p", c["when"], "cl-when")}<h3>{html.escape(c["name"])}</h3>{_cl_t("p", c["what"], "cl-what")}'
+                  f'{_cl_t("p", c["from"], "cl-from")}<ul class="cl-did">{did}</ul>{link}</article>')
+    return (f'<section class="{cls}" id="clients">\n  <div class="wrap">\n    <div class="sec-head"><div>{_cl_t("p", _CL_HEAD["eb"], "eyebrow")}{_cl_t("h2", _CL_HEAD["t"])}</div>'
+            f'{_cl_t("p", _CL_HEAD["p"])}</div>\n    <div class="cl-grid">{cards}</div>\n  </div>\n</section>\n\n')
+for _pg, _before, _cls in (("index.html", '<section class="block night">', "block alt"), ("usa.html", '<section class="block alt" id="faq">', "block cl-sep")):
+    _s = open(f"{D}/{_pg}").read()
+    _s = re.sub(r'<section class="[^"]*" id="clients">.*?</section>\n\n', "", _s, flags=re.S)
+    if _before in _s and _CL: _s = _s.replace(_before, clients_section(_cls) + _before, 1)
+    open(f"{D}/{_pg}", "w").write(_s)
+_sj = open(f"{D}/site.js").read()
+_m = re.match(r"const AR = (\{.*?\});\n", _sj); _ard = json.loads(_m.group(1)); _ard.update(_cl_ar)
+open(f"{D}/site.js", "w").write(_sj[:_m.start(1)] + json.dumps(_ard, ensure_ascii=False) + _sj[_m.end(1):])
+_msd = json.load(open(f"{D}/tools/ms_strings.json")); _msd.update(_cl_ms)
+json.dump(_msd, open(f"{D}/tools/ms_strings.json", "w"), ensure_ascii=False, indent=0)
+CL_CSS = """
+/* client companies */
+.cl-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:18px}
+.cl-card{background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--red);border-radius:var(--r);padding:26px;display:flex;flex-direction:column;gap:10px}
+.cl-when{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+[dir="rtl"] .cl-when{font-family:var(--body);letter-spacing:0;font-size:13px}
+.cl-card h3{font-size:24px;font-weight:800}
+.cl-what{font-size:16px}
+.cl-from{font-size:14px;font-weight:600;color:var(--muted)}
+.cl-did{list-style:none;margin:6px 0 0;padding:12px 0 0;border-top:1px solid var(--line);display:grid;gap:8px}
+.cl-did li{position:relative;padding-inline-start:26px;font-size:15px}
+.cl-did li::before{content:"";position:absolute;inset-inline-start:0;top:3px;width:16px;height:16px;border-radius:50%;background:var(--red) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M5 10.5l3.2 3L15 6.5' fill='none' stroke='white' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/12px no-repeat}
+.cl-link{margin-top:auto;padding-top:8px;font-weight:600;font-size:14px;color:var(--red);text-decoration:none}
+.block.cl-sep{border-top:1px solid var(--line)}
+"""
+LANG_CSS = CL_CSS + "\n/* language menu */\nselect.lang{width:auto;min-width:0;padding:7px 8px;font:600 13px var(--body);background-color:transparent;cursor:pointer}\nheader.site nav.main a,header.site .btn.small{white-space:nowrap}\n"
 open(f"{D}/site.css", "w").write(css + CSS + US_CSS + LANG_CSS)
 
 # sitemap

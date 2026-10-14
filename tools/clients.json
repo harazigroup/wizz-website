@@ -1,0 +1,30 @@
+{
+  "_note": "Real client companies only, each with the client's permission. Never add phone numbers, state file numbers or personal ID details. Newest first. 'url' only if the client's site is finished. Built into index.html and usa.html by build_pkgs.py.",
+  "clients": [
+    {
+      "name": "B3 BROTHERS LLC",
+      "url": "",
+      "country": "us",
+      "when": {"en": "New Mexico LLC · October 2026", "ar": "شركة ذات مسؤولية محدودة في نيومكسيكو · أكتوبر 2026", "ms": "LLC New Mexico · Oktober 2026"},
+      "from": {"en": "Founder from Kuwait", "ar": "مؤسس من الكويت", "ms": "Pengasas dari Kuwait"},
+      "what": {"en": "Garden and landscaping services in New York.", "ar": "خدمات تنسيق الحدائق والمساحات الخضراء في نيويورك.", "ms": "Perkhidmatan taman dan landskap di New York."},
+      "did": [
+        {"en": "LLC formation", "ar": "تأسيس الشركة", "ms": "Penubuhan LLC"},
+        {"en": "EIN (US tax ID)", "ar": "الرقم الضريبي الأمريكي EIN", "ms": "EIN (ID cukai AS)"},
+        {"en": "Stripe, PayPal and Zyla (WorldFirst) accounts approved", "ar": "الموافقة على حسابات Stripe وPayPal وZyla التابعة لـ WorldFirst", "ms": "Akaun Stripe, PayPal dan Zyla (WorldFirst) diluluskan"}
+      ]
+    },
+    {
+      "name": "Fourdevs.ai LLC",
+      "url": "https://fourdevs.ai/",
+      "country": "us",
+      "when": {"en": "New Mexico LLC · July 2026", "ar": "شركة ذات مسؤولية محدودة في نيومكسيكو · يوليو 2026", "ms": "LLC New Mexico · Julai 2026"},
+      "from": {"en": "Founder from Pakistan", "ar": "مؤسس من باكستان", "ms": "Pengasas dari Pakistan"},
+      "what": {"en": "AI solutions: AI voice agents, AI infrastructure and data centres.", "ar": "حلول الذكاء الاصطناعي: وكلاء صوتيون وبنية تحتية ومراكز بيانات.", "ms": "Penyelesaian AI: ejen suara AI, infrastruktur AI dan pusat data."},
+      "did": [
+        {"en": "LLC formation", "ar": "تأسيس الشركة", "ms": "Penubuhan LLC"},
+        {"en": "Company documents delivered", "ar": "تسليم مستندات الشركة", "ms": "Dokumen syarikat diserahkan"}
+      ]
+    }
+  ]
+}
