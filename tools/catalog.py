@@ -98,7 +98,8 @@ ADDONS = [("Amazon seller account application support", f"${_u('Amazon seller ac
           ("Shopify store setup", f"from ${_u('Shopify store setup')}"),
           ("Business bank or payment account application (per provider)", "$199"),
           ("Amazon FBA prep from Malaysia", "quote"),
-          ("Document attestation / apostille", "quote")]
+          ("Document attestation / apostille", "quote"),
+          ("Add a partner to your US LLC", "quote")]
 
 # Add-ons that can be bought online (label must match ADDONS above). Prices in USD per unit.
 ADDON_SKUS = {
@@ -107,7 +108,7 @@ ADDON_SKUS = {
  "Business bank or payment account application (per provider)": ("addon-bank", 199),
 }
 # Add-ons we quote case by case: the button opens WhatsApp instead of the cart.
-ADDON_CONTACT = {"Shopify store setup", "Amazon FBA prep from Malaysia", "Document attestation / apostille"}
+ADDON_CONTACT = {"Shopify store setup", "Amazon FBA prep from Malaysia", "Document attestation / apostille", "Add a partner to your US LLC"}
 
 # Established companies (1+ year) for acquisition, e.g. to support a Saudi investment licence. Priced in ringgit.
 # Not sold online: clients contact us first so we can match an available company.

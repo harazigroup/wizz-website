@@ -168,6 +168,10 @@ AR = {
 "Business bank or payment account application (per provider)": "طلب حساب بنكي تجاري أو حساب دفع (لكل مزوّد)",
 "Amazon FBA prep from Malaysia": "تجهيز شحنات أمازون FBA من ماليزيا",
 "Document attestation / apostille": "تصديق المستندات / الأبوستيل",
+"Add a partner to your US LLC": "إضافة شريك إلى شركتك الأمريكية LLC",
+"Can I add a partner to my LLC later?": "هل يمكنني إضافة شريك إلى شركتي لاحقاً؟",
+"Yes. We prepare the amended operating agreement, check your state's rules, coordinate the new EIN and help update your bank and payment accounts. Your yearly filings change to a partnership return, so we also point you to a US tax adviser. Ask us for a quote.": "نعم. نجهّز اتفاقية التشغيل المعدّلة، ونتحقق من متطلبات ولايتك، وننسّق رقم EIN الجديد، ونساعد في تحديث حساباتك البنكية وحسابات الدفع. تتحول إقراراتك السنوية إلى إقرار شراكة، لذا نوجّهك أيضاً إلى مستشار ضريبي أمريكي. اطلب عرض سعر.",
+
 "$299": "$299",
 "$249 each": "$249 لكل منصة",
 "from $490": "من $490",
