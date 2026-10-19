@@ -4,6 +4,10 @@
 import { api, configured, env, json, products } from "./_airwallex.mjs";
 import { stripe, stripeOn } from "./_stripe.mjs";
 import { RATES, localPrice } from "./_fx.mjs";
+import { checkRef } from "./referral.mjs";
+
+// Referral discount: RM 100 off orders worth RM 1,000 or more (converted for other currencies).
+const REF_OFF_MYR = 100, REF_MIN_MYR = 1000;
 
 export default async (req) => {
   return handler(req);
@@ -26,7 +30,16 @@ async function handler(req) {
   const cur = RATES[(input.currency || "").toUpperCase()] ? input.currency.toUpperCase() : "USD";
   const lines = [...seen].map(([sku, qty]) => ({ sku, qty, item: products[sku], unit: products[sku].fixed?.[cur] ?? localPrice(products[sku].amount, cur) }));
   lines.forEach(l => { l.amount = Math.round(l.unit * l.qty * 100) / 100; });
-  const amount = Math.round(lines.reduce((a, l) => a + l.amount, 0) * 100) / 100;
+  const subtotal = Math.round(lines.reduce((a, l) => a + l.amount, 0) * 100) / 100;
+  // referral code: checked on the server; the discount is never taken from the browser
+  const ref = input.ref ? await checkRef(input.ref) : null;
+  const myrValue = lines.reduce((a, l) => a + (l.item.fixed?.MYR ?? localPrice(l.item.amount, "MYR")) * l.qty, 0);
+  let discount = 0;
+  if (ref && myrValue >= REF_MIN_MYR) {
+    discount = cur === "MYR" ? REF_OFF_MYR : Math.round(REF_OFF_MYR / RATES.MYR.rate * RATES[cur].rate * 100) / 100;
+    discount = Math.min(discount, Math.round(subtotal * 50) / 100); // never more than half the order
+  }
+  const amount = Math.round((subtotal - discount) * 100) / 100;
   const label = lines.map(l => l.item.name + (l.qty > 1 ? ` ×${l.qty}` : "")).join(" + ").slice(0, 480);
   const skus = lines.map(l => `${l.sku}x${l.qty}`).join(",").slice(0, 480);
   const usdTotal = lines.reduce((a, l) => a + l.item.amount * l.qty, 0);
@@ -40,10 +53,14 @@ async function handler(req) {
         line_items: Object.fromEntries(lines.map((l, i) => [i, { quantity: l.qty, price_data: { currency: cur.toLowerCase(), unit_amount: Math.round(l.unit * 100), product_data: { name: l.item.name, description: l.item.desc || undefined, images: l.item.image ? { 0: l.item.image } : undefined } } }])),
         phone_number_collection: { enabled: true },
         custom_text: { submit: { message: `By paying you agree to our [Terms of Service](${site}/terms.html) and [Refund Policy](${site}/refund.html). After payment you will fill in a short onboarding form, and we confirm everything with you before filing.` } },
-        metadata: { sku: skus, package: label, order_id: orderId, usd_price: String(usdTotal) },
+        metadata: { sku: skus, package: label, order_id: orderId, usd_price: String(usdTotal), ...(ref ? { ref_code: ref } : {}), ...(discount ? { discount: String(discount) } : {}) },
         payment_intent_data: { description: `${label} · ${orderId}`.slice(0, 990), metadata: { sku: skus, order_id: orderId } }
       };
-      const done = { order_id: orderId, package: label, amount, currency: cur, lines: lines.map(l => ({ sku: l.sku, qty: l.qty, amount: l.amount })) };
+      if (discount) {
+        const c = await stripe("/coupons", { method: "POST", body: { amount_off: Math.round(discount * 100), currency: cur.toLowerCase(), duration: "once", max_redemptions: 1, name: `Referral ${ref}`.slice(0, 40), metadata: { ref_code: ref, order_id: orderId } } });
+        base.discounts = { 0: { coupon: c.id } };
+      }
+      const done = { order_id: orderId, package: label, subtotal, discount, ref: ref || undefined, ref_min_met: ref ? myrValue >= REF_MIN_MYR : undefined, amount, currency: cur, lines: lines.map(l => ({ sku: l.sku, qty: l.qty, amount: l.amount })) };
       const pk = process.env.STRIPE_PUBLISHABLE_KEY || "";
       let embErr = "";
       if (input.embedded && pk.startsWith("pk_")) {
@@ -70,10 +87,10 @@ async function handler(req) {
         merchant_order_id: orderId,
         descriptor: "WIZZ SMART SERVICES",
         return_url: `${site}/thank-you.html`,
-        metadata: { sku: skus, package: label }
+        metadata: { sku: skus, package: label, ...(ref ? { ref_code: ref } : {}), ...(discount ? { discount: String(discount) } : {}) }
       }
     });
-    return json(200, { provider: "airwallex", env, intent_id: intent.id, client_secret: intent.client_secret, currency: intent.currency, order_id: orderId, package: label, amount });
+    return json(200, { provider: "airwallex", env, intent_id: intent.id, client_secret: intent.client_secret, currency: intent.currency, order_id: orderId, package: label, amount, subtotal, discount, ref: ref || undefined });
   } catch (e) {
     console.error(e);
     return json(502, { error: "payment_unavailable" });

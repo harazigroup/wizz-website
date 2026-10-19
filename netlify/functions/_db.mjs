@@ -25,6 +25,7 @@ export async function recordStripeOrder(s) {
   if (!c.email) return null;
   return rpc("server_record_order", { p_order: {
     order_ref: s.client_reference_id, stripe_session_id: s.id, email: c.email, customer_name: c.name || null, phone: c.phone || null,
-    package: s.metadata?.package || "", items: parseSkus(s.metadata?.sku), amount: (s.amount_total || 0) / 100, currency: s.currency
+    package: s.metadata?.package || "", items: parseSkus(s.metadata?.sku), amount: (s.amount_total || 0) / 100, currency: s.currency,
+    ref_code: s.metadata?.ref_code || null, discount: s.metadata?.discount || null
   } });
 }

@@ -227,7 +227,7 @@ if _changed: json.dump(_msx, open(_ms_path, "w"), ensure_ascii=False, indent=0)
 XMARK2 = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 6l8 8M14 6l-8 8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>'
 DISC = "Wizz Smart Services is a private company. We are not a government agency or a law firm."
 
-def x_hero(code, eyebrow, h1, lede, wa, second, trust, kit_title, kit_small, rows):
+def x_hero(code, eyebrow, h1, lede, wa, second, trust, kit_title, kit_small, rows, price="By quote"):
     kit = "".join(f'<li><span class="us-kit-ck">{CHECK}</span>{T("span", a)}{T("em", b, "pend" if p else "")}</li>' for a, b, p in rows)
     tr = "".join(f"<li>{CHECK}{T('span', x)}</li>" for x in trust)
     return f'''<section class="page-hero night us-hero">
@@ -244,7 +244,7 @@ def x_hero(code, eyebrow, h1, lede, wa, second, trust, kit_title, kit_small, row
     </div>
     <div class="us-kit" aria-hidden="true">
       <div class="us-kit-top"><span class="us-kit-flag ltr">{code}<i>.</i></span><div>{T("b", kit_title)}{T("small", kit_small)}</div>
-        <span class="us-kit-price">{T("span", "By quote")}</span></div>
+        <span class="us-kit-price">{T("span", price)}</span></div>
       <ul>{kit}</ul>
     </div>
   </div>

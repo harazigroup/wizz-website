@@ -383,7 +383,10 @@ ck_body = f"""<section class="block ck">
       <p class="eyebrow"{tk("Secure checkout")}>Secure checkout</p>
       <h1 class="ck-title" id="ckTitle"{tk("Order summary")}>Order summary</h1>
       <ul class="ck-lines" id="ckLines"></ul>
+      <div class="ck-subrow" id="ckSubRow" hidden><span{tk("Subtotal")}>Subtotal</span><b id="ckSub" class="ltr"></b></div>
+      <div class="ck-subrow ck-disc" id="ckDiscRow" hidden><span><span{tk("Referral discount")}>Referral discount</span> <em id="ckRefCode" class="ltr"></em></span><b id="ckDisc" class="ltr"></b></div>
       <div class="ck-totalrow"><span{tk("Total")}>Total</span><b id="ckTotal" class="ltr">…</b></div>
+      <p class="ck-refnote" id="ckRefNote" hidden{tk("The referral discount applies to orders of RM 1,000 or more.")}>The referral discount applies to orders of RM 1,000 or more.</p>
     </aside>
     <div class="ck-more">
       <h2 class="ck-h"{tk("What happens next")}>What happens next</h2>
@@ -425,13 +428,16 @@ CK_JS = """<script>
       const dep=d.dep?'<p class="ck-dep">'+T('Credited to your final package price.','يُخصم من السعر النهائي لباقتك.')+'</p>':'';
       return '<li><div class="ck-line">'+code+'<div class="ck-name"><b>'+name+'</b>'+(x.qty>1?'<span class="ck-qty">× '+x.qty+'</span>':'')+'</div><span class="ck-amt ltr">'+(line?fmt(line.amount,res.currency):'')+'</span></div>'+dep+inc+'</li>';}).join('');
     $('ckTotal').textContent=res?fmt(res.amount,res.currency):'…';
+    const dsc=res&&res.discount>0;$('ckSubRow').hidden=$('ckDiscRow').hidden=!dsc;
+    if(dsc){$('ckSub').textContent=fmt(res.subtotal,res.currency);$('ckDisc').textContent='−'+fmt(res.discount,res.currency);$('ckRefCode').textContent=res.ref||'';}
+    $('ckRefNote').hidden=!(res&&res.ref&&res.ref_min_met===false);
     document.title=T('Checkout','إتمام الطلب')+' | Wizz Smart Services';
   }
   document.addEventListener('wizz:lang',render);render();
   function fail(msg){$('ckLoading').hidden=true;const m=$('ckMsg');m.innerHTML=msg;m.hidden=false;}
   const WA='<span class="ltr">+60 11-2447 7685</span>';
   async function start(embedded){
-    const r=await fetch('/.netlify/functions/checkout',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({items:list,currency:cur,embedded})});
+    const r=await fetch('/.netlify/functions/checkout',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({items:list,currency:cur,embedded,ref:(()=>{try{const v=JSON.parse(localStorage.getItem('wizz-ref')||'null');return v&&v.c&&Date.now()-v.t<60*864e5?v.c:''}catch(e){return ''}})()})});
     const j=await r.json().catch(()=>({}));
     if(!r.ok)throw Object.assign(new Error('server'),{code:j.error});
     return j;
@@ -488,7 +494,7 @@ open(f"{D}/quote-catalog.json", "w").write(json.dumps(QCAT, ensure_ascii=False))
 # ---------------- client account + team admin (Supabase)
 import shutil
 SB_JS = '<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script>\n'
-for n in ("account.js", "admin.js", "leads.js", "quote.html"):
+for n in ("account.js", "admin.js", "leads.js", "referrals.js", "quote.html"):
     shutil.copy(f"{D}/tools/portal/{n}", f"{D}/{n}")
 ac_body = f"""<section class="block ac">
   <div class="wrap ac-wrap">
@@ -515,7 +521,8 @@ ad_body = """<section class="block ac">
     <div class="ac-card" id="adGate" hidden></div>
     <div id="adApp" hidden>
       <div class="ac-top"><div><p class="eyebrow">Team</p><h1>Wizz admin</h1><p class="muted">Signed in as <b id="adWho"></b></p></div><div class="ac-actions"><button class="btn ghost small" id="adOut" type="button">Sign out</button></div></div>
-      <div class="ad-tabs" role="tablist"><button type="button" role="tab" data-tab="leads" aria-selected="true">Leads</button><button type="button" role="tab" data-tab="orders" aria-selected="false">Orders</button><button type="button" role="tab" data-tab="settings" aria-selected="false">Settings</button></div>
+      <div class="ad-tabs" role="tablist"><button type="button" role="tab" data-tab="leads" aria-selected="true">Leads</button><button type="button" role="tab" data-tab="orders" aria-selected="false">Orders</button><button type="button" role="tab" data-tab="referrals" aria-selected="false">Referrals</button><button type="button" role="tab" data-tab="settings" aria-selected="false">Settings</button></div>
+      <div id="tabReferrals" hidden><div id="rfBody"><p class="ac-none">Loading…</p></div></div>
       <div id="tabSettings" hidden><section class="ad-box"><h3>Social media posting (Postiz)</h3><p class="ld-hint" style="margin-top:0">The daily content task schedules Instagram and TikTok posts through Postiz. In Postiz, connect the Wizz Instagram and TikTok accounts, then create an API key (Settings → Public API) and paste it here. The key is stored on the server and can't be read back from this page.</p><p id="pzStatus" class="ld-hint"></p><div class="ad-form"><input id="pzKey" type="password" autocomplete="off" placeholder="Postiz API key"><button class="btn solid small" id="pzSave" type="button">Save key</button><button class="btn ghost small" id="pzDel" type="button">Remove key</button></div></section></div>
       <div id="tabLeads">
         <div class="ld-stats" id="ldStats"></div>
@@ -543,12 +550,13 @@ ad_body = """<section class="block ac">
   </div>
 </section>"""
 page("admin.html", "Team admin | Wizz Smart Services", "Team admin.", ad_body,
-     scripts=SB_JS + '<script src="admin.js" defer></script>\n<script src="leads.js" defer></script>\n', extra_head='<meta name="robots" content="noindex">')
+     scripts=SB_JS + '<script src="admin.js" defer></script>\n<script src="leads.js" defer></script>\n<script src="referrals.js" defer></script>\n', extra_head='<meta name="robots" content="noindex">')
 
 exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "us_page.py")).read())
 exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "uk_page.py")).read())
 exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "saudi_page.py")).read())
 exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "extra_pages.py")).read())
+exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "refer_page.py")).read())
 
 # ---------------- legal pages
 CO = "WIZZ SMART SERVICES SDN. BHD. (Registration No. 202501029005), B2-2-3, Publika, Solaris Dutamas, 50480 Kuala Lumpur, Malaysia"
@@ -1006,6 +1014,21 @@ open(f"{D}/site.js", "w").write(_sj[:_m.start(1)] + json.dumps(_ard, ensure_asci
 _msd = json.load(open(f"{D}/tools/ms_strings.json")); _msd.update(_cl_ms)
 json.dump(_msd, open(f"{D}/tools/ms_strings.json", "w"), ensure_ascii=False, indent=0)
 CL_CSS = """
+/* referral */
+.ref-toast{position:fixed;left:16px;right:16px;margin:0 auto;width:fit-content;bottom:22px;transform:translateY(20px);opacity:0;transition:.3s;z-index:90;max-width:560px;display:flex;gap:12px;align-items:center;background:var(--ink);color:var(--on-ink);border-radius:var(--r);padding:12px 14px 12px 16px;font-size:14px;box-shadow:0 12px 30px -12px rgba(0,0,0,.4)}
+.ref-toast.on{opacity:1;transform:none}
+.ref-toast button{background:none;border:0;color:inherit;font-size:20px;line-height:1;cursor:pointer;padding:0 2px}
+.ref-in{max-width:260px;text-transform:uppercase;letter-spacing:.06em}
+.ck-subrow{display:flex;justify-content:space-between;font-size:14px;color:var(--muted);padding:4px 0}
+.ck-disc b{color:#1a7f3c}.ck-disc em{font-style:normal;font-family:var(--mono);font-size:12px}
+.ck-refnote{font-size:13px;color:var(--muted);margin-top:8px}
+.rf-st{grid-template-columns:repeat(4,minmax(0,1fr))}.rf-st .ld-stat{cursor:default}
+.rf-table{overflow-x:auto;margin-top:10px}.rf-table table{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
+.rf-table th{text-align:start;font:600 12px var(--body);color:var(--muted);padding:8px;border-bottom:1px solid var(--line)}
+.rf-table td{padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:top}.rf-table small{color:var(--muted)}
+.rf-acts{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.rf-paused td{opacity:.55}
+#tabReferrals .ad-box{margin-top:14px}#rfF{width:auto}
+
 /* client companies */
 .cl-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:18px}
 .cl-card{background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--red);border-radius:var(--r);padding:26px;display:flex;flex-direction:column;gap:10px}
@@ -1033,8 +1056,12 @@ if os.environ.get('WIZZ_DUMP'): json.dump(sorted(AR_SRC), open(os.environ['WIZZ_
 # footer: Amazon brand and MM2H links on every page (idempotent)
 _FT_OLD = '<li><a href="services.html#fba" data-i18n="s8_t">Amazon FBA preparation from Malaysia</a></li>'
 _FT_NEW = _FT_OLD + '\n          <li><a href="amazon-brand.html" data-i18n="ft_amz">Amazon Brand Registry</a></li>\n          <li><a href="mm2h.html" data-i18n="ft_mm2h">MM2H Malaysia</a></li>'
+_FT_M = '<li><a href="mm2h.html" data-i18n="ft_mm2h">MM2H Malaysia</a></li>'
 for _f in glob.glob(f"{D}/*.html"):
     _h = open(_f).read()
     if _FT_OLD in _h and 'data-i18n="ft_mm2h"' not in _h:
-        open(_f, "w").write(_h.replace(_FT_OLD, _FT_NEW, 1))
+        _h = _h.replace(_FT_OLD, _FT_NEW, 1)
+    if _FT_M in _h and 'data-i18n="ft_ref"' not in _h:
+        _h = _h.replace(_FT_M, _FT_M + '\n          <li><a href="refer.html" data-i18n="ft_ref">Refer &amp; earn</a></li>', 1)
+    open(_f, "w").write(_h)
 import runpy; runpy.run_path(os.path.join(os.path.dirname(os.path.abspath(__file__)), "build_ar.py"))

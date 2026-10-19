@@ -9,7 +9,7 @@ const FROM = process.env.CONTACT_FROM || "Wizz Smart Services <info@wizz.com.my>
 const FIELDS = [
   ["name", "Name"], ["email", "Email"], ["phone", "WhatsApp / phone"], ["nat", "Nationality"],
   ["res", "Country of residence"], ["mkt", "Target country"], ["act", "Business activity"],
-  ["services", "Services"], ["own", "Owners"], ["brand", "Selling online"], ["msg", "Notes"], ["lang", "Site language"],
+  ["services", "Services"], ["own", "Owners"], ["brand", "Selling online"], ["msg", "Notes"], ["ref", "Referral code"], ["lang", "Site language"],
 ];
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const emailOk = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
@@ -43,6 +43,7 @@ export default async (req) => {
   const v = {};
   for (const [k] of FIELDS) v[k] = typeof d[k] === "string" ? d[k].trim().slice(0, k === "msg" ? 4000 : 300) : "";
   if (!v.name || !emailOk(v.email) || !v.act) return json(400, { error: "missing_fields" });
+  v.ref = v.ref.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 16);
 
   // 1) save the lead (scored in the database) so nothing is lost, even if email is down
   let lead = null;
