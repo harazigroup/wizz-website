@@ -49,6 +49,16 @@ Posting times (Malaysia time, GMT+8): 20:30 by default; 12:00–13:00 also works
 14. Oman: company setup or setup with a 2-year investor visa
 15. UK London address plans: registered office, director's address, business address, call answering
 16. Yearly duties after you form a company (US, UK): what you must file
+17. Wyoming, New Mexico or Delaware: choosing the state for your US LLC (usa.html)
+18. EIN for non-residents: what it is and how the application works
+19. Shopify store setup: what your company and store need before launch
+20. Canada corporation for Amazon.ca sellers: Ontario or BC
+21. Netherlands BV for Amazon EU and Bol.com sellers
+22. Attestation and apostille: why your company documents need them
+23. Malaysia Sdn. Bhd. for foreign owners: the resident director rule
+24. Amazon Brand Registry: why the trademark comes first (amazon-brand.html)
+25. MM2H and company formation: two different things (mm2h.html)
+26. Pakistan private limited company: security clearance for foreign shareholders
 
 ## Used topics
 - 2026-10-12 · UK company without living in the UK (posted)
@@ -62,3 +72,4 @@ Posting times (Malaysia time, GMT+8): 20:30 by default; 12:00–13:00 also works
 - 2026-10-15 · Adding a partner to a US LLC (blog published, extra post)
 - 2026-10-16 · Topic 5, Estonia e-Residency: what it is and what it isn't (blog + carousel, light cover, sent for manual posting)
 - 2026-10-20 · Topic 6, Saudi company setup in 2 stages: foreign company first, then MISA licence (blog + carousel, dark cover, sent for manual posting)
+- 2026-10-20 · Topic 8, Selling on Noon, Shopee, Lazada and TikTok Shop with the right company (blog + carousel, light cover, sent for manual posting)
