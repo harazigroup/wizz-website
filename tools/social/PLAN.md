@@ -73,3 +73,4 @@ Posting times (Malaysia time, GMT+8): 20:30 by default; 12:00–13:00 also works
 - 2026-10-16 · Topic 5, Estonia e-Residency: what it is and what it isn't (blog + carousel, light cover, sent for manual posting)
 - 2026-10-20 · Topic 6, Saudi company setup in 2 stages: foreign company first, then MISA licence (blog + carousel, dark cover, sent for manual posting)
 - 2026-10-20 · Topic 8, Selling on Noon, Shopee, Lazada and TikTok Shop with the right company (blog + carousel, light cover, sent for manual posting)
+- 2026-10-21 · Topic 9, Amazon FBA prep from Malaysia: how it works, step by step (blog + carousel, dark cover, sent for manual posting)
