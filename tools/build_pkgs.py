@@ -557,6 +557,7 @@ exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "uk_page.py")
 exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "saudi_page.py")).read())
 exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "extra_pages.py")).read())
 exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "refer_page.py")).read())
+exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "my_form_page.py")).read())
 
 # ---------------- legal pages
 CO = "WIZZ SMART SERVICES SDN. BHD. (Registration No. 202501029005), B2-2-3, Publika, Solaris Dutamas, 50480 Kuala Lumpur, Malaysia"
