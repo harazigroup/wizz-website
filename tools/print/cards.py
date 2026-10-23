@@ -3,7 +3,7 @@
 
 Usage:  python3 tools/print/cards.py people.json out_dir
 people.json: [{"name": "Full Name", "title": "Job title", "phone": "+60 11-2447 7685", "email": "info@wizz.com.my"}, ...]
-phone/email are optional and default to the company WhatsApp and info@wizz.com.my. The QR opens WhatsApp chat with that phone.
+phone/email are optional and default to the company WhatsApp and info@wizz.com.my. The QR opens the website (https://wizz.com.my); add "qr": "whatsapp" to make it open a WhatsApp chat with that phone instead.
 Fonts and logo come from tools/social (npm install there once). Needs Playwright with Chromium and `pip install segno`.
 """
 import asyncio, html, json, os, re, sys
@@ -59,10 +59,12 @@ def back(p):
     e = html.escape
     phone = p.get("phone") or CO_PHONE
     email = p.get("email") or CO_EMAIL
-    qr = segno.make(f"https://wa.me/{re.sub(r'[^0-9]', '', phone)}", error="m").svg_inline(border=0, dark=INK, omitsize=True)
+    wa = p.get("qr") == "whatsapp"
+    target = f"https://wa.me/{re.sub(r'[^0-9]', '', phone)}" if wa else "https://wizz.com.my"
+    qr = segno.make(target, error="m").svg_inline(border=0, dark=INK, omitsize=True)
     return f'''<section class="card back"><div class="edge"></div><div class="safe">
 <div class="top"><h2>{e(p["name"])}</h2><p class="role">{e(p["title"])}</p></div>
-<div class="qr">{qr}<small>WhatsApp</small></div>
+<div class="qr">{qr}<small>{"WhatsApp" if wa else "Website"}</small></div>
 <ul><li><span>TEL</span>{e(phone)}</li><li><span>MAIL</span>{e(email)}</li><li><span>WEB</span>wizz.com.my</li></ul>
 <p class="addr">WIZZ SMART SERVICES SDN. BHD. (202501029005)<br>B2-2-3, Publika, Solaris Dutamas, 50480 Kuala Lumpur, Malaysia</p>
 </div></section>'''
