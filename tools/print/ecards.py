@@ -34,9 +34,10 @@ def vcard(p):
     middle = " ".join(rest[:-n]) if rest else ""
     lines = ["BEGIN:VCARD", "VERSION:3.0", f"N:{last};{first};{middle};;", f"FN:{p['name']}", f"ORG:Wizz Smart Services Sdn. Bhd.",
              f"TITLE:{p['title']}", f"TEL;TYPE=CELL,VOICE:+{digits(p['phone'])}", f"EMAIL;TYPE=WORK,INTERNET:{p['email']}",
-             "TEL;TYPE=WORK,VOICE:+601124477685", "EMAIL;TYPE=WORK,INTERNET:info@wizz.com.my", "URL:https://wizz.com.my",
+             "EMAIL;TYPE=WORK,INTERNET:info@wizz.com.my", "URL:https://wizz.com.my",
              f"ADR;TYPE=WORK:;;{ADDR[0].replace(',', chr(92) + ',')};{ADDR[1]};;{ADDR[2]};{ADDR[3]}", "NOTE:Build your business beyond borders. Company formation, banking, marketplaces and logistics.",
              "END:VCARD"]
+    if digits(p["phone"]) != "601124477685": lines.insert(7, "TEL;TYPE=WORK,VOICE:+601124477685")
     return "\r\n".join(lines) + "\r\n"
 
 def page(p):
