@@ -496,7 +496,7 @@ open(f"{D}/quote-catalog.json", "w").write(json.dumps(QCAT, ensure_ascii=False))
 # ---------------- client account + team admin (Supabase)
 import shutil
 SB_JS = '<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script>\n'
-for n in ("account.js", "admin.js", "leads.js", "referrals.js", "quote.html"):
+for n in ("account.js", "admin.js", "leads.js", "referrals.js", "careers.js", "quote.html"):
     shutil.copy(f"{D}/tools/portal/{n}", f"{D}/{n}")
 ac_body = f"""<section class="block ac">
   <div class="wrap ac-wrap">
@@ -523,8 +523,9 @@ ad_body = """<section class="block ac">
     <div class="ac-card" id="adGate" hidden></div>
     <div id="adApp" hidden>
       <div class="ac-top"><div><p class="eyebrow">Team</p><h1>Wizz admin</h1><p class="muted">Signed in as <b id="adWho"></b></p></div><div class="ac-actions"><button class="btn ghost small" id="adOut" type="button">Sign out</button></div></div>
-      <div class="ad-tabs" role="tablist"><button type="button" role="tab" data-tab="leads" aria-selected="true">Leads</button><button type="button" role="tab" data-tab="orders" aria-selected="false">Orders</button><button type="button" role="tab" data-tab="referrals" aria-selected="false">Referrals</button><button type="button" role="tab" data-tab="settings" aria-selected="false">Settings</button></div>
+      <div class="ad-tabs" role="tablist"><button type="button" role="tab" data-tab="leads" aria-selected="true">Leads</button><button type="button" role="tab" data-tab="orders" aria-selected="false">Orders</button><button type="button" role="tab" data-tab="referrals" aria-selected="false">Referrals</button><button type="button" role="tab" data-tab="careers" aria-selected="false">Careers</button><button type="button" role="tab" data-tab="settings" aria-selected="false">Settings</button></div>
       <div id="tabReferrals" hidden><div id="rfBody"><p class="ac-none">Loading…</p></div></div>
+      <div id="tabCareers" hidden><div id="jbBody"><p class="ac-none">Loading…</p></div></div>
       <div id="tabSettings" hidden><section class="ad-box"><h3>Social media posting (Postiz)</h3><p class="ld-hint" style="margin-top:0">The daily content task schedules Instagram and TikTok posts through Postiz. In Postiz, connect the Wizz Instagram and TikTok accounts, then create an API key (Settings → Public API) and paste it here. The key is stored on the server and can't be read back from this page.</p><p id="pzStatus" class="ld-hint"></p><div class="ad-form"><input id="pzKey" type="password" autocomplete="off" placeholder="Postiz API key"><button class="btn solid small" id="pzSave" type="button">Save key</button><button class="btn ghost small" id="pzDel" type="button">Remove key</button></div></section></div>
       <div id="tabLeads">
         <div class="ld-stats" id="ldStats"></div>
@@ -552,7 +553,7 @@ ad_body = """<section class="block ac">
   </div>
 </section>"""
 page("admin.html", "Team admin | Wizz Smart Services", "Team admin.", ad_body,
-     scripts=SB_JS + '<script src="admin.js" defer></script>\n<script src="leads.js" defer></script>\n<script src="referrals.js" defer></script>\n', extra_head='<meta name="robots" content="noindex">')
+     scripts=SB_JS + '<script src="admin.js" defer></script>\n<script src="leads.js" defer></script>\n<script src="referrals.js" defer></script>\n<script src="careers.js" defer></script>\n', extra_head='<meta name="robots" content="noindex">')
 
 exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "us_page.py")).read())
 exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "uk_page.py")).read())
@@ -560,6 +561,7 @@ exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "saudi_page.p
 exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "extra_pages.py")).read())
 exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "refer_page.py")).read())
 exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "my_form_page.py")).read())
+exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "careers_page.py")).read())
 
 # ---------------- legal pages
 CO = "WIZZ SMART SERVICES SDN. BHD. (Registration No. 202501029005), B2-2-3, Publika, Solaris Dutamas, 50480 Kuala Lumpur, Malaysia"
@@ -677,6 +679,10 @@ if '"pay_secure"' not in js:
 if '"pay_usdt"' not in js:
     js = js.replace('"nav_mp": ', '"pay_usdt": "نقبل أيضاً", "nav_mp": ', 1)
     assert '"pay_usdt"' in js
+    open(f"{D}/site.js", "w").write(js)
+if '"ft_jobs"' not in js:
+    js = js.replace('"nav_mp": ', '"ft_jobs": "الوظائف", "nav_mp": ', 1)
+    assert '"ft_jobs"' in js
     open(f"{D}/site.js", "w").write(js)
 if '"nav_legal"' not in js:
     js = js.replace('"nav_mp": ', '"nav_legal": "قانوني", "lg_terms": "شروط الخدمة", "lg_refund": "سياسة الاسترداد", "lg_privacy": "سياسة الخصوصية", "wa_chat": "تواصل معنا", "nav_mp": ', 1)
@@ -1077,6 +1083,9 @@ for _f in glob.glob(f"{D}/*.html"):
     _h = open(_f).read()
     if _FT_OLD in _h and 'data-i18n="ft_mm2h"' not in _h:
         _h = _h.replace(_FT_OLD, _FT_NEW, 1)
+    _FT_B = '<a href="blog.html" data-i18n="nav_blog">Blog</a></li>'
+    if _FT_B in _h and 'data-i18n="ft_jobs"' not in _h:
+        _h = _h.replace(_FT_B, '<a href="blog.html" data-i18n="nav_blog">Blog</a> · <a href="careers.html" data-i18n="ft_jobs">Careers</a></li>', 1)
     if _FT_M in _h and 'data-i18n="ft_ref"' not in _h:
         _h = _h.replace(_FT_M, _FT_M + '\n          <li><a href="refer.html" data-i18n="ft_ref">Refer &amp; earn</a></li>', 1)
     open(_f, "w").write(_h)
