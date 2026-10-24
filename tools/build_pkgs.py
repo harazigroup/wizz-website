@@ -27,6 +27,7 @@ def page(fname, title, desc, body, current=None, extra_head="", scripts=""):
     open(f"{D}/{fname}", "w").write(h + '<main id="top">\n' + body + "\n</main>" + foot)
 
 from catalog_ar import AR as AR_SRC
+AR_SRC.setdefault("Prefer to pay in USDT (TRC-20)? Message us on WhatsApp and we'll send an invoice with our wallet address.", 'تفضّل الدفع بعملة USDT (شبكة TRC-20)؟ راسلنا عبر واتساب وسنرسل لك فاتورة بعنوان محفظتنا.')
 MS_SRC = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'ms_strings.json')))
 MS = lambda en: MS_SRC.get(en, en)
 LANG_SEL = '<select class="lang" id="langSel" aria-label="Language"><option value="en">EN</option><option value="ms">BM</option><option value="ar">عربي</option></select>'
@@ -397,6 +398,7 @@ ck_body = f"""<section class="block ck">
       </ol>
       <div class="ck-trust">
         <p>{LOCK}<span{tk("Payments are processed by Stripe. We never see your full card details.")}>Payments are processed by Stripe. We never see your full card details.</span></p>
+        <p class="ck-usdt"><b class="pay-usdt"><i aria-hidden="true">₮</i>USDT</b><a href="https://wa.me/601124477685?text=Hi%20Wizz%2C%20I%27d%20like%20to%20pay%20in%20USDT%20(TRC-20)." target="_blank" rel="noopener"{tk("Prefer to pay in USDT (TRC-20)? Message us on WhatsApp and we'll send an invoice with our wallet address.")}>Prefer to pay in USDT (TRC-20)? Message us on WhatsApp and we'll send an invoice with our wallet address.</a></p>
         <p><a href="refund.html"{tk("Refund Policy")}>Refund Policy</a> · <a href="terms.html"{tk("Terms of Service")}>Terms of Service</a> · <a href="https://wa.me/601124477685" target="_blank" rel="noopener"{tk("Questions? WhatsApp us")}>Questions? WhatsApp us</a></p>
       </div>
     </div>
@@ -614,7 +616,8 @@ legal("privacy.html", "Privacy Policy", "How we collect, use and protect your pe
 # Payment methods shown in the footer. Keep this in line with what is switched on in Stripe.
 PAY_METHODS = ["Visa", "Mastercard", "UnionPay", "Apple Pay", "Google Pay", "Link", "FPX", "GrabPay"]
 PAY_ROW = ('      <div class="pay-row"><span class="pay-label" data-i18n="pay_secure">Secure payments by Stripe</span>'
-           '<ul class="pay-list" aria-label="Accepted payment methods">' + "".join(f'<li>{m}</li>' for m in PAY_METHODS) + '</ul></div>\n')
+           '<ul class="pay-list" aria-label="Accepted payment methods">' + "".join(f'<li>{m}</li>' for m in PAY_METHODS) + '</ul>'
+           '<span class="pay-alt"><span data-i18n="pay_usdt">We also accept</span><b class="pay-usdt"><i aria-hidden="true">₮</i>USDT (TRC-20)</b></span></div>\n')
 LEGAL_COL = """      <div><h4 data-i18n="nav_legal">Legal</h4><ul>
           <li><a href="terms.html" data-i18n="lg_terms">Terms of Service</a></li>
           <li><a href="refund.html" data-i18n="lg_refund">Refund Policy</a></li>
@@ -641,6 +644,8 @@ for f in glob.glob(f"{D}/*.html"):
     # accepted payment methods, above the copyright line
     if 'class="pay-row"' not in s:
         s = s.replace('    <div class="legal">\n', '    <div class="legal">\n' + PAY_ROW, 1)
+    elif 'data-i18n="pay_usdt"' not in s:
+        s = re.sub(r'      <div class="pay-row">.*?</ul></div>\n', lambda m: PAY_ROW, s, count=1, flags=re.S)
     if 'class="acct-btn"' not in s:
         s = s.replace('<button class="lang" id="langBtn"', '<a class="acct-btn" href="account.html" aria-label="My account" title="My account"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm-7 8a7 7 0 0 1 14 0"/></svg></a>\n      <button class="lang" id="langBtn"', 1)
     s = re.sub(r'<button class="lang" id="langBtn"[^>]*>[^<]*</button>', LANG_SEL, s)
@@ -668,6 +673,10 @@ js = open(f"{D}/site.js").read()
 if '"pay_secure"' not in js:
     js = js.replace('"nav_mp": ', '"pay_secure": "دفع آمن عبر Stripe", "nav_mp": ', 1)
     assert '"pay_secure"' in js
+    open(f"{D}/site.js", "w").write(js)
+if '"pay_usdt"' not in js:
+    js = js.replace('"nav_mp": ', '"pay_usdt": "نقبل أيضاً", "nav_mp": ', 1)
+    assert '"pay_usdt"' in js
     open(f"{D}/site.js", "w").write(js)
 if '"nav_legal"' not in js:
     js = js.replace('"nav_mp": ', '"nav_legal": "قانوني", "lg_terms": "شروط الخدمة", "lg_refund": "سياسة الاسترداد", "lg_privacy": "سياسة الخصوصية", "wa_chat": "تواصل معنا", "nav_mp": ', 1)
@@ -921,6 +930,12 @@ body[data-page="checkout"] .wa-float{width:56px;padding:0;justify-content:center
 .g-label.g-nl{margin:-20px 0 0 2px}
 .g-label.g-fr{margin-left:-30px}
 .pay-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding-bottom:6px}
+.pay-alt{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:color-mix(in srgb,var(--on-ink) 80%,transparent)}
+.pay-usdt{display:inline-flex;align-items:center;gap:6px;background:#fff;color:#1F2328;border-radius:5px;padding:4px 9px 4px 5px;font:700 12px/1.2 var(--body);direction:ltr}
+.pay-usdt i{display:grid;place-items:center;width:16px;height:16px;border-radius:50%;background:#26A17B;color:#fff;font:700 11px/1 var(--body);font-style:normal}
+.ck-usdt{display:flex;gap:10px;align-items:flex-start}
+.ck-usdt .pay-usdt{flex:none;border:1px solid var(--line)}
+.ck-usdt a{color:inherit}
 .pay-label{display:inline-flex;align-items:center;gap:6px;font-weight:600;color:color-mix(in srgb,var(--on-ink) 80%,transparent)}
 .pay-label::before{content:"";width:12px;height:12px;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 1a5 5 0 0 0-5 5v4H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5zm-3 9V6a3 3 0 1 1 6 0v4z'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 1a5 5 0 0 0-5 5v4H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5zm-3 9V6a3 3 0 1 1 6 0v4z'/%3E%3C/svg%3E") center/contain no-repeat}
 .pay-list{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
