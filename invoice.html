@@ -35,7 +35,7 @@ td small{display:block;color:var(--muted);font-size:12.5px}
 .stamp.void{border-color:#999;color:#999}
 .pay{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:22px}
 .pay section{border:1px solid var(--line);border-radius:8px;padding:12px 14px}
-.pay dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:13.5px}.pay dt{color:var(--muted)}.pay dd{margin:0;word-break:break-all}
+.pay dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:13.5px}.pay dt{color:var(--muted)}.pay dd{margin:0;overflow-wrap:anywhere}
 .mono{font-family:ui-monospace,Menlo,monospace;font-weight:600}
 .qr{width:96px;height:96px;float:right;margin-left:10px}.qr svg{width:100%;height:100%}
 .note{background:#fff7e6;border:1px solid #f3dcae;border-radius:8px;padding:10px 12px;margin-top:14px;white-space:pre-wrap;font-size:13.5px}
@@ -54,7 +54,7 @@ td small{display:block;color:var(--muted);font-size:12.5px}
 <script>
 (function(){
 // ---- payment details shown on every invoice. Fill in BANK when the account details are confirmed.
-const BANK = { name: "", bank: "", account: "", swift: "", note: "Bank details are sent with your invoice on WhatsApp or email. | تُرسل بيانات الحساب البنكي مع الفاتورة عبر واتساب أو البريد." };
+const BANK = { name: "Wizz Smart Services Sdn Bhd", bank: "RHB Bank", account: "26457100011519", swift: "RHBBMYKLXXX", note: "Bank details are sent with your invoice on WhatsApp or email. | تُرسل بيانات الحساب البنكي مع الفاتورة عبر واتساب أو البريد." };
 const USDT = "TLcDHgGxPL1b4JiYUXEDMitr5zTVrfDg6n";
 const SB_URL='https://mzkkhotipmgqczavrfqy.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im16a2tob3RpcG1ncWN6YXZyZnF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEzNjA5OTEsImV4cCI6MjEwNjkzNjk5MX0.-RX74vfMP8qedH2F7XvBN4OGj_dL8yEX96VlXO8ONA0';
@@ -67,10 +67,10 @@ const ST={submitted:['Received','تم الاستلام'],invoiced:['Unpaid','غ�
 const PAID=['paid','in_progress','completed'];
 const q=new URLSearchParams(location.search);
 const HEAD='<div class="hd"><img src="/img/email-logo.png" alt="Wizz"><div class="co"><b>WIZZ SMART SERVICES SDN. BHD.</b><br>Company No. 202501029005<br>B2-2-3, Publika, Solaris Dutamas, 50480 Kuala Lumpur, Malaysia<br>info@wizz.com.my · +60 11-2447 7685 · wizz.com.my</div></div>';
-const FOOT='<div class="ft">WIZZ SMART SERVICES SDN. BHD. · Company No. 202501029005 · B2-2-3, Publika, Solaris Dutamas, 50480 Kuala Lumpur, Malaysia<br>Group company in Oman: El Harazi Co for Investment LLC · CR 1340473 · 506, Al Mawalih South, Al Seeb, Muscat 121</div>';
+const FOOT='<div class="ft">WIZZ SMART SERVICES SDN. BHD. · Company No. 202501029005 · B2-2-3, Publika, Solaris Dutamas, 50480 Kuala Lumpur, Malaysia</div>';
 const bar=()=>'<div class="bar"><a class="btn" href="partner.html">← '+L('Partner portal','بوابة الشركاء')+'</a><button class="btn solid" type="button" onclick="print()">'+L('Print / save PDF','طباعة / حفظ PDF')+'</button></div>';
 const bill=p=>'<section><h3>'+L('Billed to','فاتورة إلى')+'</h3><b>'+esc(p.company)+'</b><br><span class="mono">'+esc(p.code)+'</span>'+(p.cr_number?' · CR '+esc(p.cr_number):'')+'<br>'+esc([p.city,p.country].filter(Boolean).join(', '))+'<br>'+esc(p.email)+(p.phone?' · '+esc(p.phone):'')+'</section>';
-const payBox=()=>{const b=BANK.account?'<dl><dt>Account name</dt><dd>'+esc(BANK.name)+'</dd><dt>Bank</dt><dd>'+esc(BANK.bank)+'</dd><dt>Account no.</dt><dd class="mono">'+esc(BANK.account)+'</dd>'+(BANK.swift?'<dt>SWIFT</dt><dd class="mono">'+esc(BANK.swift)+'</dd>':'')+'</dl>':'<p style="margin:0;font-size:13px">'+esc(BANK.note)+'</p>';
+const payBox=()=>{const b=BANK.account?'<dl><dt>'+L('Account name','اسم الحساب')+'</dt><dd>'+esc(BANK.name)+'</dd><dt>'+L('Bank','البنك')+'</dt><dd>'+esc(BANK.bank)+'</dd><dt>'+L('Account no.','رقم الحساب')+'</dt><dd class="mono">'+esc(BANK.account)+'</dd>'+(BANK.swift?'<dt>SWIFT</dt><dd class="mono">'+esc(BANK.swift)+'</dd>':'')+'<dt>'+L('Reference','المرجع')+'</dt><dd class="mono">'+esc(window.REF||'')+'</dd></dl>':'<p style="margin:0;font-size:13px">'+esc(BANK.note)+'</p>';
   return '<div class="pay"><section><h3>'+L('Bank transfer','تحويل بنكي')+'</h3>'+b+'</section><section><h3>USDT (TRC-20)</h3><div class="qr" id="qr"></div><p style="margin:0 0 4px;font-size:13px">'+L('TRON network only','شبكة TRON فقط')+'</p><p class="mono" style="font-size:12.5px;word-break:break-all;margin:0">'+USDT+'</p><p style="font-size:12px;color:var(--muted);margin:6px 0 0">'+L('Message us first and we confirm the USDT amount. Send the TXID after paying.','راسلنا أولاً لنؤكد مبلغ USDT، وأرسل رقم العملية TXID بعد الدفع.')+'</p></section></div>';};
 const terms='<ol class="terms"><li>'+L('Prices are our service fees for one client. Government, third-party and capital costs are not included unless listed above.','الأسعار هي أتعاب خدماتنا لعميل واحد، ولا تشمل الرسوم الحكومية أو رسوم الأطراف الأخرى أو رأس المال ما لم تُذكر أعلاه.')+'</li><li>'+L('Banks, payment providers, marketplaces and government authorities make their own decisions. We cannot guarantee any approval, licence, visa or account.','البنوك ومزودو الدفع والمنصات والجهات الحكومية تتخذ قراراتها بنفسها، ولا يمكننا ضمان أي موافقة أو ترخيص أو تأشيرة أو حساب.')+'</li><li>'+L('Work starts once payment and complete documents are received.','يبدأ العمل بعد استلام الدفع والمستندات كاملة.')+'</li></ol>';
 
@@ -86,7 +86,7 @@ async function invoice(){
   const id=q.get('o');
   const {data:o,error}=await sb.from('partner_orders').select('*,partners(*)').eq('id',id).single();
   if(error||!o)throw new Error('This invoice could not be found, or your account cannot open it.');
-  const p=o.partners||{}, inv=!!o.invoice_no&&o.status!=='cancelled';
+  const p=o.partners||{}, inv=!!o.invoice_no&&o.status!=='cancelled';window.REF=o.invoice_no||o.ref;
   document.title=(inv?'Invoice '+o.invoice_no:'Order '+o.ref)+' | Wizz Smart Services';
   const rows=(o.items||[]).map(i=>'<tr><td><b>'+esc(i.name_en)+'</b>'+(i.name_ar?'<small class="ar">'+esc(i.name_ar)+'</small>':'')+'</td><td class="num">'+i.qty+'</td><td class="num">'+money(i.unit,o.currency)+'</td><td class="num">'+money(i.qty*i.unit,o.currency)+'</td></tr>').join('');
   const stamp=o.status==='cancelled'?'<div class="stamp void">CANCELLED</div>':PAID.includes(o.status)?'<div class="stamp">PAID '+day(o.paid_at)+'</div>':'';
@@ -107,7 +107,7 @@ async function statement(){
   const end=new Date(to);end.setDate(end.getDate()+1);
   const {data:os,error}=await sb.from('partner_orders').select('*').eq('partner_id',p.id).gte('created_at',from).lt('created_at',end.toISOString().slice(0,10)).order('created_at');
   if(error)throw error;
-  const list=(os||[]).filter(o=>o.status!=='cancelled');
+  const list=(os||[]).filter(o=>o.status!=='cancelled');window.REF=p.code;
   const sum=f=>{const t={};list.filter(f).forEach(o=>t[o.currency]=(t[o.currency]||0)+Number(o.total));return Object.entries(t).map(([c,v])=>money(v,c)).join(' + ')||money(0,'MYR');};
   document.title='Statement '+p.code+' '+from+' to '+to+' | Wizz Smart Services';
   app.innerHTML=bar()+'<div class="doc">'+HEAD+'<h1>'+L('Account statement','كشف حساب')+'<small>'+day(from)+' – '+day(to)+'</small></h1>'+
