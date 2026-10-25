@@ -76,6 +76,8 @@
     if(error){showErr(error.message);return;}
     orders=data||[];render();
     const {data:adm}=await sb.from('admins').select('email').limit(1);$('acAdmin').hidden=!(adm&&adm.length);
+    const {data:pt}=await sb.from('partners').select('id,status').limit(1);const isP=!!(pt&&pt.length);$('acPartner').hidden=!isP;
+    if(isP&&(qs.get('next')==='partner'||!orders.length))location.replace('partner.html');
   }
   async function loadOrder(id){
     const [d,e,r]=await Promise.all([

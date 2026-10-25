@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Invoice | Wizz Smart Services</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<style>
+:root{--ink:#1F2328;--muted:#5d636b;--line:#e3e5e8;--red:#E01B22;--bg:#F3F5F7;--green:#1a7f45}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14.5px/1.5 -apple-system,"Segoe UI",Roboto,Arial,"IBM Plex Sans Arabic",sans-serif}
+.bar{max-width:880px;margin:20px auto 0;padding:0 16px;display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+.btn{border:1px solid var(--ink);background:#fff;color:var(--ink);border-radius:8px;padding:9px 14px;font:600 14px inherit;cursor:pointer;text-decoration:none}
+.btn.solid{background:var(--ink);color:#fff}
+.doc{max-width:880px;margin:14px auto 40px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:40px 44px;position:relative}
+.hd{display:flex;justify-content:space-between;gap:20px;border-bottom:2px solid var(--ink);padding-bottom:16px}
+.hd img{height:42px}
+.co{text-align:right;font-size:12.5px;color:var(--muted)}.co b{color:var(--ink);font-size:13px;letter-spacing:.03em}
+h1{font-size:26px;margin:24px 0 2px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:baseline}
+h1 small{font-size:14px;color:var(--muted);font-weight:600}
+.ar{direction:rtl;unicode-bidi:isolate;font-weight:600}
+.meta{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:16px 0 22px}
+.meta div{background:var(--bg);border-radius:8px;padding:9px 11px}.meta small{display:block;color:var(--muted);font-size:11.5px}.meta b{font-size:13.5px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px}
+.two section{border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+.two h3,.pay h3{margin:0 0 6px;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+table{width:100%;border-collapse:collapse}
+th{font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);text-align:left;border-bottom:1px solid var(--line);padding:8px 6px}
+td{padding:10px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+td small{display:block;color:var(--muted);font-size:12.5px}
+.num{text-align:right;white-space:nowrap}
+.tot td{border:0;font-size:17px;font-weight:700;padding-top:14px}
+.stamp{position:absolute;top:120px;right:44px;transform:rotate(-8deg);border:3px solid var(--green);color:var(--green);font:800 22px/1 inherit;letter-spacing:.08em;padding:8px 14px;border-radius:8px;opacity:.85}
+.stamp.void{border-color:#999;color:#999}
+.pay{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:22px}
+.pay section{border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+.pay dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:13.5px}.pay dt{color:var(--muted)}.pay dd{margin:0;word-break:break-all}
+.mono{font-family:ui-monospace,Menlo,monospace;font-weight:600}
+.qr{width:96px;height:96px;float:right;margin-left:10px}.qr svg{width:100%;height:100%}
+.note{background:#fff7e6;border:1px solid #f3dcae;border-radius:8px;padding:10px 12px;margin-top:14px;white-space:pre-wrap;font-size:13.5px}
+.terms{font-size:12.5px;color:#444;margin-top:18px}
+.ft{margin-top:26px;padding-top:12px;border-top:1px solid var(--line);font-size:11.5px;color:var(--muted);text-align:center;line-height:1.6}
+.msg{max-width:880px;margin:60px auto;padding:0 16px;text-align:center}
+.sum{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:0 0 18px}.sum div{border:1px solid var(--line);border-radius:8px;padding:10px 12px}.sum small{display:block;color:var(--muted);font-size:12px}.sum b{font-size:16px}
+.st{font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--bg);white-space:nowrap}
+@media (max-width:680px){.doc{padding:22px 16px;border-radius:0}.meta{grid-template-columns:1fr 1fr}.two,.pay,.sum{grid-template-columns:1fr}.hd{flex-direction:column}.co{text-align:left}.stamp{top:90px;right:16px}}
+@media print{body{background:#fff}.bar{display:none}.doc{border:0;margin:0;padding:0;max-width:none}}
+</style>
+</head>
+<body>
+<div id="app"><p class="msg">Loading…</p></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script>
+<script>
+(function(){
+// ---- payment details shown on every invoice. Fill in BANK when the account details are confirmed.
+const BANK = { name: "", bank: "", account: "", swift: "", note: "Bank details are sent with your invoice on WhatsApp or email. | تُرسل بيانات الحساب البنكي مع الفاتورة عبر واتساب أو البريد." };
+const USDT = "TLcDHgGxPL1b4JiYUXEDMitr5zTVrfDg6n";
+const SB_URL='https://mzkkhotipmgqczavrfqy.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im16a2tob3RpcG1ncWN6YXZyZnF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEzNjA5OTEsImV4cCI6MjEwNjkzNjk5MX0.-RX74vfMP8qedH2F7XvBN4OGj_dL8yEX96VlXO8ONA0';
+const app=document.getElementById('app');
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const money=(n,c)=>{try{return new Intl.NumberFormat('en-US',{style:'currency',currency:c||'MYR',currencyDisplay:'code',maximumFractionDigits:2}).format(n)}catch(e){return c+' '+n}};
+const day=d=>d?new Date(d).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'–';
+const L=(en,ar)=>esc(en)+(ar?' <span class="ar">'+esc(ar)+'</span>':'');
+const ST={submitted:['Received','تم الاستلام'],invoiced:['Unpaid','غير مدفوعة'],paid:['Paid','مدفوعة'],in_progress:['Paid · in progress','مدفوعة · قيد التنفيذ'],completed:['Paid · completed','مدفوعة · مكتملة'],cancelled:['Cancelled','ملغاة']};
+const PAID=['paid','in_progress','completed'];
+const q=new URLSearchParams(location.search);
+const HEAD='<div class="hd"><img src="/img/email-logo.png" alt="Wizz"><div class="co"><b>WIZZ SMART SERVICES SDN. BHD.</b><br>Company No. 202501029005<br>B2-2-3, Publika, Solaris Dutamas, 50480 Kuala Lumpur, Malaysia<br>info@wizz.com.my · +60 11-2447 7685 · wizz.com.my</div></div>';
+const FOOT='<div class="ft">WIZZ SMART SERVICES SDN. BHD. · Company No. 202501029005 · B2-2-3, Publika, Solaris Dutamas, 50480 Kuala Lumpur, Malaysia<br>Group company in Oman: El Harazi Co for Investment LLC · CR 1340473 · 506, Al Mawalih South, Al Seeb, Muscat 121</div>';
+const bar=()=>'<div class="bar"><a class="btn" href="partner.html">← '+L('Partner portal','بوابة الشركاء')+'</a><button class="btn solid" type="button" onclick="print()">'+L('Print / save PDF','طباعة / حفظ PDF')+'</button></div>';
+const bill=p=>'<section><h3>'+L('Billed to','فاتورة إلى')+'</h3><b>'+esc(p.company)+'</b><br><span class="mono">'+esc(p.code)+'</span>'+(p.cr_number?' · CR '+esc(p.cr_number):'')+'<br>'+esc([p.city,p.country].filter(Boolean).join(', '))+'<br>'+esc(p.email)+(p.phone?' · '+esc(p.phone):'')+'</section>';
+const payBox=()=>{const b=BANK.account?'<dl><dt>Account name</dt><dd>'+esc(BANK.name)+'</dd><dt>Bank</dt><dd>'+esc(BANK.bank)+'</dd><dt>Account no.</dt><dd class="mono">'+esc(BANK.account)+'</dd>'+(BANK.swift?'<dt>SWIFT</dt><dd class="mono">'+esc(BANK.swift)+'</dd>':'')+'</dl>':'<p style="margin:0;font-size:13px">'+esc(BANK.note)+'</p>';
+  return '<div class="pay"><section><h3>'+L('Bank transfer','تحويل بنكي')+'</h3>'+b+'</section><section><h3>USDT (TRC-20)</h3><div class="qr" id="qr"></div><p style="margin:0 0 4px;font-size:13px">'+L('TRON network only','شبكة TRON فقط')+'</p><p class="mono" style="font-size:12.5px;word-break:break-all;margin:0">'+USDT+'</p><p style="font-size:12px;color:var(--muted);margin:6px 0 0">'+L('Message us first and we confirm the USDT amount. Send the TXID after paying.','راسلنا أولاً لنؤكد مبلغ USDT، وأرسل رقم العملية TXID بعد الدفع.')+'</p></section></div>';};
+const terms='<ol class="terms"><li>'+L('Prices are our service fees for one client. Government, third-party and capital costs are not included unless listed above.','الأسعار هي أتعاب خدماتنا لعميل واحد، ولا تشمل الرسوم الحكومية أو رسوم الأطراف الأخرى أو رأس المال ما لم تُذكر أعلاه.')+'</li><li>'+L('Banks, payment providers, marketplaces and government authorities make their own decisions. We cannot guarantee any approval, licence, visa or account.','البنوك ومزودو الدفع والمنصات والجهات الحكومية تتخذ قراراتها بنفسها، ولا يمكننا ضمان أي موافقة أو ترخيص أو تأشيرة أو حساب.')+'</li><li>'+L('Work starts once payment and complete documents are received.','يبدأ العمل بعد استلام الدفع والمستندات كاملة.')+'</li></ol>';
+
+const sb=window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,flowType:'implicit'}});
+(async()=>{
+  const {data:s}=await sb.auth.getSession();
+  if(!s.session){location.replace('account.html?next=partner');return;}
+  try{ q.get('statement')?await statement():await invoice(); }
+  catch(e){app.innerHTML='<p class="msg">'+esc(e.message||'Not found')+'</p>';}
+})();
+
+async function invoice(){
+  const id=q.get('o');
+  const {data:o,error}=await sb.from('partner_orders').select('*,partners(*)').eq('id',id).single();
+  if(error||!o)throw new Error('This invoice could not be found, or your account cannot open it.');
+  const p=o.partners||{}, inv=!!o.invoice_no&&o.status!=='cancelled';
+  document.title=(inv?'Invoice '+o.invoice_no:'Order '+o.ref)+' | Wizz Smart Services';
+  const rows=(o.items||[]).map(i=>'<tr><td><b>'+esc(i.name_en)+'</b>'+(i.name_ar?'<small class="ar">'+esc(i.name_ar)+'</small>':'')+'</td><td class="num">'+i.qty+'</td><td class="num">'+money(i.unit,o.currency)+'</td><td class="num">'+money(i.qty*i.unit,o.currency)+'</td></tr>').join('');
+  const stamp=o.status==='cancelled'?'<div class="stamp void">CANCELLED</div>':PAID.includes(o.status)?'<div class="stamp">PAID '+day(o.paid_at)+'</div>':'';
+  app.innerHTML=bar()+'<div class="doc">'+HEAD+stamp+
+    '<h1>'+(inv?L('Invoice','فاتورة'):L('Order confirmation','تأكيد الطلب'))+'<small class="mono">'+esc(inv?o.invoice_no:o.ref)+'</small></h1>'+
+    '<div class="meta"><div><small>'+L('Date','التاريخ')+'</small><b>'+day(inv?o.invoiced_at:o.created_at)+'</b></div><div><small>'+L('Order','الطلب')+'</small><b class="mono">'+esc(o.ref)+'</b></div><div><small>'+L('Status','الحالة')+'</small><b>'+L(...ST[o.status])+'</b></div><div><small>'+L('Payment','الدفع')+'</small><b>'+(o.pay_method==='usdt'?'USDT (TRC-20)':L('Bank transfer','تحويل بنكي'))+'</b></div></div>'+
+    '<div class="two">'+bill(p)+'<section><h3>'+L('Client','العميل')+'</h3><b>'+esc(o.client_name)+'</b><br>'+esc([o.client_nationality,o.client_country].filter(Boolean).join(' · '))+'</section></div>'+
+    '<table><thead><tr><th>'+L('Service','الخدمة')+'</th><th class="num">'+L('Qty','الكمية')+'</th><th class="num">'+L('Unit','السعر')+'</th><th class="num">'+L('Amount','المبلغ')+'</th></tr></thead><tbody>'+rows+'</tbody><tfoot><tr class="tot"><td>'+L('Total','الإجمالي')+'</td><td></td><td></td><td class="num">'+money(o.total,o.currency)+'</td></tr></tfoot></table>'+
+    (inv?'':'<p class="note">'+L('This is an order confirmation, not an invoice. We issue the invoice shortly.','هذا تأكيد طلب وليس فاتورة، وسنصدر الفاتورة قريباً.')+'</p>')+
+    (o.note_to_partner?'<p class="note">'+esc(o.note_to_partner)+'</p>':'')+
+    (o.status==='cancelled'?'':payBox())+terms+FOOT+'</div>';
+  qr();
+}
+async function statement(){
+  const from=q.get('from')||new Date().getFullYear()+'-01-01', to=q.get('to')||new Date().toISOString().slice(0,10);
+  let pq=sb.from('partners').select('*');if(q.get('p'))pq=pq.eq('id',q.get('p'));
+  const {data:ps}=await pq.limit(1);const p=(ps||[])[0];if(!p)throw new Error('Partner account not found.');
+  const end=new Date(to);end.setDate(end.getDate()+1);
+  const {data:os,error}=await sb.from('partner_orders').select('*').eq('partner_id',p.id).gte('created_at',from).lt('created_at',end.toISOString().slice(0,10)).order('created_at');
+  if(error)throw error;
+  const list=(os||[]).filter(o=>o.status!=='cancelled');
+  const sum=f=>{const t={};list.filter(f).forEach(o=>t[o.currency]=(t[o.currency]||0)+Number(o.total));return Object.entries(t).map(([c,v])=>money(v,c)).join(' + ')||money(0,'MYR');};
+  document.title='Statement '+p.code+' '+from+' to '+to+' | Wizz Smart Services';
+  app.innerHTML=bar()+'<div class="doc">'+HEAD+'<h1>'+L('Account statement','كشف حساب')+'<small>'+day(from)+' – '+day(to)+'</small></h1>'+
+    '<div class="two" style="margin-top:16px">'+bill(p)+'<section><h3>'+L('Issued','تاريخ الإصدار')+'</h3><b>'+day(new Date())+'</b></section></div>'+
+    '<div class="sum"><div><small>'+L('Invoiced','المفوتر')+'</small><b>'+sum(o=>!!o.invoice_no)+'</b></div><div><small>'+L('Paid','المدفوع')+'</small><b>'+sum(o=>PAID.includes(o.status))+'</b></div><div><small>'+L('Balance due','الرصيد المستحق')+'</small><b>'+sum(o=>o.status==='invoiced')+'</b></div></div>'+
+    '<table><thead><tr><th>'+L('Date','التاريخ')+'</th><th>'+L('Order / invoice','الطلب / الفاتورة')+'</th><th>'+L('Client','العميل')+'</th><th>'+L('Status','الحالة')+'</th><th class="num">'+L('Amount','المبلغ')+'</th></tr></thead><tbody>'+
+    (list.length?list.map(o=>'<tr><td>'+day(o.created_at)+'</td><td class="mono">'+esc(o.ref)+(o.invoice_no?'<small>'+esc(o.invoice_no)+'</small>':'')+'</td><td>'+esc(o.client_name)+'<small>'+esc((o.items||[]).map(i=>i.name_en).join(' · '))+'</small></td><td><span class="st">'+esc(ST[o.status][0])+'</span>'+(o.paid_at?'<small>'+day(o.paid_at)+'</small>':'')+'</td><td class="num">'+money(o.total,o.currency)+'</td></tr>').join(''):'<tr><td colspan="5">'+L('No orders in this period.','لا توجد طلبات في هذه الفترة.')+'</td></tr>')+
+    '</tbody></table>'+(list.some(o=>o.status==='invoiced')?payBox():'')+FOOT+'</div>';
+  qr();
+}
+function qr(){const el=document.getElementById('qr');if(el)el.innerHTML=QR;}
+const QR='<svg viewBox="0 0 29 29" class="segno"><path class="qrline" stroke="#1f2328" d="M0 0.5h7m3 0h1m3 0h1m4 0h1m2 0h7m-29 1h1m5 0h1m4 0h2m3 0h3m1 0h1m1 0h1m5 0h1m-29 1h1m1 0h3m1 0h1m2 0h3m2 0h2m1 0h2m3 0h1m1 0h3m1 0h1m-29 1h1m1 0h3m1 0h1m2 0h1m1 0h1m1 0h1m4 0h1m3 0h1m1 0h3m1 0h1m-29 1h1m1 0h3m1 0h1m4 0h2m9 0h1m1 0h3m1 0h1m-29 1h1m5 0h1m1 0h1m1 0h3m2 0h1m1 0h1m1 0h1m2 0h1m5 0h1m-29 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-20 1h5m1 0h3m2 0h1m-21 1h1m2 0h1m1 0h2m1 0h4m2 0h1m1 0h1m1 0h2m1 0h1m1 0h1m-24 1h1m1 0h2m3 0h5m1 0h1m1 0h1m1 0h4m1 0h2m3 0h1m-26 1h2m1 0h3m4 0h3m4 0h3m3 0h3m-26 1h1m2 0h1m1 0h1m1 0h2m2 0h1m2 0h1m1 0h2m1 0h1m4 0h1m1 0h1m-27 1h2m2 0h3m2 0h1m2 0h4m2 0h3m3 0h1m1 0h1m-28 1h1m3 0h1m3 0h6m3 0h1m1 0h3m3 0h2m-28 1h1m1 0h1m3 0h2m1 0h2m1 0h3m1 0h1m1 0h1m1 0h1m3 0h1m2 0h2m-28 1h1m1 0h1m1 0h1m1 0h2m2 0h2m3 0h2m1 0h5m3 0h1m-28 1h3m1 0h1m1 0h5m2 0h1m2 0h1m2 0h3m1 0h1m1 0h1m1 0h2m-28 1h2m1 0h1m3 0h1m3 0h3m3 0h2m1 0h2m3 0h2m-28 1h1m3 0h7m3 0h1m5 0h1m3 0h2m1 0h2m-27 1h4m2 0h1m2 0h1m2 0h1m2 0h1m4 0h1m1 0h2m1 0h2m-29 1h1m1 0h1m1 0h4m4 0h1m3 0h2m1 0h6m2 0h2m-21 1h1m2 0h1m2 0h1m1 0h3m1 0h1m3 0h1m-25 1h7m2 0h2m6 0h1m1 0h2m1 0h1m1 0h1m2 0h1m-28 1h1m5 0h1m1 0h4m2 0h3m3 0h1m3 0h1m1 0h3m-29 1h1m1 0h3m1 0h1m3 0h2m4 0h2m2 0h6m2 0h1m-29 1h1m1 0h3m1 0h1m1 0h2m1 0h1m3 0h1m1 0h3m2 0h2m2 0h2m-28 1h1m1 0h3m1 0h1m3 0h1m1 0h1m1 0h1m1 0h1m1 0h2m1 0h2m1 0h1m3 0h1m-29 1h1m5 0h1m2 0h2m2 0h2m1 0h2m3 0h3m3 0h1m-28 1h7m1 0h1m2 0h1m1 0h1m3 0h1m2 0h2m2 0h1m1 0h2"/></svg>';
+})();
+</script>
+</body>
+</html>

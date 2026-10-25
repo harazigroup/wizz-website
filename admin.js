@@ -75,9 +75,9 @@
     await sb.from('order_events').insert({order_id:data.id,status:'paid',note:'Order added by team',created_by:me.email});
     e.target.reset();$('adNewBox').open=false;flash('Order '+ref+' added. The client sees it when they sign in with '+row.email+'.');await loadOrders();openOrder(data.id);});
   // tabs: Leads / Orders (remembered in the address, e.g. admin.html#orders)
-  function tab(t){document.querySelectorAll('.ad-tabs [data-tab]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.tab===t)));$('tabLeads').hidden=t!=='leads';$('tabOrders').hidden=t!=='orders';$('tabSettings').hidden=t!=='settings';$('tabReferrals').hidden=t!=='referrals';$('tabCareers').hidden=t!=='careers';if(t==='settings')pzStatus();try{history.replaceState(null,'','#'+t)}catch(e){}}
+  function tab(t){document.querySelectorAll('.ad-tabs [data-tab]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.tab===t)));$('tabLeads').hidden=t!=='leads';$('tabOrders').hidden=t!=='orders';$('tabSettings').hidden=t!=='settings';$('tabReferrals').hidden=t!=='referrals';$('tabCareers').hidden=t!=='careers';$('tabPartners').hidden=t!=='partners';if(t==='settings')pzStatus();try{history.replaceState(null,'','#'+t)}catch(e){}}
   document.querySelector('.ad-tabs').addEventListener('click',e=>{const b=e.target.closest('[data-tab]');if(b)tab(b.dataset.tab);});
-  tab(['#orders','#settings','#referrals','#careers'].includes(location.hash)?location.hash.slice(1):'leads');
+  tab(['#orders','#settings','#referrals','#careers','#partners'].includes(location.hash)?location.hash.slice(1):'leads');
   async function pzStatus(){if(!me)return;const {data,error}=await sb.rpc('admin_setting_status',{p_name:'postiz_api_key'});$('pzStatus').textContent=error?error.message:(data?'Status: key saved. Daily posts will be scheduled automatically.':'Status: no key yet. Daily content is sent to you to post by hand.');}
   async function pzSet(v){const {error}=await sb.rpc('admin_set_setting',{p_name:'postiz_api_key',p_value:v});if(error)return flash(error.message,true);$('pzKey').value='';flash(v?'Postiz key saved.':'Postiz key removed.');pzStatus();}
   $('pzSave').addEventListener('click',()=>{const v=$('pzKey').value.trim();if(v.length<10)return flash('Paste the full API key.',true);pzSet(v);});

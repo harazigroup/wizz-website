@@ -12,7 +12,7 @@ from bs4 import BeautifulSoup
 D = "/home/claude/wizz-dist"
 T = os.path.dirname(os.path.abspath(__file__))
 SITE = "https://wizz.com.my"
-SKIP = {"admin.html", "quote.html"}
+SKIP = {"admin.html", "quote.html", "invoice.html"}
 LANGS = ("ar", "ms")
 
 site_js = open(f"{D}/site.js").read()

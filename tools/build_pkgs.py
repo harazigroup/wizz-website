@@ -27,6 +27,7 @@ def page(fname, title, desc, body, current=None, extra_head="", scripts=""):
     open(f"{D}/{fname}", "w").write(h + '<main id="top">\n' + body + "\n</main>" + foot)
 
 from catalog_ar import AR as AR_SRC
+AR_SRC.setdefault('Partner portal', 'بوابة الشركاء')
 AR_SRC.setdefault("Prefer to pay in USDT (TRC-20)? Message us on WhatsApp and we'll send an invoice with our wallet address.", 'تفضّل الدفع بعملة USDT (شبكة TRC-20)؟ راسلنا عبر واتساب وسنرسل لك فاتورة بعنوان محفظتنا.')
 MS_SRC = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'ms_strings.json')))
 MS = lambda en: MS_SRC.get(en, en)
@@ -496,7 +497,7 @@ open(f"{D}/quote-catalog.json", "w").write(json.dumps(QCAT, ensure_ascii=False))
 # ---------------- client account + team admin (Supabase)
 import shutil
 SB_JS = '<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script>\n'
-for n in ("account.js", "admin.js", "leads.js", "referrals.js", "careers.js", "quote.html"):
+for n in ("account.js", "admin.js", "leads.js", "referrals.js", "careers.js", "partner.js", "partners-admin.js", "quote.html", "invoice.html"):
     shutil.copy(f"{D}/tools/portal/{n}", f"{D}/{n}")
 ac_body = f"""<section class="block ac">
   <div class="wrap ac-wrap">
@@ -506,7 +507,7 @@ ac_body = f"""<section class="block ac">
     <div id="acIn" hidden>
       <div class="ac-top">
         <div><p class="eyebrow"{tk("Client account")}>Client account</p><h1{tk("Your orders")}>Your orders</h1><p class="muted"><span{tk("Signed in as")}>Signed in as</span> <b id="acWho" class="ltr"></b></p></div>
-        <div class="ac-actions"><a class="btn ghost small" id="acAdmin" href="admin.html" hidden>Team admin</a><button class="btn ghost small" id="acPwBtn" type="button"{tk("Change password")}>Change password</button><button class="btn ghost small" id="acOut" type="button"{tk("Sign out")}>Sign out</button></div>
+        <div class="ac-actions"><a class="btn solid small" id="acPartner" href="partner.html" hidden{tk("Partner portal")}>Partner portal</a><a class="btn ghost small" id="acAdmin" href="admin.html" hidden>Team admin</a><button class="btn ghost small" id="acPwBtn" type="button"{tk("Change password")}>Change password</button><button class="btn ghost small" id="acOut" type="button"{tk("Sign out")}>Sign out</button></div>
       </div>
       <div class="ac-card ac-pw" id="acPw" hidden></div>
       <div id="acOrders" class="ac-orders"></div>
@@ -514,6 +515,9 @@ ac_body = f"""<section class="block ac">
     </div>
   </div>
 </section>"""
+pt_body = """<section class="block ac"><div class="wrap"><div class="ac-msg" id="ptMsg" hidden></div><div id="ptApp"><div class="ac-loading"><span class="ck-spin" aria-hidden="true"></span></div></div></div></section>"""
+page("partner.html", "Partner portal | Wizz Smart Services", "Partner offices: prices, orders, documents and invoices.", pt_body,
+     scripts=SB_JS + '<script src="partner.js" defer></script>\n', extra_head='<meta name="robots" content="noindex">')
 page("account.html", "My account | Wizz Smart Services", "Sign in to follow your order and share documents securely.", ac_body,
      scripts=ar_script() + SB_JS + '<script src="account.js" defer></script>\n', extra_head='<meta name="robots" content="noindex">')
 
@@ -523,8 +527,9 @@ ad_body = """<section class="block ac">
     <div class="ac-card" id="adGate" hidden></div>
     <div id="adApp" hidden>
       <div class="ac-top"><div><p class="eyebrow">Team</p><h1>Wizz admin</h1><p class="muted">Signed in as <b id="adWho"></b></p></div><div class="ac-actions"><button class="btn ghost small" id="adOut" type="button">Sign out</button></div></div>
-      <div class="ad-tabs" role="tablist"><button type="button" role="tab" data-tab="leads" aria-selected="true">Leads</button><button type="button" role="tab" data-tab="orders" aria-selected="false">Orders</button><button type="button" role="tab" data-tab="referrals" aria-selected="false">Referrals</button><button type="button" role="tab" data-tab="careers" aria-selected="false">Careers</button><button type="button" role="tab" data-tab="settings" aria-selected="false">Settings</button></div>
+      <div class="ad-tabs" role="tablist"><button type="button" role="tab" data-tab="leads" aria-selected="true">Leads</button><button type="button" role="tab" data-tab="orders" aria-selected="false">Orders</button><button type="button" role="tab" data-tab="referrals" aria-selected="false">Referrals</button><button type="button" role="tab" data-tab="partners" aria-selected="false">Partners</button><button type="button" role="tab" data-tab="careers" aria-selected="false">Careers</button><button type="button" role="tab" data-tab="settings" aria-selected="false">Settings</button></div>
       <div id="tabReferrals" hidden><div id="rfBody"><p class="ac-none">Loading…</p></div></div>
+      <div id="tabPartners" hidden><div id="ptBody"><p class="ac-none">Loading…</p></div></div>
       <div id="tabCareers" hidden><div id="jbBody"><p class="ac-none">Loading…</p></div></div>
       <div id="tabSettings" hidden><section class="ad-box"><h3>Social media posting (Postiz)</h3><p class="ld-hint" style="margin-top:0">The daily content task schedules Instagram and TikTok posts through Postiz. In Postiz, connect the Wizz Instagram and TikTok accounts, then create an API key (Settings → Public API) and paste it here. The key is stored on the server and can't be read back from this page.</p><p id="pzStatus" class="ld-hint"></p><div class="ad-form"><input id="pzKey" type="password" autocomplete="off" placeholder="Postiz API key"><button class="btn solid small" id="pzSave" type="button">Save key</button><button class="btn ghost small" id="pzDel" type="button">Remove key</button></div></section></div>
       <div id="tabLeads">
@@ -553,7 +558,7 @@ ad_body = """<section class="block ac">
   </div>
 </section>"""
 page("admin.html", "Team admin | Wizz Smart Services", "Team admin.", ad_body,
-     scripts=SB_JS + '<script src="admin.js" defer></script>\n<script src="leads.js" defer></script>\n<script src="referrals.js" defer></script>\n<script src="careers.js" defer></script>\n', extra_head='<meta name="robots" content="noindex">')
+     scripts=SB_JS + '<script src="admin.js" defer></script>\n<script src="leads.js" defer></script>\n<script src="referrals.js" defer></script>\n<script src="careers.js" defer></script>\n<script src="partners-admin.js" defer></script>\n', extra_head='<meta name="robots" content="noindex">')
 
 exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "us_page.py")).read())
 exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "uk_page.py")).read())
@@ -562,6 +567,7 @@ exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "extra_pages.
 exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "refer_page.py")).read())
 exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "my_form_page.py")).read())
 exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "careers_page.py")).read())
+exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "partners_page.py")).read())
 
 # ---------------- legal pages
 CO = "WIZZ SMART SERVICES SDN. BHD. (Registration No. 202501029005), B2-2-3, Publika, Solaris Dutamas, 50480 Kuala Lumpur, Malaysia"
@@ -630,7 +636,7 @@ WA_PATH = "M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.6
 WA_FLOAT = f"""<a class="wa-float" href="https://wa.me/601124477685?text=Hi%20Wizz%2C%20I%27d%20like%20to%20ask%20about%20your%20services." target="_blank" rel="noopener" aria-label="Chat with us on WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="{WA_PATH}"/></svg><span class="wa-tip" data-i18n="wa_chat">Chat with us</span></a>
 """
 for f in glob.glob(f"{D}/*.html"):
-    if f.endswith("/quote.html"): continue  # standalone document page
+    if f.endswith(("/quote.html", "/invoice.html")): continue  # standalone document pages
     s = open(f).read()
     if 'data-i18n="nav_pkgs"' not in s:
         cur = ' aria-current="page"' if f.endswith("/packages.html") else ""
@@ -679,6 +685,10 @@ if '"pay_secure"' not in js:
 if '"pay_usdt"' not in js:
     js = js.replace('"nav_mp": ', '"pay_usdt": "نقبل أيضاً", "nav_mp": ', 1)
     assert '"pay_usdt"' in js
+    open(f"{D}/site.js", "w").write(js)
+if '"ft_b2b"' not in js:
+    js = js.replace('"nav_mp": ', '"ft_b2b": "مكاتب شريكة (B2B)", "nav_mp": ', 1)
+    assert '"ft_b2b"' in js
     open(f"{D}/site.js", "w").write(js)
 if '"ft_jobs"' not in js:
     js = js.replace('"nav_mp": ', '"ft_jobs": "الوظائف", "nav_mp": ', 1)
@@ -1069,7 +1079,7 @@ LANG_CSS = CL_CSS + "\n/* language menu */\nselect.lang{width:auto;min-width:0;p
 open(f"{D}/site.css", "w").write(css + CSS + US_CSS + LANG_CSS)
 
 # sitemap
-pages = sorted(os.path.basename(p) for p in glob.glob(f"{D}/*.html") if not p.endswith(("thank-you.html", "checkout.html", "account.html", "admin.html", "quote.html")))
+pages = sorted(os.path.basename(p) for p in glob.glob(f"{D}/*.html") if not p.endswith(("thank-you.html", "checkout.html", "account.html", "admin.html", "quote.html", "invoice.html", "partner.html")))
 open(f"{D}/sitemap.xml", "w").write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "".join(f'  <url><loc>https://wizz.com.my/{"" if p=="index.html" else p}</loc></url>\n' for p in pages) + "</urlset>\n")
 print("built", pages)
 
@@ -1083,6 +1093,8 @@ for _f in glob.glob(f"{D}/*.html"):
     _h = open(_f).read()
     if _FT_OLD in _h and 'data-i18n="ft_mm2h"' not in _h:
         _h = _h.replace(_FT_OLD, _FT_NEW, 1)
+    if _FT_M in _h and 'data-i18n="ft_b2b"' not in _h:
+        _h = _h.replace(_FT_M, _FT_M + '\n          <li><a href="partners.html" data-i18n="ft_b2b">Partner offices (B2B)</a></li>', 1)
     _FT_B = '<a href="blog.html" data-i18n="nav_blog">Blog</a></li>'
     if _FT_B in _h and 'data-i18n="ft_jobs"' not in _h:
         _h = _h.replace(_FT_B, '<a href="blog.html" data-i18n="nav_blog">Blog</a> · <a href="careers.html" data-i18n="ft_jobs">Careers</a></li>', 1)
