@@ -1076,7 +1076,16 @@ CL_CSS = """
 .block.cl-sep{border-top:1px solid var(--line)}
 """
 LANG_CSS = CL_CSS + "\n/* language menu */\nselect.lang{width:auto;min-width:0;padding:7px 8px;font:600 13px var(--body);background-color:transparent;cursor:pointer}\nheader.site nav.main a,header.site .btn.small{white-space:nowrap}\n"
-open(f"{D}/site.css", "w").write(css + CSS + US_CSS + LANG_CSS)
+RTL_FONT_CSS = """
+/* Arabic pages: one font family for Arabic and Latin text, so prices, codes and labels match the Arabic */
+[dir="rtl"]{--display:"IBM Plex Sans Arabic","IBM Plex Sans",system-ui,sans-serif;--mono:"IBM Plex Sans Arabic","IBM Plex Sans",system-ui,sans-serif}
+[dir="rtl"] *{font-stretch:100%!important}
+[dir="rtl"] .pk-price,[dir="rtl"] .pk-price b,[dir="rtl"] .acq .pk-price{font-weight:700;letter-spacing:0}
+[dir="rtl"] .acq-age,[dir="rtl"] .acq-dl dt,[dir="rtl"] .pk-flag,[dir="rtl"] .us-kit-flag,[dir="rtl"] .eyebrow,[dir="rtl"] dt{letter-spacing:0!important;text-transform:none}
+[dir="rtl"] .acq-age{font-size:12px}
+[dir="rtl"] .acq-dl dt{font-size:12.5px;font-weight:700}
+"""
+open(f"{D}/site.css", "w").write(css + CSS + US_CSS + LANG_CSS + RTL_FONT_CSS)
 
 # sitemap
 pages = sorted(os.path.basename(p) for p in glob.glob(f"{D}/*.html") if not p.endswith(("thank-you.html", "checkout.html", "account.html", "admin.html", "quote.html", "invoice.html", "partner.html")))
