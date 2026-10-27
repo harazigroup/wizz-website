@@ -2,6 +2,7 @@
 # Prices come from catalog.py (the US entry), so changing a US price there updates this page too.
 
 US = next(c for c in COUNTRIES if c["c"] == "US")
+US_T = [t for t in US["tiers"] if not t.get("grp")]
 
 # Real client stories only, with the client's written permission to show their name and photo.
 # Example: dict(name="Full Name", role="Founder, Brand (Amazon US)", country="Oman", photo="img/clients/name.webp",
@@ -237,13 +238,13 @@ states = "".join(f'<div class="us-state">{T("b", s)}{T("p", d)}</div>' for s, d 
 
 # comparison table built from the catalog: each tier adds to the one before
 rows, owner = [], []
-for i, t in enumerate(US["tiers"]):
+for i, t in enumerate(US_T):
     for item in t["i"]:
         rows.append((item, i))
 def cell(have):
     return f'<td class="{"y" if have else "n"}">' + (f'{CHECK}<span class="sr"{tk("Included")}>Included</span>' if have else f'<span aria-hidden="true">–</span><span class="sr"{tk("Not included")}>Not included</span>') + "</td>"
-thead = "".join(f'<th scope="col">{T("span", t["n"])}<small>{money(t["p"])}</small></th>' for t in US["tiers"])
-tbody = "".join(f'<tr><th scope="row"{tk(item)}>{esc(item)}</th>' + "".join(cell(j >= i) for j in range(len(US["tiers"]))) + "</tr>" for item, i in rows)
+thead = "".join(f'<th scope="col">{T("span", t["n"])}<small>{money(t["p"])}</small></th>' for t in US_T)
+tbody = "".join(f'<tr><th scope="row"{tk(item)}>{esc(item)}</th>' + "".join(cell(j >= i) for j in range(len(US_T))) + "</tr>" for item, i in rows)
 notes = "".join(f'<p class="pk-note"{tk(n, money_text)}>{money_text(n)}</p>' for n in US["notes"])
 
 who = [("cart", "Amazon and e-commerce sellers", "Sell on Amazon.com, Walmart or TikTok Shop US with a US company and EIN. We also help with seller account applications."),
@@ -297,7 +298,8 @@ us_body = hero + f'''
   <div class="wrap">
     {head("Pricing", "US packages", "One price, with the state filing fee included. Pay in your own currency.")}
     <div class="pk-curbar"><label for="pkCur"{tk("Prices in")}>Prices in</label><select id="pkCur"><option value="USD">USD · US dollar</option></select><span class="pk-curnote" id="pkCurNote">Set in US dollars. Change the currency if you prefer.</span></div>
-    <div class="pk-grid">{"".join(tier_html(US, t) for t in US["tiers"])}</div>
+    <div class="pk-grid">{"".join(tier_html(US, t) for t in US_T)}</div>
+    {grp_html(US)}
     {notes}
     <div class="pk-msg" id="pkMsg" role="status" hidden></div>
     {T("h3", "Compare packages", "us-cmp-h")}

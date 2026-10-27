@@ -116,6 +116,7 @@ for idx, c in enumerate(COUNTRIES):
     tabs.append(f'<button type="button" role="tab" id="tab-{k}" aria-controls="p-{k}" aria-selected="{sel}" tabindex="{0 if idx==0 else -1}" data-k="{k}"><b class="ltr">{c["c"]}</b><span{tk(c["n"])}>{esc(c["n"])}</span></button>')
     notes = "".join(f'<p class="pk-note"{tk(n, money_text)}>{money_text(n)}</p>' for n in c["notes"])
     if k in GUIDES: notes += f'<a class="pk-guide" href="{GUIDES[k][0]}"><span{tk(GUIDES[k][1])}>{GUIDES[k][1]}</span> <span aria-hidden="true">→</span></a>'
+    if k == "my": notes += '<p class="pk-guide-pdf"><a class="pk-guide" href="/docs/malaysia-director-visa-guide-en.pdf" target="_blank" rel="noopener"><span' + tk("Download the director visa guide (PDF)") + '>Download the director visa guide (PDF)</span></a> · <a href="/docs/malaysia-director-visa-guide-ar.pdf" target="_blank" rel="noopener" lang="ar">العربية</a></p>'
     panels.append(f'''<div class="pk-panel" role="tabpanel" id="p-{k}" aria-labelledby="tab-{k}"{'' if idx==0 else ' hidden'}>
     <div class="pk-head"><span class="pk-code ltr">{c["c"]}<i>.</i></span><div><h2{tk(c["n"])}>{esc(c["n"])}</h2><p{tk(c["e"])}>{esc(c["e"])}</p></div></div>
     <div class="pk-grid">{"".join(tier_html(c, t) for t in c["tiers"] if not t.get("grp"))}</div>
