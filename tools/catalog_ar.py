@@ -465,3 +465,8 @@ AR.update({
 "Live and work in Malaysia as the director of your own company. The company needs paid-up capital of RM 1,000,000 if 100% foreign-owned, or RM 350,000 with majority Malaysian shareholding. A company alone does not give a visa.": "عِش واعمل في ماليزيا بصفتك مديراً لشركتك. تحتاج الشركة إلى رأس مال مدفوع قدره 1,000,000 رينغيت إذا كانت مملوكة بالكامل لأجانب، أو 350,000 رينغيت إذا كانت أغلبية الملكية ماليزية. تأسيس الشركة وحده لا يمنح تأشيرة.",
 "Download the director visa guide (PDF)": "تنزيل دليل تأشيرة المدير (PDF)",
 })
+AR.update({
+"Government fees included, except for the Employment Pass": "تشمل الرسوم الحكومية، باستثناء تصريح العمل",
+"Rent and paid-up capital not included": "لا يشمل الإيجار ورأس المال المدفوع",
+"Government fees included": "تشمل الرسوم الحكومية",
+})
