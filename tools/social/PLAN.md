@@ -77,3 +77,4 @@ Posting times (Malaysia time, GMT+8): 20:30 by default; 12:00–13:00 also works
 - 2026-10-23 · Topic 10, Myths: "A US company gives me a US visa" and 4 more (blog + carousel, light cover, sent for manual posting)
 - 2026-10-26 · Topic 11, What documents you need to open a company abroad (blog + carousel, dark cover, sent for manual posting)
 - 2026-10-27 · Topic 12, Marketplace onboarding from RM 300 per platform: what we prepare (blog + carousel, light cover, sent for manual posting)
+- 2026-10-28 · Topic 13, Thailand work permit through our Thai company: how it works and what the authorities decide (blog + carousel, dark cover, sent for manual posting)
