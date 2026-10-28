@@ -82,6 +82,12 @@ COUNTRIES = [
    dict(sku=None, grp="my-visa", n="Employment Pass application", p=fx("MYR", 5500), fix={"MYR": 5500}, i=["Director's Employment Pass prepared and submitted","Government fees extra, usually under RM 1,000","Approval is decided by the Immigration Department"])],
   groups={"my-visa": ("Director visa (Employment Pass)", "Live and work in Malaysia as the director of your own company. The company needs paid-up capital of RM 1,000,000 if 100% foreign-owned, or RM 350,000 with majority Malaysian shareholding. A company alone does not give a visa.")},
   notes=["A foreign-owned Sdn Bhd needs at least one director resident in Malaysia. If you don't have one, we quote a resident director service separately.","Audit and tax filing are yearly obligations, quoted separately."]),
+ dict(c="SG", n="Singapore", g="Asia", e="Private limited company (Pte. Ltd.) at ACRA. A regional base trusted by banks and investors.",
+  tiers=[
+   dict(sku=None, n="Company setup", p=fx("SGD", 1315), fix={"SGD": 1315}, i=["Company registration with ACRA","ACRA registration fee (SGD 315) included","Online business account application","Constitution & company documents"]),
+   dict(sku=None, n="Yearly compliance", p=fx("SGD", 4140), fix={"SGD": 4140}, frm=True, i=["Registered office address","Company secretary","Accounting & bookkeeping","Corporate tax filing","Business registration support"]),
+   dict(sku=None, n="Nominee resident director", p=fx("SGD", 4000), fix={"SGD": 4000}, i=["Local resident director, required for every Singapore company","12 months","Only if you have no director living in Singapore"])],
+  notes=["The yearly compliance fee depends on your number of transactions and accounting software; we confirm it before you start.","Not included: ACRA annual return fee (SGD 60 a year) and other fees paid for the company, such as stamp duty. A traditional (physical) bank account is charged by time spent."]),
  dict(c="TH", n="Thailand", g="Asia", e="Thai limited company. Foreign ownership limits apply to many activities.",
   tiers=[
    dict(sku=None, n="Company setup", p=1490, fix={"MYR": 6199}, frm=True, i=["Ownership & activity review","Government registration fees included","Company documents & tax ID"]),

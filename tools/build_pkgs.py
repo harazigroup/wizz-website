@@ -946,6 +946,7 @@ body[data-page="checkout"] .wa-float{width:56px;padding:0;justify-content:center
 .g-label.g-uk{margin-left:-30px}
 .g-label.g-nl{margin:-20px 0 0 2px}
 .g-label.g-fr{margin-left:-30px}
+.g-label.g-sg{margin:16px 0 0 10px}
 .pay-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding-bottom:6px}
 .pay-alt{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:color-mix(in srgb,var(--on-ink) 80%,transparent)}
 .pay-usdt{display:inline-flex;align-items:center;gap:6px;background:#fff;color:#1F2328;border-radius:5px;padding:4px 9px 4px 5px;font:700 12px/1.2 var(--body);direction:ltr}

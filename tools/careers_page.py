@@ -8,7 +8,7 @@ JTX = [
   "Kami membantu usahawan dari seluruh dunia memulakan dan mengembangkan syarikat mereka. Sertai pasukan kecil di Kuala Lumpur dan dalam talian, dan pelajari perniagaan antarabangsa dari dalam."),
  ("See open roles", "اطّلع على الوظائف المتاحة", "Lihat jawatan kosong"),
  ("Why work at Wizz", "لماذا تعمل في ويز", "Mengapa bekerja di Wizz"),
- ("Clients from 14 countries", "عملاء من 14 دولة", "Pelanggan dari 14 negara"),
+ ("Clients from 15 countries", "عملاء من 15 دولة", "Pelanggan dari 15 negara"),
  ("You work with founders from the Gulf, Africa, Asia and Europe, in Arabic, English and Malay.", "تعمل مع مؤسسين من الخليج وأفريقيا وآسيا وأوروبا، بالعربية والإنجليزية والماليزية.", "Anda bekerja dengan pengasas dari Teluk, Afrika, Asia dan Eropah, dalam bahasa Arab, Inggeris dan Melayu."),
  ("Learn the whole business", "تعلّم العمل من كل جوانبه", "Pelajari keseluruhan perniagaan"),
  ("Company formation, banking, marketplaces and logistics: you see how international companies are really built.", "تأسيس الشركات والحسابات البنكية والمنصات والخدمات اللوجستية: ترى كيف تُبنى الشركات الدولية فعلاً.", "Penubuhan syarikat, perbankan, pasaran dalam talian dan logistik: anda melihat bagaimana syarikat antarabangsa sebenarnya dibina."),
@@ -141,7 +141,7 @@ def _job(j):
   <a class="btn solid jb-go" href="#apply" data-role="{esc(j["t"])}"><span class="dot"></span>{T("span", "Apply for this role")}</a>
 </article>'''
 
-why = [("Clients from 14 countries", "You work with founders from the Gulf, Africa, Asia and Europe, in Arabic, English and Malay."),
+why = [("Clients from 15 countries", "You work with founders from the Gulf, Africa, Asia and Europe, in Arabic, English and Malay."),
        ("Learn the whole business", "Company formation, banking, marketplaces and logistics: you see how international companies are really built."),
        ("Salary plus commission", "Every role has a fixed salary, and you earn commission on the clients you help bring in."),
        ("Remote or Kuala Lumpur", "Work from our office in Publika, Kuala Lumpur, or remotely from anywhere in Malaysia, depending on the role.")]

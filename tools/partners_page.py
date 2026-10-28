@@ -16,7 +16,7 @@ PTX = [
  ("What you get", "ما تحصل عليه", "Apa yang anda dapat"),
  ("Everything your office needs to sell international company services", "كل ما يحتاجه مكتبك لبيع خدمات الشركات الدولية", "Semua yang pejabat anda perlukan untuk menjual perkhidmatan syarikat antarabangsa"),
  ("Office price list", "قائمة أسعار المكاتب", "Senarai harga pejabat"),
- ("See your partner prices for company formation in 14 countries, established companies and add-on services. You set your own price for your client.", "اطّلع على أسعار الشركاء لتأسيس الشركات في 14 دولة، والشركات القائمة، والخدمات الإضافية. وأنت تحدد سعرك لعميلك.", "Lihat harga rakan kongsi untuk penubuhan syarikat di 14 negara, syarikat sedia ada dan perkhidmatan tambahan. Anda menetapkan harga sendiri untuk pelanggan anda."),
+ ("See your partner prices for company formation in 15 countries, established companies and add-on services. You set your own price for your client.", "اطّلع على أسعار الشركاء لتأسيس الشركات في 15 دولة، والشركات القائمة، والخدمات الإضافية. وأنت تحدد سعرك لعميلك.", "Lihat harga rakan kongsi untuk penubuhan syarikat di 15 negara, syarikat sedia ada dan perkhidmatan tambahan. Anda menetapkan harga sendiri untuk pelanggan anda."),
  ("White-label service", "خدمة باسم مكتبك", "Perkhidmatan label putih"),
  ("Your client stays your client. We don't contact them, and all documents come back to your office.", "عميلك يبقى عميلك. لا نتواصل معه، وكل المستندات تعود إلى مكتبك.", "Pelanggan anda kekal pelanggan anda. Kami tidak menghubungi mereka, dan semua dokumen dikembalikan ke pejabat anda."),
  ("Orders and documents in one place", "الطلبات والمستندات في مكان واحد", "Pesanan dan dokumen di satu tempat"),
@@ -80,7 +80,7 @@ pb_hero = x_hero("B2B", "Partner offices (B2B)", "Office prices for your clients
     "Your partner account", "Partner offices (B2B)",
     [("Office price list", "Partner prices for every service", 0), ("White-label service", "We deal only with your office", 0), ("Invoices and statements", "Pay by bank transfer or USDT", 0)], price="After KYC")
 pb_feats = "".join(f'<article class="jw">{T("h3", h)}{T("p", p)}</article>' for h, p in [
-    ("Office price list", "See your partner prices for company formation in 14 countries, established companies and add-on services. You set your own price for your client."),
+    ("Office price list", "See your partner prices for company formation in 15 countries, established companies and add-on services. You set your own price for your client."),
     ("White-label service", "Your client stays your client. We don't contact them, and all documents come back to your office."),
     ("Orders and documents in one place", "Place an order for each client, upload their documents and follow every step online."),
     ("Invoices and statements", "Every order gets an invoice, and you can print an account statement for any period.")])
@@ -161,7 +161,7 @@ pb_body = pb_hero + f'''
 for _c in ("err full pb-e1", "err full pb-e2"):
     pb_body = pb_body.replace(f'class="{_c}"', f'class="{_c}" hidden')
 page("partners.html", "Partner Offices (B2B): Office Prices for Company Formation | Wizz Smart Services",
-     "For business-service offices in Saudi Arabia, Oman and the Gulf: partner prices for company formation in 14 countries, white-label service, an online portal, invoices and payment by bank transfer or USDT.",
+     "For business-service offices in Saudi Arabia, Oman and the Gulf: partner prices for company formation in 15 countries, white-label service, an online portal, invoices and payment by bank transfer or USDT.",
      pb_body, extra_head=f'<script type="application/ld+json">{pb_ld}</script>', scripts=ar_script() + PB_JS)
 
 US_CSS += """

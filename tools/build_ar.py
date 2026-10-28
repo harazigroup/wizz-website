@@ -40,11 +40,11 @@ CFG = {
     "ar": dict(dir="rtl", locale="ar_AR", read="اقرأ المقال",
                months=["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"],
                mins=lambda n: f"وقت القراءة: {n} د", suffix=" | ويز للخدمات الذكية",
-               home="ويز للخدمات الذكية | تأسيس الشركات والمنصات والخدمات اللوجستية في 14 دولة"),
+               home="ويز للخدمات الذكية | تأسيس الشركات والمنصات والخدمات اللوجستية في 15 دولة"),
     "ms": dict(dir="ltr", locale="ms_MY", read="Baca artikel",
                months=["Jan","Feb","Mac","Apr","Mei","Jun","Jul","Ogo","Sep","Okt","Nov","Dis"],
                mins=lambda n: f"{n} min bacaan", suffix=" | Wizz Smart Services",
-               home="Wizz Smart Services | Penubuhan syarikat, pasaran dalam talian dan logistik di 14 negara"),
+               home="Wizz Smart Services | Penubuhan syarikat, pasaran dalam talian dan logistik di 15 negara"),
 }
 
 def meta_line(post, l):
