@@ -86,7 +86,7 @@ COUNTRIES = [
   tiers=[
    dict(sku=None, n="Company setup", p=fx("SGD", 1315), fix={"SGD": 1315}, i=["Company registration with ACRA","ACRA registration fee (SGD 315) included","Online business account application","Constitution & company documents"]),
    dict(sku=None, n="Yearly compliance", p=fx("SGD", 4140), fix={"SGD": 4140}, frm=True, i=["Registered office address","Company secretary","Accounting & bookkeeping","Corporate tax filing","Business registration support"]),
-   dict(sku=None, n="Nominee resident director", p=fx("SGD", 4000), fix={"SGD": 4000}, i=["Local resident director, required for every Singapore company","12 months","Only if you have no director living in Singapore"])],
+   dict(sku=None, n="Nominee resident director", p=fx("SGD", 4600), fix={"SGD": 4600}, i=["Local resident director, required for every Singapore company","12 months","Only if you have no director living in Singapore"])],
   notes=["The yearly compliance fee depends on your number of transactions and accounting software; we confirm it before you start.","Not included: ACRA annual return fee (SGD 60 a year) and other fees paid for the company, such as stamp duty. A traditional (physical) bank account is charged by time spent."]),
  dict(c="TH", n="Thailand", g="Asia", e="Thai limited company. Foreign ownership limits apply to many activities.",
   tiers=[
