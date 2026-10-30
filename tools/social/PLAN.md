@@ -3,7 +3,7 @@
 Used by the weekly content task. Every Sunday it prepares the next week's posts for TikTok and Instagram (@wizz.com.my).
 
 ## Rules (always)
-- **English only** on TikTok and Instagram.
+- **English only** on TikTok and Instagram, except the Friday Jumaat Mubarak post (Malay + Arabic, see below).
 - Carousels are rendered with `tools/social/carousel.py`: 1080×1920, 5–7 slides, cover + 3–5 content slides + CTA slide.
   The renderer enforces TikTok's safe area. If it fails, shorten the copy. Never shrink the type.
 - Alternate light and dark covers across the week so the profile grid stays checkerboard (light, dark, light…).
@@ -22,13 +22,22 @@ Used by the weekly content task. Every Sunday it prepares the next week's posts 
 - CTA slide: `wizz.com.my/<page>` + `WhatsApp +60 11-2447 7685`, with one line of fine print.
 
 ## Posting routine (Monday, Wednesday, Friday at 08:47 MYT)
-On each posting day one topic becomes:
+**Friday is different:** no blog or carousel. Post a "Jumaat Mubarak / جمعة مباركة" image instead (see "Friday post" below).
+
+On Monday and Wednesday one topic becomes:
 1. A **blog article** in English, Arabic and Malay, added with `python3 tools/new_post.py post.json` (rebuilds the site; push to deploy).
 2. A **carousel** (5–7 slides) built from the same article, ending with a CTA to the article or the matching package page.
 3. **Captions** for Instagram and TikTok.
 4. If a Postiz key is saved (admin page → Settings), the carousel is **scheduled** on Instagram and TikTok for 20:30 Malaysia time.
    Otherwise the slides and captions are sent to the owner to post by hand.
 On Fridays, also write 2 talking-video scripts for Arkan for the coming week (30–60 s each).
+
+## Friday post (Jumaat Mubarak)
+- Render with `python3 tools/social/jumuah.py` (today's date by default). It writes a 1080×1920 TikTok image, a 1080×1350 Instagram image and `caption.txt`.
+- The Quran verse, the short prayer and the colour theme rotate by week number from `tools/social/jumuah_verses.json`.
+- **Never type, change or "fix" a Quran verse.** Only use the verses in that file, which a person has checked. If the script reports a problem, send the images to the owner and say so.
+- Malay + Arabic only, no prices, no sales pitch, no service offer: it is a greeting. The logo and "wizz.com.my" are enough.
+- Schedule for Friday 10:00 Malaysia time (02:00 UTC), before Friday prayers: Instagram as a single-image post, TikTok as a photo post.
 
 Posting times (Malaysia time, GMT+8): 20:30 by default; 12:00–13:00 also works. Gulf audience: 21:00–23:00 MYT.
 
