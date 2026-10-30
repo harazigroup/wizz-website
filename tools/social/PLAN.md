@@ -78,3 +78,4 @@ Posting times (Malaysia time, GMT+8): 20:30 by default; 12:00–13:00 also works
 - 2026-10-26 · Topic 11, What documents you need to open a company abroad (blog + carousel, dark cover, sent for manual posting)
 - 2026-10-27 · Topic 12, Marketplace onboarding from RM 300 per platform: what we prepare (blog + carousel, light cover, sent for manual posting)
 - 2026-10-28 · Topic 13, Thailand work permit through our Thai company: how it works and what the authorities decide (blog + carousel, dark cover, sent for manual posting)
+- 2026-10-30 · Topic 14, Oman: company setup or setup with a 2-year investor visa (blog + carousel, light cover, sent for manual posting)
