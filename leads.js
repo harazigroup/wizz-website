@@ -37,7 +37,7 @@
   };
   const fill=(t,l)=>t.replace(/\{name\}/g,(l.name||'').split(/\s+/)[0]).replace(/\{market\}/g,l.market||'your company').replace(/\{ref\}/g,l.ref);
 
-  function flash(m,bad){const x=$('adMsg');x.hidden=false;x.className='ac-msg '+(bad?'bad':'good');x.textContent=m;clearTimeout(flash.t);flash.t=setTimeout(()=>x.hidden=true,4000);}
+  function flash(m,bad){const x=$('wzAMsg');x.hidden=false;x.className='ac-msg '+(bad?'bad':'good');x.textContent=m;clearTimeout(flash.t);flash.t=setTimeout(()=>x.hidden=true,4000);}
   async function load(){
     const {data,error}=await sb.from('leads').select('*').order('created_at',{ascending:false}).limit(1000);
     if(error)return flash(error.message,true);leads=data||[];renderStats();renderList();
@@ -55,7 +55,7 @@
     const q=$('ldQ').value.trim().toLowerCase(),f=$('ldF').value,s=$('ldS').value;
     const L=leads.filter(l=>(f==='due'?isDue(l):f==='hot'?(l.priority==='hot'&&!['won','lost'].includes(l.status)):f==='open'?!['won','lost'].includes(l.status):(!f||l.status===f))&&(!s||l.source===s)&&(!q||[l.ref,l.name,l.email,l.phone,l.market,l.activity,l.nationality].join(' ').toLowerCase().includes(q)));
     $('ldCount').textContent=L.length+' lead'+(L.length===1?'':'s');
-    $('ldList').innerHTML=L.map(l=>{const due=isDue(l);return '<button type="button" class="ad-row'+(cur&&cur.id===l.id?' on':'')+'" data-lead="'+l.id+'"><span class="ld-line"><i class="ld-dot p-'+l.priority+'" title="'+l.priority+'"></i><b>'+esc(l.name)+'</b><span class="ac-badge ls-'+l.status+'">'+ST[l.status]+'</span></span><span class="ad-pk">'+esc([l.market,l.activity].filter(Boolean).join(' · ').slice(0,80))+'</span><small>'+esc(SRC[l.source]||l.source)+' · '+fmtDate(l.created_at)+(l.next_follow_up&&!['won','lost'].includes(l.status)?' · <span class="'+(due?'ld-due':'')+'">follow up '+fmtDate(l.next_follow_up)+'</span>':'')+'</small></button>';}).join('')||'<p class="ac-none">No leads here.</p>';
+    $('ldList').innerHTML=L.map(l=>{const due=isDue(l);return '<button type="button" class="wz-row'+(cur&&cur.id===l.id?' on':'')+'" data-lead="'+l.id+'"><span class="ld-line"><i class="ld-dot p-'+l.priority+'" title="'+l.priority+'"></i><b>'+esc(l.name)+'</b><span class="ac-badge ls-'+l.status+'">'+ST[l.status]+'</span></span><span class="wz-pk">'+esc([l.market,l.activity].filter(Boolean).join(' · ').slice(0,80))+'</span><small>'+esc(SRC[l.source]||l.source)+' · '+fmtDate(l.created_at)+(l.next_follow_up&&!['won','lost'].includes(l.status)?' · <span class="'+(due?'ld-due':'')+'">follow up '+fmtDate(l.next_follow_up)+'</span>':'')+'</small></button>';}).join('')||'<p class="ac-none">No leads here.</p>';
   }
   async function open(id){
     cur=leads.find(l=>l.id===id);if(!cur)return;renderList();
@@ -65,9 +65,9 @@
   function waLink(l,key){const lang=['ar','ms'].includes(l.lang)?l.lang:'en';return 'https://wa.me/'+String(l.phone||'').replace(/\D/g,'')+'?text='+encodeURIComponent(fill(TPL[key][lang],l));}
   function renderLead(){
     const l=cur,F=[['Email',l.email],['WhatsApp',l.phone],['Nationality',l.nationality],['Lives in',l.residence],['Target country',l.market],['Activity',l.activity],['Services',l.services],['Owners',l.owners],['Selling online',l.brand],['Message',l.message],['Language',{en:'English',ar:'Arabic',ms:'Malay'}[l.lang]||l.lang]];
-    $('ldDetail').innerHTML='<div class="ad-top"><div><h2>'+esc(l.name)+'</h2><p class="ad-sub ltr">'+esc(l.ref)+' · '+esc(SRC[l.source]||l.source)+' · '+fmtDate(l.created_at)+'</p>'+(l.ref_code?'<p class="ld-hint" style="margin:4px 0 0">Referral code <b class="ltr">'+esc(l.ref_code)+'</b>: RM 100 off orders of RM 1,000+. Add it as a discount line on the quote, then record the 10% in Referrals once the client pays.</p>':'')+'</div><div class="ad-amt"><span class="ld-pri p-'+l.priority+'">'+l.priority.toUpperCase()+'</span><small>score '+l.score+'</small></div></div>'+
-      '<section class="ad-box"><h3>Contact on WhatsApp</h3>'+(l.phone?'<div class="ld-tpl">'+Object.keys(TPL).map(k=>'<a class="btn ghost small" target="_blank" rel="noopener" data-tpl="'+k+'" href="'+esc(waLink(l,k))+'">'+TPL[k].label+'</a>').join('')+'</div><p class="ld-hint">Opens WhatsApp with the message ready in the client\'s language. Sending it marks the lead as contacted and sets the next follow-up in 2 days.</p>':'<p class="ac-none">No WhatsApp number. Add one below.</p>')+(l.email?'<p class="ld-hint">Email: <a href="mailto:'+esc(l.email)+'">'+esc(l.email)+'</a></p>':'')+'</section>'+
-      '<section class="ad-box"><h3>Pipeline</h3><div class="ld-grid">'+
+    $('ldDetail').innerHTML='<div class="wz-top"><div><h2>'+esc(l.name)+'</h2><p class="wz-sub ltr">'+esc(l.ref)+' · '+esc(SRC[l.source]||l.source)+' · '+fmtDate(l.created_at)+'</p>'+(l.ref_code?'<p class="ld-hint" style="margin:4px 0 0">Referral code <b class="ltr">'+esc(l.ref_code)+'</b>: RM 100 off orders of RM 1,000+. Add it as a discount line on the quote, then record the 10% in Referrals once the client pays.</p>':'')+'</div><div class="wz-amt"><span class="ld-pri p-'+l.priority+'">'+l.priority.toUpperCase()+'</span><small>score '+l.score+'</small></div></div>'+
+      '<section class="wz-box"><h3>Contact on WhatsApp</h3>'+(l.phone?'<div class="ld-tpl">'+Object.keys(TPL).map(k=>'<a class="btn ghost small" target="_blank" rel="noopener" data-tpl="'+k+'" href="'+esc(waLink(l,k))+'">'+TPL[k].label+'</a>').join('')+'</div><p class="ld-hint">Opens WhatsApp with the message ready in the client\'s language. Sending it marks the lead as contacted and sets the next follow-up in 2 days.</p>':'<p class="ac-none">No WhatsApp number. Add one below.</p>')+(l.email?'<p class="ld-hint">Email: <a href="mailto:'+esc(l.email)+'">'+esc(l.email)+'</a></p>':'')+'</section>'+
+      '<section class="wz-box"><h3>Pipeline</h3><div class="ld-grid">'+
         '<label>Status<select id="ldSt">'+Object.keys(ST).map(k=>'<option value="'+k+'"'+(k===l.status?' selected':'')+'>'+ST[k]+'</option>').join('')+'</select></label>'+
         '<label>Next follow-up<input type="date" id="ldNext" value="'+esc(l.next_follow_up||'')+'"></label>'+
         '<label>Priority<select id="ldPri">'+['hot','warm','cold'].map(k=>'<option'+(k===l.priority?' selected':'')+'>'+k+'</option>').join('')+'</select></label>'+
@@ -76,12 +76,12 @@
         '<label>Currency<select id="ldQC">'+['MYR','USD','GBP','EUR','SAR','AED','OMR'].map(c=>'<option'+(c===(l.quote_currency||'MYR')?' selected':'')+'>'+c+'</option>').join('')+'</select></label>'+
         '<label id="ldLostW"'+(l.status==='lost'?'':' hidden')+'>Lost reason<select id="ldLost"><option value="">Choose</option>'+LOST.map(r=>'<option'+(r===l.lost_reason?' selected':'')+'>'+r+'</option>').join('')+'</select></label>'+
         '<label>WhatsApp<input id="ldPh" value="'+esc(l.phone||'')+'" placeholder="+60..."></label>'+
-      '</div><label class="ad-lbl">Notes<textarea id="ldNotes" rows="3">'+esc(l.notes||'')+'</textarea></label>'+
+      '</div><label class="wz-lbl">Notes<textarea id="ldNotes" rows="3">'+esc(l.notes||'')+'</textarea></label>'+
       '<div class="ld-actions"><button class="btn solid small" id="ldSave" type="button">Save</button><label class="ld-chk"><input type="checkbox" id="ldNoMail"'+(l.no_emails?' checked':'')+'> No automatic emails</label></div>'+
       '<p class="ld-hint">Set the status to <b>Quote sent</b> and the system emails the client a polite follow-up after 3 and 7 days, unless the lead is won, lost or set to no emails.</p></section>'+
-      '<section class="ad-box" id="ldQuotes"></section>'+
-      '<section class="ad-box"><h3>Enquiry</h3><dl class="ad-dl">'+F.filter(([,v])=>v).map(([k,v])=>'<dt>'+k+'</dt><dd>'+esc(v)+'</dd>').join('')+'</dl></section>'+
-      '<section class="ad-box"><h3>History</h3><ul class="ad-ev">'+events.map(e=>'<li><b>'+esc(e.kind.replace(/_/g,' '))+'</b>'+(e.note?' · '+esc(e.note):'')+'<small>'+new Date(e.created_at).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})+' · '+esc(e.created_by||'')+'</small></li>').join('')+'</ul></section>';
+      '<section class="wz-box" id="ldQuotes"></section>'+
+      '<section class="wz-box"><h3>Enquiry</h3><dl class="wz-dl">'+F.filter(([,v])=>v).map(([k,v])=>'<dt>'+k+'</dt><dd>'+esc(v)+'</dd>').join('')+'</dl></section>'+
+      '<section class="wz-box"><h3>History</h3><ul class="wz-ev">'+events.map(e=>'<li><b>'+esc(e.kind.replace(/_/g,' '))+'</b>'+(e.note?' · '+esc(e.note):'')+'<small>'+new Date(e.created_at).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})+' · '+esc(e.created_by||'')+'</small></li>').join('')+'</ul></section>';
     renderQuotes();
   }
   // ---------- quotes
@@ -103,10 +103,10 @@
         '<label>Language<select id="qLang">'+[['en','English'],['ar','Arabic'],['ms','Malay']].map(([k,v])=>'<option value="'+k+'"'+(k===draft.lang?' selected':'')+'>'+v+'</option>').join('')+'</select></label>'+
         '<label>Currency<select id="qCur">'+['MYR','USD','GBP','EUR','SAR','AED','OMR'].map(c=>'<option'+(c===draft.currency?' selected':'')+'>'+c+'</option>').join('')+'</select></label>'+
         '<label>Valid for (days)<input id="qDays" type="number" min="1" max="90" value="'+draft.days+'"></label></div>'+
-        '<div class="ad-form"><select id="qPick"><option value="">Add a package or service…</option>'+groups.map(g=>'<optgroup label="'+esc(g)+'">'+CAT.map((c,i)=>c.g===g?'<option value="'+i+'">'+esc(c.name)+(priceOf(c,draft.currency)?' · '+money(priceOf(c,draft.currency),draft.currency):'')+'</option>':'').join('')+'</optgroup>').join('')+'</select><button type="button" class="btn ghost small" id="qCustom">Custom line</button></div>'+
+        '<div class="wz-form"><select id="qPick"><option value="">Add a package or service…</option>'+groups.map(g=>'<optgroup label="'+esc(g)+'">'+CAT.map((c,i)=>c.g===g?'<option value="'+i+'">'+esc(c.name)+(priceOf(c,draft.currency)?' · '+money(priceOf(c,draft.currency),draft.currency):'')+'</option>':'').join('')+'</optgroup>').join('')+'</select><button type="button" class="btn ghost small" id="qCustom">Custom line</button></div>'+
         '<table class="ld-qt"><thead><tr><th>Service</th><th>Qty</th><th>Unit price</th><th></th></tr></thead><tbody>'+draft.items.map((it,i)=>'<tr><td><input data-qi="'+i+'" data-k="name" value="'+esc(it.name)+'"><textarea data-qi="'+i+'" data-k="detail" rows="2" placeholder="What is included">'+esc(it.detail)+'</textarea><label class="ld-chk"><input type="checkbox" data-qi="'+i+'" data-k="from"'+(it.from?' checked':'')+'> show as "from"</label></td><td><input type="number" min="1" data-qi="'+i+'" data-k="qty" value="'+it.qty+'"></td><td><input type="number" min="0" step="1" data-qi="'+i+'" data-k="unit" value="'+it.unit+'"></td><td><button type="button" class="ac-link danger" data-qdel="'+i+'">Remove</button></td></tr>').join('')+'</tbody></table>'+
         '<p class="ld-qtot">Total: <b>'+money(draft.items.reduce((a,it)=>a+(+it.unit||0)*(+it.qty||1),0),draft.currency)+'</b></p>'+
-        '<label class="ad-lbl">Note shown to the client (optional)<textarea id="qNotes" rows="2" placeholder="e.g. Government fees for Delaware are paid at cost.">'+esc(draft.notes)+'</textarea></label>'+
+        '<label class="wz-lbl">Note shown to the client (optional)<textarea id="qNotes" rows="2" placeholder="e.g. Government fees for Delaware are paid at cost.">'+esc(draft.notes)+'</textarea></label>'+
         '<div class="ld-actions"><button class="btn solid small" type="button" id="qSave">Create quote</button><button class="btn ghost small" type="button" id="qCancelDraft">Cancel</button></div>'+
         '<p class="ld-hint">Creating the quote sets the lead to Quote sent. The client gets polite follow-up emails after 3 and 7 days unless they accept, or you change the status.</p></div>';
     }

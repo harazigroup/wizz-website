@@ -186,7 +186,7 @@ US_CSS += """
 .pt-prices td:nth-child(2){text-align:end;white-space:nowrap;font-weight:700}
 .pt-prices td:last-child{text-align:end;width:1%}
 .pt-new{display:flex;flex-direction:column;gap:16px}
-.pt-new .ad-box{margin:0}
+.pt-new .wz-box{margin:0}
 .pt-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
 .pt-grid label{display:flex;flex-direction:column;gap:6px;font-weight:600;font-size:13.5px}
 .pt-grid .full{grid-column:1/-1}
