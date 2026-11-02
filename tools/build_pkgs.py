@@ -699,6 +699,10 @@ if '"nav_legal"' not in js:
     js = js.replace('"nav_mp": ', '"nav_legal": "قانوني", "lg_terms": "شروط الخدمة", "lg_refund": "سياسة الاسترداد", "lg_privacy": "سياسة الخصوصية", "wa_chat": "تواصل معنا", "nav_mp": ', 1)
     assert '"nav_legal"' in js
     open(f"{D}/site.js", "w").write(js)
+if '"ft_s_form"' not in js:
+    js = js.replace('"nav_mp": ', '"ft_s_form": "تأسيس الشركات", "ft_s_bank": "البنوك والمدفوعات", "ft_s_ecom": "التجارة الإلكترونية وأمازون", "ft_s_log": "الشحن والخدمات اللوجستية", "ft_s_all": "كل الخدمات ←", "nav_mp": ', 1)
+    assert '"ft_s_form"' in js
+    open(f"{D}/site.js", "w").write(js)
 if '"nav_pkgs"' not in js:
     js = js.replace('"nav_mp": ', '"nav_pkgs": "الباقات", "nav_mp": ', 1)
     assert '"nav_pkgs"' in js
@@ -1112,4 +1116,20 @@ for _f in glob.glob(f"{D}/*.html"):
     if _FT_M in _h and 'data-i18n="ft_ref"' not in _h:
         _h = _h.replace(_FT_M, _FT_M + '\n          <li><a href="refer.html" data-i18n="ft_ref">Refer &amp; earn</a></li>', 1)
     open(_f, "w").write(_h)
+# footer: short services list (5 links); partner offices and refer & earn move to the contact column (idempotent)
+_FT_SVC = """<h4 data-i18n="nav_services">Services</h4><ul>
+          <li><a href="services.html#formation" data-i18n="ft_s_form">Company formation</a></li>
+          <li><a href="services.html#banking" data-i18n="ft_s_bank">Banking &amp; payments</a></li>
+          <li><a href="marketplaces.html" data-i18n="ft_s_ecom">E-commerce &amp; Amazon</a></li>
+          <li><a href="services.html#logistics" data-i18n="ft_s_log">Logistics &amp; shipping</a></li>
+          <li><a href="services.html" data-i18n="ft_s_all">All services →</a></li>
+        </ul>"""
+_FT_RE = re.compile(r'<h4 data-i18n="nav_services">Services</h4><ul>.*?</ul>', re.S)
+_FT_JOBS = re.compile(r'(data-i18n="ft_jobs"[^>]*>Careers</a></li>|href="careers.html">Careers</a></li>)')
+for _f in glob.glob(f"{D}/*.html"):
+    _h = open(_f).read(); _o = _h
+    if 'data-i18n="ft_s_form"' not in _h: _h = _FT_RE.sub(lambda m: _FT_SVC, _h, count=1)
+    if 'data-i18n="ft_s_form"' in _h and 'class="ft-more"' not in _h:
+        _h = _FT_JOBS.sub(lambda m: m.group(1) + '\n          <li class="ft-more"><a href="partners.html" data-i18n="ft_b2b">Partner offices (B2B)</a> · <a href="refer.html" data-i18n="ft_ref">Refer &amp; earn</a></li>', _h, count=1)
+    if _h != _o: open(_f, "w").write(_h)
 import runpy; runpy.run_path(os.path.join(os.path.dirname(os.path.abspath(__file__)), "build_ar.py"))
