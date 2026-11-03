@@ -239,7 +239,6 @@ function setLang(l){
   if (l !== 'ms') nodes.forEach(n => { const v = d[n.dataset.i18n] ?? EN[n.dataset.i18n]; if (v == null) return; if (n.hasAttribute('data-html')) n.innerHTML = v; else n.textContent = v; });
   if (l !== 'ms') document.querySelectorAll('[data-i18n-ph]').forEach(n => { n.placeholder = d[n.dataset.i18nPh] ?? EN[n.dataset.i18nPh]; });
   const ls = document.getElementById('langSel'); if (ls) ls.value = l;
-  try { localStorage.setItem('wizz-lang', l); } catch(e) {}
   document.dispatchEvent(new CustomEvent('wizz:lang', { detail: l }));
   renderBlog(); renderArticle();
   const out = document.getElementById('out'); if (out && !out.hidden) buildMsg();
@@ -252,11 +251,11 @@ function langUrl(l){
 }
 const langSel = document.getElementById('langSel');
 if (langSel) { langSel.value = PAGE_LANG; langSel.addEventListener('change', () => {
-  try { localStorage.setItem('wizz-lang', langSel.value); } catch(e) {}
+  try { localStorage.setItem('wizz-lang-choice', langSel.value); localStorage.removeItem('wizz-lang'); } catch(e) {}
   location.href = langUrl(langSel.value);
 }); }
 if (PAGE_LANG !== 'en') setLang(PAGE_LANG);
-else { try { const saved = localStorage.getItem('wizz-lang'); if ((saved === 'ar' || saved === 'ms') && !/bot|crawl|spider/i.test(navigator.userAgent)) location.replace(langUrl(saved)); } catch(e) {} }
+else { try { localStorage.removeItem('wizz-lang'); const saved = localStorage.getItem('wizz-lang-choice'); if ((saved === 'ar' || saved === 'ms') && !/bot|crawl|spider/i.test(navigator.userAgent)) location.replace(langUrl(saved)); } catch(e) {} }
 if (lang === 'en') { renderBlog(); renderArticle(); }
 
 // ---- referral codes: ?ref=CODE is remembered for 60 days and used on the contact form and at checkout
