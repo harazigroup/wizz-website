@@ -91,3 +91,4 @@ Posting times (Malaysia time, GMT+8): 20:30 by default; 12:00–13:00 also works
 - 2026-11-04 · Topic 15, UK London address plans: registered office, director's address, business address, call answering (blog + carousel, dark cover, sent for manual posting)
 - 2026-11-05 · Topic 16, Yearly duties after you form a company (US, UK): what you must file (blog + carousel, light cover, sent for manual posting)
 - 2026-11-06 · Jumaat Mubarak (Hud 11:88, night, sent for manual posting)
+- 2026-11-09 · Topic 17, Wyoming, New Mexico or Delaware: choosing the state for your US LLC (blog + carousel, dark cover, sent for manual posting)
