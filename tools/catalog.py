@@ -19,7 +19,7 @@ COUNTRIES = [
   notes=["Delaware: add $100. Delaware charges a $400 yearly tax from 2026.","Yearly renewal from $499 (registered agent + annual report)."]),
  dict(c="UK", n="United Kingdom", g="Europe", e="Private limited company (Ltd) at Companies House. No UK-resident director needed.",
   tiers=[
-   dict(sku="uk-starter", n="Starter", p=299, fix={"MYR": 1299}, buy=True, i=["Companies House fee (£100) included","Director identity verification","Registered office address, 12 months","Share certificates & digital documents"]),
+   dict(sku="uk-starter", n="Starter", p=499, fix={"MYR": 2099}, buy=True, i=["Companies House fee (£100) included","Director identity verification","Registered office address, 12 months","Share certificates & digital documents"]),
    dict(sku="uk-business", n="Business", p=599, fix={"MYR": 2499}, buy=True, pop=True, plus="Everything in Starter, plus", i=["Director service address, 12 months","HMRC Corporation Tax (UTR) registration","Business account application support","VAT registration if needed"]),
    dict(sku="uk-complete", n="Complete", p=1290, fix={"MYR": 5399}, buy=True, plus="Everything in Business, plus", i=["First-year accounts via our accountant partner","Confirmation statement filing (£50 fee included)"]),
    dict(sku="uk-addr-ro-da", grp="uk-addr", n="Registered office + director's address", p=fx("GBP", 34.99), fix={"GBP": 34.99}, buy=True, i=["Registered office address in London","Director's service address","12 months"]),

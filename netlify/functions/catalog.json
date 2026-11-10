@@ -31,10 +31,10 @@
  },
  "uk-starter": {
   "name": "United Kingdom - Starter",
-  "amount": 299,
+  "amount": 499,
   "currency": "USD",
   "fixed": {
-   "MYR": 1299
+   "MYR": 2099
   },
   "desc": "Includes: Companies House fee (£100) included; Director identity verification; Registered office address, 12 months; Share certificates & digital documents.",
   "image": "https://wizz.com.my/img/pay/uk.png"
