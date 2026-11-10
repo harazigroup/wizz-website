@@ -41,10 +41,10 @@
  },
  "uk-business": {
   "name": "United Kingdom - Business",
-  "amount": 599,
+  "amount": 799,
   "currency": "USD",
   "fixed": {
-   "MYR": 2499
+   "MYR": 3399
   },
   "desc": "Everything in Starter, plus: Director service address, 12 months; HMRC Corporation Tax (UTR) registration; Business account application support; VAT registration if needed.",
   "image": "https://wizz.com.my/img/pay/uk.png"
