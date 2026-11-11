@@ -68,6 +68,16 @@ Posting times (Malaysia time, GMT+8): 20:30 by default; 12:00–13:00 also works
 24. Amazon Brand Registry: why the trademark comes first (amazon-brand.html)
 25. MM2H and company formation: two different things (mm2h.html)
 26. Pakistan private limited company: security clearance for foreign shareholders
+27. FDA facility registration and US Agent for food and supplement sellers (usa.html)
+28. US label review: Supplement Facts and claims before selling in the US (usa.html)
+29. Form 5472 and the pro-forma 1120: the yearly filing every foreign-owned LLC must make
+30. UK VAT registration: when your Ltd needs it and what we handle (uk.html)
+31. Canada Starter vs Business: Business Number, GST/HST and Amazon.ca readiness
+32. France SAS for Cdiscount sellers: what a non-EU manager should know
+33. Poland sp. z o.o.: share capital and why accounting is mandatory
+34. Singapore company for regional trade: what you need to prepare (countries.html)
+35. Egypt company setup for foreign founders (countries.html)
+36. Preparing a strong Wise, Payoneer or Stripe application (what the provider decides)
 
 ## Used topics
 - 2026-10-12 · UK company without living in the UK (posted)
@@ -92,3 +102,4 @@ Posting times (Malaysia time, GMT+8): 20:30 by default; 12:00–13:00 also works
 - 2026-11-05 · Topic 16, Yearly duties after you form a company (US, UK): what you must file (blog + carousel, light cover, sent for manual posting)
 - 2026-11-06 · Jumaat Mubarak (Hud 11:88, night, sent for manual posting)
 - 2026-11-09 · Topic 17, Wyoming, New Mexico or Delaware: choosing the state for your US LLC (blog + carousel, dark cover, sent for manual posting)
+- 2026-11-11 · Topic 18, EIN for non-residents: what it is and how the application works (blog + carousel, light cover, sent for manual posting)
