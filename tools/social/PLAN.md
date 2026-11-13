@@ -103,3 +103,4 @@ Posting times (Malaysia time, GMT+8): 20:30 by default; 12:00–13:00 also works
 - 2026-11-06 · Jumaat Mubarak (Hud 11:88, night, sent for manual posting)
 - 2026-11-09 · Topic 17, Wyoming, New Mexico or Delaware: choosing the state for your US LLC (blog + carousel, dark cover, sent for manual posting)
 - 2026-11-11 · Topic 18, EIN for non-residents: what it is and how the application works (blog + carousel, light cover, sent for manual posting)
+- 2026-11-13 · Jumaat Mubarak (At-Talaq 65:3, emerald, sent for manual posting)
