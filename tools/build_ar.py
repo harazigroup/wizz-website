@@ -13,7 +13,7 @@ D = "/home/claude/wizz-dist"
 T = os.path.dirname(os.path.abspath(__file__))
 SITE = "https://wizz.com.my"
 SKIP = {"admin.html", "quote.html", "invoice.html"}
-LANGS = ("ar", "ms")
+LANGS = ("ar", "ms", "zh")
 
 site_js = open(f"{D}/site.js").read()
 AR = json.loads(re.match(r"const AR = (\{.*?\});\n", site_js).group(1))
@@ -21,6 +21,10 @@ MS = json.load(open(f"{T}/ms_strings.json"))
 # runtime strings in the JS source carry \' escapes; the browser sees plain apostrophes
 MS.update({k.replace("\\'", "'"): v.replace("\\'", "'") for k, v in list(MS.items()) if "\\'" in k})
 MS_POSTS = json.load(open(f"{T}/posts_ms.json"))
+ZH = json.load(open(f"{T}/zh_strings.json"))
+ZH.update({k.replace("\\'", "'"): v for k, v in list(ZH.items()) if "\\'" in k})
+ZH_POSTS = json.load(open(f"{T}/posts_zh.json"))
+DICT = {"ms": MS, "zh": ZH}
 
 # blog posts live in site.js as a JS array; let node turn them into JSON
 NODE = r"""
@@ -35,6 +39,8 @@ POSTS, SLUGS = blog["posts"], blog["slugs"]
 for p in POSTS:
     p["ms"] = MS_POSTS.get(p["id"])
     if not p["ms"]: raise SystemExit(f"Missing Malay blog post in tools/posts_ms.json: {p['id']}")
+    p["zh"] = ZH_POSTS.get(p["id"])
+    if not p["zh"]: raise SystemExit(f"Missing Chinese blog post in tools/posts_zh.json: {p['id']}")
 
 CFG = {
     "ar": dict(dir="rtl", locale="ar_AR", read="اقرأ المقال",
@@ -45,13 +51,20 @@ CFG = {
                months=["Jan","Feb","Mac","Apr","Mei","Jun","Jul","Ogo","Sep","Okt","Nov","Dis"],
                mins=lambda n: f"{n} min bacaan", suffix=" | Wizz Smart Services",
                home="Wizz Smart Services | Penubuhan syarikat, pasaran dalam talian dan logistik di 15 negara"),
+    "zh": dict(dir="ltr", locale="zh_CN", read="阅读文章",
+               months=None, date=lambda y, m, d: f"{y}年{m}月{d}日",
+               mins=lambda n: f"阅读约 {n} 分钟", suffix=" | Wizz Smart Services",
+               home="Wizz Smart Services | 在 15 个国家提供公司注册、电商平台与物流服务"),
 }
 
 def meta_line(post, l):
     y, m, d = map(int, post["date"].split("-"))
     p = post[l]
     words = len((p["lede"] + " " + re.sub(r"<[^>]+>", " ", p["body"])).split())
-    return f"{d} {CFG[l]['months'][m-1]} {y} · {CFG[l]['mins'](max(2, round(words/200)))}"
+    date = CFG[l]["date"](y, m, d) if CFG[l].get("date") else f"{d} {CFG[l]['months'][m-1]} {y}"
+    if l == "zh":  # Chinese text has no spaces between words: about 400 characters a minute
+        words = len(re.sub(r"<[^>]+>|\s", "", p["lede"] + p["body"])) // 2
+    return f"{date} · {CFG[l]['mins'](max(2, round(words/200)))}"
 
 def url_for(name, l):
     path = "" if name == "index.html" else name
@@ -69,23 +82,26 @@ def alternates(name):
     return (f'<link rel="alternate" hreflang="en" href="{url_for(name, "en")}">\n'
             f'<link rel="alternate" hreflang="ar" href="{url_for(name, "ar")}">\n'
             f'<link rel="alternate" hreflang="ms" href="{url_for(name, "ms")}">\n'
+            f'<link rel="alternate" hreflang="zh-Hans" href="{url_for(name, "zh")}">\n'
             f'<link rel="alternate" hreflang="x-default" href="{url_for(name, "en")}">\n')
 
 # short labels where the header has little room
 MS_KEY = {"nav_mp": "Pasaran", "nav_acq": "Pemerolehan", "cta_short": "Rundingan percuma"}
+ZH_KEY = {"nav_mp": "电商平台", "nav_acq": "公司收购", "cta_short": "免费咨询"}
+SHORT = {"ms": MS_KEY, "zh": ZH_KEY}
 
-def ms_lookup(el, is_html):
+def ms_lookup(el, is_html, D=None):
     """Malay for an element, looked up by its English content. Returns (value, value_is_html) or None."""
     raw = el.decode_contents().strip()
     for cand in (raw, html.unescape(raw), el.get_text()):
-        if cand in MS:
-            v = MS[cand]
+        if cand in (D or MS):
+            v = (D or MS)[cand]
             return v, bool(re.search(r"<[a-z]", v))
     return None
 
 # runtime strings (cart, checkout, account, forms): English -> Malay, read by the T() helpers on /ms/ pages
-RT = {k: v for k, v in MS.items() if "<" not in k or "<span" in k}
-MS_RT_SCRIPT = "<script>window.WIZZ_MS=" + json.dumps(RT, ensure_ascii=False).replace("</", "<\\/") + ";</script>\n"
+RT_SCRIPT = {l: "<script>window.WIZZ_MS=" + json.dumps({k: v for k, v in d.items() if "<" not in k or "<span" in k}, ensure_ascii=False).replace("</", "<\\/") + ";</script>\n"
+             for l, d in DICT.items()}
 
 missing = {}
 for l in LANGS:
@@ -110,20 +126,20 @@ for path in pages:
             if l == "ar":
                 v = page_ar.get(el["data-i18n"])
                 if v is not None: set_inner(el, v, el.has_attr("data-html"))
-            elif el["data-i18n"] in MS_KEY:
-                set_inner(el, MS_KEY[el["data-i18n"]], False)
+            elif el["data-i18n"] in SHORT[l]:
+                set_inner(el, SHORT[l][el["data-i18n"]], False)
             else:
-                hit = ms_lookup(el, el.has_attr("data-html"))
+                hit = ms_lookup(el, el.has_attr("data-html"), DICT[l])
                 if hit: set_inner(el, hit[0], hit[1])
-                elif el.get_text(strip=True): missing.setdefault(el.get_text(" ", strip=True)[:90], name)
+                elif el.get_text(strip=True): missing.setdefault(f"{l}: " + el.get_text(" ", strip=True)[:90], name)
         for el in soup.select("[data-i18n-ph]"):
             if l == "ar":
                 v = page_ar.get(el["data-i18n-ph"])
                 if v is not None: el["placeholder"] = v
             else:
                 ph = el.get("placeholder", "")
-                if ph in MS: el["placeholder"] = MS[ph]
-                elif ph: missing.setdefault(ph, name)
+                if ph in DICT[l]: el["placeholder"] = DICT[l][ph]
+                elif ph: missing.setdefault(f"{l}: " + ph, name)
         sel = soup.find(id="langSel")
         if sel:
             for o in sel.find_all("option"):
@@ -171,18 +187,18 @@ for path in pages:
         loc = soup.select_one('meta[property="og:locale"]')
         if loc: loc["content"] = c["locale"]
         out = str(soup)
-        if l == "ms": out = out.replace("</head>", MS_RT_SCRIPT + "</head>", 1)
+        if l in RT_SCRIPT: out = out.replace("</head>", RT_SCRIPT[l] + "</head>", 1)
         open(f"{D}/{l}/{name}", "w").write(out)
 
 # sitemap: the translated pages next to the English ones
 sm = f"{D}/sitemap.xml"
 s = open(sm).read()
-s = re.sub(r"  <url><loc>https://wizz\.com\.my/(ar|ms)/[^<]*</loc></url>\n", "", s)
+s = re.sub(r"  <url><loc>https://wizz\.com\.my/(ar|ms|zh)/[^<]*</loc></url>\n", "", s)
 en = re.findall(r"<loc>(https://wizz\.com\.my/[^<]*)</loc>", s)
 extra = "".join(f"  <url><loc>{u.replace(SITE + '/', SITE + '/' + l + '/', 1)}</loc></url>\n" for l in LANGS for u in en)
 s = s.replace("</urlset>", extra + "</urlset>")
 open(sm, "w").write(s)
 print("translated pages:", len(pages), "x", len(LANGS))
 if missing:
-    print(f"Malay missing for {len(missing)} strings:")
+    print(f"Translation missing for {len(missing)} strings:")
     for k, v in list(missing.items())[:60]: print(f"  [{v}] {k}")

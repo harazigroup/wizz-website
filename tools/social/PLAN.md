@@ -25,7 +25,7 @@ Used by the weekly content task. Every Sunday it prepares the next week's posts 
 **Friday is different:** no blog or carousel. Post a "Jumaat Mubarak / جمعة مباركة" image instead (see "Friday post" below).
 
 On Monday and Wednesday one topic becomes:
-1. A **blog article** in English, Arabic and Malay, added with `python3 tools/new_post.py post.json` (rebuilds the site; push to deploy).
+1. A **blog article** in English, Arabic, Malay and Chinese (Simplified), added with `python3 tools/new_post.py post.json` (rebuilds the site; push to deploy).
 2. A **carousel** (5–7 slides) built from the same article, ending with a CTA to the article or the matching package page.
 3. **Captions** for Instagram and TikTok.
 4. If a Postiz key is saved (admin page → Settings), the carousel is **scheduled** on Instagram and TikTok for 20:30 Malaysia time.

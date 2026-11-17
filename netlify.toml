@@ -20,6 +20,12 @@
   to = "/:splat"
   status = 200
 
+# Chinese (Simplified) pages work the same way under /zh/
+[[redirects]]
+  from = "/zh/*"
+  to = "/:splat"
+  status = 200
+
 # digital business cards: contact files open in the phone's contacts app
 [[headers]]
   for = "/card/*"

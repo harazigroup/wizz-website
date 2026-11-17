@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
-"""Adds a blog post in English, Arabic and Malay, then rebuilds the site.
+"""Adds a blog post in English, Arabic, Malay and Chinese (Simplified), then rebuilds the site.
 
 Usage:  python3 tools/new_post.py post.json
 post.json:
 { "id": "post-uae-free-zone", "slug": "blog-uae-free-zone-or-mainland.html", "date": "2026-10-14",
   "en": {"tag": "...", "title": "...", "lede": "...", "body": "<p>...</p><h3>...</h3><ul><li>...</li></ul>"},
-  "ar": {...same keys...}, "ms": {...same keys...} }
+  "ar": {...same keys...}, "ms": {...same keys...}, "zh": {...same keys, Simplified Chinese...} }
 
 What it does: adds the post to site.js (POSTS, newest first, and POST_SLUGS), adds the Malay version to
-tools/posts_ms.json, creates the article page from an existing one, refreshes the English blog grids
-(blog.html, index.html), then runs tools/build_pkgs.py, which builds /ar/ and /ms/ and the sitemap.
+tools/posts_ms.json and the Chinese version to tools/posts_zh.json, creates the article page from an existing one, refreshes the English blog grids
+(blog.html, index.html), then runs tools/build_pkgs.py, which builds /ar/, /ms/ and /zh/ and the sitemap.
 Body HTML may use <p>, <h3>, <ul>/<ol>/<li>, <b>, <a href="page.html">. No images, no scripts.
 """
 import html, json, re, subprocess, sys, os
@@ -28,7 +28,7 @@ pid, slug, date = spec["id"], spec["slug"], spec["date"]
 if not re.fullmatch(r"post-[a-z0-9-]+", pid): fail("id must look like post-some-topic")
 if not re.fullmatch(r"blog-[a-z0-9-]+\.html", slug): fail("slug must look like blog-some-topic.html")
 if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", date): fail("date must be YYYY-MM-DD")
-for l in ("en", "ar", "ms"):
+for l in ("en", "ar", "ms", "zh"):
     p = spec.get(l) or fail(f"missing {l}")
     for k in ("tag", "title", "lede", "body"):
         if not str(p.get(k, "")).strip(): fail(f"{l}.{k} is empty")
@@ -55,6 +55,8 @@ open(D + "/site.js", "w").write(site)
 # 2) Malay
 ms = json.load(open(T + "/posts_ms.json")); ms[pid] = spec["ms"]
 json.dump(ms, open(T + "/posts_ms.json", "w"), ensure_ascii=False, indent=0)
+zh = json.load(open(T + "/posts_zh.json")); zh[pid] = spec["zh"]
+json.dump(zh, open(T + "/posts_zh.json", "w"), ensure_ascii=False, indent=0)
 
 # 3) article page from the template
 en = spec["en"]

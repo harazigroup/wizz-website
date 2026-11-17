@@ -216,13 +216,13 @@ function metaLine(post,l){const n=readMins(post[l]);return fmtDate(post.date,l)+
 function esc(s){return s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
 
 function renderBlog(){
-  const grid = document.getElementById('blogGrid'); if (!grid || lang === 'ms') return; // Malay pages are pre-rendered
+  const grid = document.getElementById('blogGrid'); if (!grid || lang === 'ms' || lang === 'zh') return; // Malay and Chinese pages are pre-rendered
   grid.innerHTML = POSTS.slice(0, +grid.dataset.limit || POSTS.length).map(post => { const p = post[lang];
     return `<a class="post" href="${POST_SLUGS[post.id]}"><span class="ptag">${esc(p.tag)}</span><h3>${esc(p.title)}</h3><p>${esc(p.lede)}</p><span class="pfoot"><span>${esc(metaLine(post,lang))}</span><b>${lang==='ar'?'اقرأ المقال':lang==='ms'?'Baca artikel':'Read article'}</b></span></a>`;
   }).join('');
 }
 function renderArticle(){
-  const art = document.querySelector('[data-post]'); if (!art || lang === 'ms') return;
+  const art = document.querySelector('[data-post]'); if (!art || lang === 'ms' || lang === 'zh') return;
   const post = POSTS.find(p => p.id === art.dataset.post); if (!post) return;
   const p = post[lang];
   document.getElementById('rTag').textContent = p.tag;
@@ -241,17 +241,17 @@ document.querySelectorAll('[data-i18n-ph]').forEach(n => { EN[n.dataset.i18nPh] 
 function setLang(l){
   lang = l; const d = l === 'ar' ? AR : EN;
   document.documentElement.lang = l; document.documentElement.dir = l === 'ar' ? 'rtl' : 'ltr';
-  if (l !== 'ms') nodes.forEach(n => { const v = d[n.dataset.i18n] ?? EN[n.dataset.i18n]; if (v == null) return; if (n.hasAttribute('data-html')) n.innerHTML = v; else n.textContent = v; });
-  if (l !== 'ms') document.querySelectorAll('[data-i18n-ph]').forEach(n => { n.placeholder = d[n.dataset.i18nPh] ?? EN[n.dataset.i18nPh]; });
+  if (l !== 'ms' && l !== 'zh') nodes.forEach(n => { const v = d[n.dataset.i18n] ?? EN[n.dataset.i18n]; if (v == null) return; if (n.hasAttribute('data-html')) n.innerHTML = v; else n.textContent = v; });
+  if (l !== 'ms' && l !== 'zh') document.querySelectorAll('[data-i18n-ph]').forEach(n => { n.placeholder = d[n.dataset.i18nPh] ?? EN[n.dataset.i18nPh]; });
   const ls = document.getElementById('langSel'); if (ls) ls.value = l;
   document.dispatchEvent(new CustomEvent('wizz:lang', { detail: l }));
   renderBlog(); renderArticle();
   const out = document.getElementById('out'); if (out && !out.hidden) buildMsg();
 }
 // Arabic pages live under /ar/ and Malay pages under /ms/ (built by tools/build_ar.py); the menu moves between versions
-const PAGE_LANG = (location.pathname.match(/^\/(ar|ms)(\/|$)/) || [, 'en'])[1];
+const PAGE_LANG = (location.pathname.match(/^\/(ar|ms|zh)(\/|$)/) || [, 'en'])[1];
 function langUrl(l){
-  const p = location.pathname.replace(/^\/(ar|ms)(\/|$)/, '/');
+  const p = location.pathname.replace(/^\/(ar|ms|zh)(\/|$)/, '/');
   return (l === 'en' ? p : '/' + l + (p === '/' ? '/' : p)) + location.search + location.hash;
 }
 const langSel = document.getElementById('langSel');
@@ -260,14 +260,14 @@ if (langSel) { langSel.value = PAGE_LANG; langSel.addEventListener('change', () 
   location.href = langUrl(langSel.value);
 }); }
 if (PAGE_LANG !== 'en') setLang(PAGE_LANG);
-else { try { localStorage.removeItem('wizz-lang'); const saved = localStorage.getItem('wizz-lang-choice'); if ((saved === 'ar' || saved === 'ms') && !/bot|crawl|spider/i.test(navigator.userAgent)) location.replace(langUrl(saved)); } catch(e) {} }
+else { try { localStorage.removeItem('wizz-lang'); const saved = localStorage.getItem('wizz-lang-choice'); if ((saved === 'ar' || saved === 'ms' || saved === 'zh') && !/bot|crawl|spider/i.test(navigator.userAgent)) location.replace(langUrl(saved)); } catch(e) {} }
 if (lang === 'en') { renderBlog(); renderArticle(); }
 
 // ---- referral codes: ?ref=CODE is remembered for 60 days and used on the contact form and at checkout
 (function(){
   const K='wizz-ref', DAY=864e5;
   const get=()=>{try{const v=JSON.parse(localStorage.getItem(K)||'null');return v&&v.c&&Date.now()-v.t<60*DAY?v.c:''}catch(e){return ''}};
-  const msg=c=>lang==='ar'?'تم تطبيق رمز الإحالة '+c+': خصم 100 رينغيت على الطلبات من 1,000 رينغيت فأكثر.':lang==='ms'?'Kod rujukan '+c+' digunakan: RM 100 diskaun untuk pesanan RM 1,000 ke atas.':'Referral code '+c+' applied: RM 100 off orders of RM 1,000 or more.';
+  const msg=c=>lang==='ar'?'تم تطبيق رمز الإحالة '+c+': خصم 100 رينغيت على الطلبات من 1,000 رينغيت فأكثر.':lang==='ms'?'Kod rujukan '+c+' digunakan: RM 100 diskaun untuk pesanan RM 1,000 ke atas.':lang==='zh'?'已使用推荐码 '+c+'：RM 1,000 或以上的订单减 RM 100。':'Referral code '+c+' applied: RM 100 off orders of RM 1,000 or more.';
   function toast(c){const d=document.createElement('div');d.className='ref-toast';d.setAttribute('role','status');d.innerHTML='<span></span><button type="button" aria-label="Close">×</button>';d.firstChild.textContent=msg(c);d.lastChild.onclick=()=>d.remove();document.body.appendChild(d);setTimeout(()=>d.classList.add('on'),30);setTimeout(()=>d.remove(),9000);}
   const q=new URLSearchParams(location.search).get('ref');
   const c=(q||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
@@ -288,7 +288,7 @@ if (menuBtn) menuBtn.addEventListener('click', () => {
 
 // ---- copy buttons
 function copyText(text, btn){
-  const done = () => { const o = btn.textContent; btn.textContent = lang==='ar' ? 'تم النسخ' : lang==='ms' ? 'Disalin' : 'Copied'; setTimeout(()=>btn.textContent=o,1500); };
+  const done = () => { const o = btn.textContent; btn.textContent = lang==='ar' ? 'تم النسخ' : lang==='ms' ? 'Disalin' : lang==='zh' ? '已复制' : 'Copied'; setTimeout(()=>btn.textContent=o,1500); };
   if (navigator.clipboard) navigator.clipboard.writeText(text).then(done).catch(()=>{});
 }
 document.querySelectorAll('[data-copy]').forEach(b => b.addEventListener('click', () => copyText(b.dataset.copy, b)));
@@ -333,7 +333,7 @@ if (form) {
     form.elements.subject.value = 'Website enquiry: ' + form.elements.name.value.trim() + ' (' + form.elements.mkt.value + ')';
     const data = new FormData(form); data.delete('need');
     const btn = form.querySelector('button[type=submit]'); const lbl = btn.querySelector('[data-i18n]');
-    btn.disabled = true; const old = lbl.textContent; lbl.textContent = lang === 'ar' ? 'جارٍ الإرسال…' : lang === 'ms' ? 'Menghantar…' : 'Sending…';
+    btn.disabled = true; const old = lbl.textContent; lbl.textContent = lang === 'ar' ? 'جارٍ الإرسال…' : lang === 'ms' ? 'Menghantar…' : lang === 'zh' ? '发送中…' : 'Sending…';
     try {
       // 1) email the team (and the client) through our function; 2) if that fails, keep the lead in Netlify Forms
       let sent = false, ref = '';
@@ -350,7 +350,7 @@ if (form) {
       form.querySelectorAll(':scope > div:not(.out), :scope > fieldset, :scope > p').forEach(n => n.hidden = true);
       form.classList.add('sent');
       const rf = document.getElementById('outRef');
-      if (rf && /^[A-Z0-9-]{3,20}$/.test(ref)) { rf.textContent = lang === 'ar' ? 'رقمك المرجعي: ' : lang === 'ms' ? (window.WIZZ_MS?.['Your reference'] || 'Rujukan anda') + ': ' : 'Your reference: '; const bd = document.createElement('bdi'); bd.textContent = ref; rf.appendChild(bd); rf.hidden = false; }
+      if (rf && /^[A-Z0-9-]{3,20}$/.test(ref)) { rf.textContent = lang === 'ar' ? 'رقمك المرجعي: ' : lang === 'ms' ? (window.WIZZ_MS?.['Your reference'] || 'Rujukan anda') + ': ' : lang === 'zh' ? '您的参考号：' : 'Your reference: '; const bd = document.createElement('bdi'); bd.textContent = ref; rf.appendChild(bd); rf.hidden = false; }
       const out = document.getElementById('out'); out.hidden = false;
       out.scrollIntoView({behavior:'smooth', block:'center'}); out.focus({preventScroll:true});
       if (window.gtag) gtag('event', 'generate_lead', { form: 'contact' });
