@@ -260,7 +260,16 @@ if (langSel) { langSel.value = PAGE_LANG; langSel.addEventListener('change', () 
   location.href = langUrl(langSel.value);
 }); }
 if (PAGE_LANG !== 'en') setLang(PAGE_LANG);
-else { try { localStorage.removeItem('wizz-lang'); const saved = localStorage.getItem('wizz-lang-choice'); if ((saved === 'ar' || saved === 'ms' || saved === 'zh') && !/bot|crawl|spider/i.test(navigator.userAgent)) location.replace(langUrl(saved)); } catch(e) {} }
+else { try {
+  localStorage.removeItem('wizz-lang');
+  const saved = localStorage.getItem('wizz-lang-choice');
+  const bot = /bot|crawl|spider|slurp|baidu|yandex|lighthouse/i.test(navigator.userAgent);
+  // a language picked from the menu always wins; otherwise follow the browser's language (Chinese, Arabic, Malay)
+  const auto = () => { for (const x of (navigator.languages || [navigator.language || ''])) { const c = String(x).toLowerCase().slice(0, 2);
+    if (c === 'en') return ''; if (c === 'zh' || c === 'ar' || c === 'ms') return c; } return ''; };
+  const l = saved || auto();
+  if ((l === 'ar' || l === 'ms' || l === 'zh') && !bot && !/[?&]lang=en\b/.test(location.search)) location.replace(langUrl(l));
+} catch(e) {} }
 if (lang === 'en') { renderBlog(); renderArticle(); }
 
 // ---- referral codes: ?ref=CODE is remembered for 60 days and used on the contact form and at checkout
