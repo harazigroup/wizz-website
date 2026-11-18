@@ -105,3 +105,4 @@ Posting times (Malaysia time, GMT+8): 20:30 by default; 12:00–13:00 also works
 - 2026-11-11 · Topic 18, EIN for non-residents: what it is and how the application works (blog + carousel, light cover, sent for manual posting)
 - 2026-11-13 · Jumaat Mubarak (At-Talaq 65:3, emerald, sent for manual posting)
 - 2026-11-16 · Topic 19, Shopify store setup: what your company and store need before launch (blog + carousel, dark cover, sent for manual posting)
+- 2026-11-18 · Topic 20, Canada corporation for Amazon.ca sellers: Ontario or BC (blog + carousel, light cover, sent for manual posting)
