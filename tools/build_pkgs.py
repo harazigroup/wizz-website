@@ -1138,4 +1138,11 @@ for _f in glob.glob(f"{D}/*.html"):
     if 'data-i18n="ft_s_form"' in _h and 'class="ft-more"' not in _h:
         _h = _FT_JOBS.sub(lambda m: m.group(1) + '\n          <li class="ft-more"><a href="partners.html" data-i18n="ft_b2b">Partner offices (B2B)</a> · <a href="refer.html" data-i18n="ft_ref">Refer &amp; earn</a></li>', _h, count=1)
     if _h != _o: open(_f, "w").write(_h)
+# header: Careers link in the main menu, before Contact (idempotent)
+_NAV_RE = re.compile(r'(<nav[^>]*id="mainNav"[^>]*>.*?)(\n\s*<a (?=[^>]*data-i18n="nav_contact")[^>]*>)', re.S)
+for _f in glob.glob(f"{D}/*.html"):
+    _h = open(_f).read()
+    if 'class="nav-jobs"' not in _h:
+        _n = _NAV_RE.sub(lambda m: m.group(1) + '\n      <a href="careers.html" data-i18n="ft_jobs" class="nav-jobs"' + (' aria-current="page"' if _f.endswith('/careers.html') else '') + '>Careers</a>' + m.group(2), _h, count=1)
+        if _n != _h: open(_f, "w").write(_n)
 import runpy; runpy.run_path(os.path.join(os.path.dirname(os.path.abspath(__file__)), "build_ar.py"))
