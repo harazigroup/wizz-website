@@ -11,20 +11,20 @@
  },
  "us-business": {
   "name": "United States - Business",
-  "amount": 1899,
+  "amount": 849,
   "currency": "USD",
   "fixed": {
-   "MYR": 7899
+   "MYR": 3499
   },
   "desc": "Everything in Starter, plus: US business mailing address, 12 months; Business account application support (one provider); Amazon / Shopify readiness call.",
   "image": "https://wizz.com.my/img/pay/us.png"
  },
  "us-complete": {
   "name": "United States - Complete",
-  "amount": 2899,
+  "amount": 1699,
   "currency": "USD",
   "fixed": {
-   "MYR": 12099
+   "MYR": 6999
   },
   "desc": "Everything in Business, plus: First-year Form 5472 + pro-forma 1120 filing; State annual report filing; Compliance calendar & reminders.",
   "image": "https://wizz.com.my/img/pay/us.png"

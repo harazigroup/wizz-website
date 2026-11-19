@@ -11,8 +11,8 @@ COUNTRIES = [
  dict(c="US", n="United States", g="North America", e="LLC in Wyoming or New Mexico (Delaware on request). Owned 100% by non-residents.",
   tiers=[
    dict(sku="us-starter", n="Starter", p=289, fix={"MYR": 1199}, buy=True, i=["State filing fee included","Articles of organization & operating agreement","EIN application for non-residents","Registered agent, 12 months","Digital document pack"]),
-   dict(sku="us-business", n="Business", p=1899, fix={"MYR": 7899}, buy=True, pop=True, plus="Everything in Starter, plus", i=["US business mailing address, 12 months","Business account application support (one provider)","Amazon / Shopify readiness call"]),
-   dict(sku="us-complete", n="Complete", p=2899, fix={"MYR": 12099}, buy=True, plus="Everything in Business, plus", i=["First-year Form 5472 + pro-forma 1120 filing","State annual report filing","Compliance calendar & reminders"]),
+   dict(sku="us-business", n="Business", p=849, fix={"MYR": 3499}, buy=True, pop=True, plus="Everything in Starter, plus", i=["US business mailing address, 12 months","Business account application support (one provider)","Amazon / Shopify readiness call"]),
+   dict(sku="us-complete", n="Complete", p=1699, fix={"MYR": 6999}, buy=True, plus="Everything in Business, plus", i=["First-year Form 5472 + pro-forma 1120 filing","State annual report filing","Compliance calendar & reminders"]),
    dict(sku=None, grp="us-fda", n="FDA facility registration + US Agent", p=fx("MYR", 1999), fix={"MYR": 1999}, i=["Food facility registration with the US FDA","US Agent appointed, 12 months","FDA registration number & confirmation","For food, drinks and dietary supplements"]),
    dict(sku=None, grp="us-fda", n="US label review", p=None, i=["Supplement Facts / Nutrition Facts checked","Ingredient list and claims checked against US rules","Quoted per product"])],
   groups={"us-fda": ("FDA registration for food & supplements", "Selling food, drinks or dietary supplements in the US? The facility that makes them must register with the US FDA and appoint a US Agent. The FDA charges no government fee.")},
