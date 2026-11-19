@@ -495,6 +495,10 @@ for a_, label in ADDONS:
     QCAT.append({"g": "Add-ons", "name": a_, "detail": "", "usd": usd, "myr": (ADDON_FIX.get(a_) or {}).get("MYR") or (_myr(usd, None) if usd else 0), "from": a_ in ADDON_CONTACT})
 for a_ in ACQUISITIONS:
     QCAT.append({"g": "Established companies (1+ year)", "name": f'Established company · {a_["n"]}', "detail": "; ".join(a_["i"]) + ". Timeline: " + a_["time"], "usd": a_["p"], "myr": a_["rm"], "from": False})
+from us_states import US_STATES as _USS, TIER as _UST
+for st, tier, ff, yf, rm_f, rm_y, note in _USS:
+    QCAT.append({"g": "US LLC by state", "name": f"{st} LLC formation · {_UST[tier]}", "detail": f"State filing fee ({ff}) included; Articles of organization & operating agreement; EIN application for non-residents; Registered agent in {st}, 12 months; Digital document pack. {note}", "usd": int(round(rm_f / _RATES["MYR"])), "myr": rm_f, "from": False})
+    QCAT.append({"g": "US LLC by state", "name": f"{st} LLC yearly state upkeep", "detail": f"From year 2: registered agent renewal and state filing; state fee ({yf}) included. Federal Form 5472 filing is separate.", "usd": int(round(rm_y / _RATES["MYR"])), "myr": rm_y, "from": True})
 open(f"{D}/quote-catalog.json", "w").write(json.dumps(QCAT, ensure_ascii=False))
 
 # ---------------- client account + team admin (Supabase)
