@@ -102,7 +102,7 @@
         '<label>Title (optional)<input id="qTitle" value="'+esc(draft.title)+'" placeholder="e.g. US LLC for Amazon"></label>'+
         '<label>Language<select id="qLang">'+[['en','English'],['ar','Arabic'],['ms','Malay']].map(([k,v])=>'<option value="'+k+'"'+(k===draft.lang?' selected':'')+'>'+v+'</option>').join('')+'</select></label>'+
         '<label>Currency<select id="qCur">'+['MYR','USD','GBP','EUR','SAR','AED','OMR'].map(c=>'<option'+(c===draft.currency?' selected':'')+'>'+c+'</option>').join('')+'</select></label>'+
-        '<label>Valid for (days)<input id="qDays" type="number" min="1" max="90" value="'+draft.days+'"></label></div>'+
+        '<label>Valid for (days, default 2 = 48 hours)<input id="qDays" type="number" min="1" max="90" value="'+draft.days+'"></label></div>'+
         '<div class="wz-form"><select id="qPick"><option value="">Add a package or service…</option>'+groups.map(g=>'<optgroup label="'+esc(g)+'">'+CAT.map((c,i)=>c.g===g?'<option value="'+i+'">'+esc(c.name)+(priceOf(c,draft.currency)?' · '+money(priceOf(c,draft.currency),draft.currency):'')+'</option>':'').join('')+'</optgroup>').join('')+'</select><button type="button" class="btn ghost small" id="qCustom">Custom line</button></div>'+
         '<table class="ld-qt"><thead><tr><th>Service</th><th>Qty</th><th>Unit price</th><th></th></tr></thead><tbody>'+draft.items.map((it,i)=>'<tr><td><input data-qi="'+i+'" data-k="name" value="'+esc(it.name)+'"><textarea data-qi="'+i+'" data-k="detail" rows="2" placeholder="What is included">'+esc(it.detail)+'</textarea><label class="ld-chk"><input type="checkbox" data-qi="'+i+'" data-k="from"'+(it.from?' checked':'')+'> show as "from"</label></td><td><input type="number" min="1" data-qi="'+i+'" data-k="qty" value="'+it.qty+'"></td><td><input type="number" min="0" step="1" data-qi="'+i+'" data-k="unit" value="'+it.unit+'"></td><td><button type="button" class="ac-link danger" data-qdel="'+i+'">Remove</button></td></tr>').join('')+'</tbody></table>'+
         '<p class="ld-qtot">Total: <b>'+money(draft.items.reduce((a,it)=>a+(+it.unit||0)*(+it.qty||1),0),draft.currency)+'</b></p>'+
@@ -114,14 +114,14 @@
   }
   function syncDraft(){
     if(!draft)return;const g=id=>$(id);
-    if(g('qTitle'))draft.title=g('qTitle').value;if(g('qLang'))draft.lang=g('qLang').value;if(g('qDays'))draft.days=+g('qDays').value||14;if(g('qNotes'))draft.notes=g('qNotes').value;
+    if(g('qTitle'))draft.title=g('qTitle').value;if(g('qLang'))draft.lang=g('qLang').value;if(g('qDays'))draft.days=+g('qDays').value||2;if(g('qNotes'))draft.notes=g('qNotes').value;
     document.querySelectorAll('[data-qi]').forEach(el=>{const it=draft.items[+el.dataset.qi];if(!it)return;const k=el.dataset.k;it[k]=el.type==='checkbox'?el.checked:(k==='qty'||k==='unit')?(+el.value||0):el.value;});
   }
   async function loadCat(){if(CAT.length)return;try{CAT=await fetch('quote-catalog.json').then(r=>r.json());}catch(e){CAT=[];}}
   async function saveQuote(){
     syncDraft();const items=draft.items.filter(i=>i.name.trim());if(!items.length)return flash('Add at least one service.',true);
     const total=items.reduce((a,it)=>a+(+it.unit||0)*(+it.qty||1),0);
-    const vu=addDays(draft.days||14);
+    const vu=addDays(draft.days||2);
     const row={lead_id:cur.id,created_by:me.email,status:'sent',lang:draft.lang,client_name:cur.name,client_email:cur.email,client_phone:cur.phone,client_country:cur.residence||cur.nationality||null,
       title:draft.title.trim()||null,currency:draft.currency,items:items.map(i=>({name:i.name.trim(),detail:(i.detail||'').trim(),qty:+i.qty||1,unit:+i.unit||0,from:!!i.from})),total,valid_until:vu,notes:draft.notes.trim()||null};
     const {data,error}=await sb.from('quotes').insert(row).select().single();if(error)return flash(error.message,true);
@@ -153,7 +153,7 @@
     $('ldList').addEventListener('click',e=>{const b=e.target.closest('[data-lead]');if(b)open(b.dataset.lead);});
     $('ldDetail').addEventListener('click',async e=>{
       if(e.target.id==='ldSave')return save();
-      if(e.target.id==='qNew'){await loadCat();draft={title:'',lang:['ar','ms'].includes(cur.lang)?cur.lang:'en',currency:cur.quote_currency||'MYR',days:14,notes:'',items:[]};return renderQuotes();}
+      if(e.target.id==='qNew'){await loadCat();draft={title:'',lang:['ar','ms'].includes(cur.lang)?cur.lang:'en',currency:cur.quote_currency||'MYR',days:2,notes:'',items:[]};return renderQuotes();}
       if(e.target.id==='qCancelDraft'){draft=null;return renderQuotes();}
       if(e.target.id==='qCustom'){syncDraft();draft.items.push({name:'',detail:'',qty:1,unit:0,from:false});return renderQuotes();}
       if(e.target.dataset.qdel!=null){syncDraft();draft.items.splice(+e.target.dataset.qdel,1);return renderQuotes();}
