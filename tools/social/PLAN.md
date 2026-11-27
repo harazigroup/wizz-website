@@ -109,3 +109,4 @@ Posting times (Malaysia time, GMT+8): 20:30 by default; 12:00–13:00 also works
 - 2026-11-20 · Jumaat Mubarak (Al-Ahzab 33:56, dusk, sent for manual posting)
 - 2026-11-23 · Topic 21, Netherlands BV for Amazon EU and Bol.com sellers (blog + carousel, dark cover, sent for manual posting)
 - 2026-11-25 · Topic 22, Attestation and apostille: why your company documents need them (blog + carousel, light cover, sent for manual posting)
+- 2026-11-27 · Jumaat Mubarak (Al-Jumu'ah 62:10, night, sent for manual posting)
